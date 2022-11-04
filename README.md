@@ -115,7 +115,7 @@ A `Participant` can be updated by local user actions or updates sent from the se
 
 Server and console client are written in pure Go language.
 
-The same binary is used with different parameters to start a server or console client instance.
+The software is packaged as a single binary file for each supported platform. The same file is used with different parameters to start a server or a client instance from a text console.
 
 It should be possible to write other client implementations using other languages supporting websocket and JSON.
 
