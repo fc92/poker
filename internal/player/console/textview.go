@@ -127,7 +127,7 @@ func updateCommands(voteList *tview.List, commandList *tview.Form, voter *co.Par
 	// reset default selection if no local vote is available
 	if voter.Vote == co.VoteNotReceived {
 		voteList.SetCurrentItem(0)
-		voteList.SetSelectedTextColor(tcell.ColorDefault)
+		voteList.SetSelectedTextColor(tcell.ColorBlack)
 	}
 	commandList.AddButton("Quit", func() {
 		app.Stop()
