@@ -1,5 +1,5 @@
 // Game room
-// Game logic independant from underlying transport
+// Game logic independent from underlying transport
 
 package common
 
@@ -115,7 +115,7 @@ func (room Room) DisplayVotersStatus() []string {
 				votersStatus = append(votersStatus, voter.Name, ": ", voter.Vote, "\n")
 			}
 		default:
-			votersStatus = append(votersStatus, voter.Name, ": [red]unkown status[white]", emoji.Sprint(" :stop_sign:\n"))
+			votersStatus = append(votersStatus, voter.Name, ": [red]unknown status[white]", emoji.Sprint(" :stop_sign:\n"))
 		}
 	}
 	return votersStatus

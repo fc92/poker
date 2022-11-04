@@ -1,5 +1,5 @@
 // Game room
-// Game logic independant from underlying transport
+// Game logic independent from underlying transport
 
 package common
 

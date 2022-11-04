@@ -30,7 +30,7 @@ func sendVoter(c *websocket.Conn, voter *co.Participant) {
 func updateFromServer(c *websocket.Conn, voter *co.Participant, localRoom *co.Room, displayControl chan<- bool, controlFromServer chan<- []byte) {
 	for {
 		_, message, err := c.ReadMessage()
-		//TODO differenciate timeout and socket closed
+		//TODO differentiate timeout and socket closed
 		if err != nil {
 			return
 		}

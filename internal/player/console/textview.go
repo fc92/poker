@@ -98,7 +98,7 @@ func updateCommands(voteList *tview.List, commandList *tview.Form, voter *co.Par
 	sort.Strings(commands)
 	for _, shortcut := range commands {
 		key := []rune(shortcut)[0]
-		shortcut := shortcut // need to differenciate the shortcut variables to differenciate anonymous func
+		shortcut := shortcut // need to differentiate the shortcut variables to differentiate anonymous func
 		// handle vote commands
 		if _, ok := room.VoteCommands()[shortcut]; ok {
 			voteList.AddItem(voter.AvailableCommands[shortcut], "", key, func() {
