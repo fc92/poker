@@ -112,7 +112,7 @@ func updateCommands(voteList *tview.List, commandList *tview.Form, voter *co.Par
 					if voter.Vote == voter.AvailableCommands[string(scut)] {
 						voteList.SetSelectedTextColor(tcell.ColorRed)
 					} else {
-						voteList.SetSelectedTextColor(tcell.ColorDefault)
+						voteList.SetSelectedTextColor(tcell.ColorBlack)
 					}
 				})
 			}
