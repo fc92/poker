@@ -3,7 +3,7 @@
 [![Go](https://github.com/sietchcode/poker/actions/workflows/go.yml/badge.svg)](https://github.com/sietchcode/poker/actions/workflows/go.yml)
 [![release](https://github.com/sietchcode/poker/actions/workflows/release.yaml/badge.svg)](https://github.com/sietchcode/poker/actions/workflows/release.yaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/sietchcode/poker)](https://goreportcard.com/report/github.com/sietchcode/poker)
-
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Game description
 
