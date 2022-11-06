@@ -6,6 +6,16 @@
 [![codecov](https://codecov.io/github/fc92/poker/branch/main/graph/badge.svg?token=R4OZKBC13P)](https://codecov.io/github/fc92/poker)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+- [poker](#poker)
+  - [Game description](#game-description)
+    - [Client console](#client-console)
+    - [Server](#server)
+  - [Usage](#usage)
+  - [Information for developers](#information-for-developers)
+    - [High level design](#high-level-design)
+    - [Low level design](#low-level-design)
+    - [Ideas for the future](#ideas-for-the-future)
+
 ## Game description
 
 *poker* is a planing poker game **limiting vote influence** between the players. The goal is to collect an independent vote from each player and to improve the vote experience of distributed teams.
@@ -38,7 +48,7 @@ Server main features:
 
 - [X] start single game to host client players
 - [X] share vote and available commands to all users
-- [X] add connected user
+- [X] add newly connected user
 - [X] remove disconnected user
 - [X] broadcast vote status per user during vote session
 - [X] broadcast votes when all votes are available or vote is manually closed
@@ -118,6 +128,16 @@ Server and console client are written in pure Go language.
 
 The software is packaged as a single binary file for each supported platform. The same file is used with different parameters to start a server or a client instance from a text console.
 
-It should be possible to write other client implementations using other languages supporting websocket and JSON.
+It should be possible to write other client implementations using other languages supporting websocket and JSON. The focus of this project is pure GO so far.
 
-Default websocket is `localhost:8080` when the value is not provided on the command line.
+### Ideas for the future
+
+- [ ] [WebAssembly.sh](https://webassembly.sh) support: tinygo WASI support is not yes sufficient
+
+```bash
+$ tinygo build -wasm-abi=generic -target=wasi -o poker.wasm cmd/poker.go 
+# golang.org/x/sys/unix
+../.go/pkg/mod/golang.org/x/sys@v0.0.0-20220722155257-8c9f86f7a55f/unix/syscall_unix.go:526:17: Exec not declared by package syscall
+```
+
+- [ ] server part on ESP32: [tinygo support for ESP32](https://tinygo.org/docs/reference/microcontrollers/esp32-coreboard-v2) is not sufficient
