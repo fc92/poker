@@ -10,7 +10,7 @@ import (
 	"github.com/rivo/tview"
 	"golang.org/x/exp/maps"
 
-	co "github.com/sietchcode/poker/internal/common"
+	co "github.com/fc92/poker/internal/common"
 )
 
 func Display(localPlayer *co.Participant, room *co.Room, controlFromUI chan<- string, displayControl <-chan bool) {

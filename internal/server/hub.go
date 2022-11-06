@@ -9,7 +9,7 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/sietchcode/poker/internal/common"
+	"github.com/fc92/poker/internal/common"
 )
 
 // Hub maintains the set of active clients and broadcasts messages to the

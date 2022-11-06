@@ -16,7 +16,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 
-	"github.com/sietchcode/poker/internal/common"
+	"github.com/fc92/poker/internal/common"
 )
 
 const (

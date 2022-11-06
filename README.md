@@ -1,8 +1,8 @@
 # poker
 
-[![Go](https://github.com/sietchcode/poker/actions/workflows/go.yml/badge.svg)](https://github.com/sietchcode/poker/actions/workflows/go.yml)
-[![release](https://github.com/sietchcode/poker/actions/workflows/release.yaml/badge.svg)](https://github.com/sietchcode/poker/actions/workflows/release.yaml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/sietchcode/poker)](https://goreportcard.com/report/github.com/sietchcode/poker)
+[![Go](https://github.com/fc92/poker/actions/workflows/go.yml/badge.svg)](https://github.com/fc92/poker/actions/workflows/go.yml)
+[![release](https://github.com/fc92/poker/actions/workflows/release.yaml/badge.svg)](https://github.com/fc92/poker/actions/workflows/release.yaml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/fc92/poker)](https://goreportcard.com/report/github.com/fc92/poker)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Game description
@@ -46,7 +46,7 @@ Server main features:
 
 ## Usage
 
-The same binary file is used to start the server and console clients. Various platform are supported. See [latest release page](https://github.com/sietchcode/poker/releases/latest) for more details.
+The same binary file is used to start the server and console clients. Various platform are supported. See [latest release page](https://github.com/fc92/poker/releases/latest) for more details.
 
 Start a single server instance (dedicated for one team):
 

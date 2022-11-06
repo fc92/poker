@@ -8,8 +8,8 @@ import (
 
 	"github.com/goombaio/namegenerator"
 
-	"github.com/sietchcode/poker/internal/player"
-	"github.com/sietchcode/poker/internal/server"
+	"github.com/fc92/poker/internal/player"
+	"github.com/fc92/poker/internal/server"
 )
 
 func main() {

@@ -10,8 +10,8 @@ import (
 	"github.com/gorilla/websocket"
 	"golang.org/x/exp/maps"
 
-	co "github.com/sietchcode/poker/internal/common"
-	console "github.com/sietchcode/poker/internal/player/console"
+	co "github.com/fc92/poker/internal/common"
+	console "github.com/fc92/poker/internal/player/console"
 )
 
 // send participant data to the server

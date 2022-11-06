@@ -1,4 +1,4 @@
-module github.com/sietchcode/poker
+module github.com/fc92/poker
 
 go 1.19
 
