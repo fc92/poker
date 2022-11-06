@@ -26,11 +26,8 @@ jobs:
     - name: Build
       run: go build -v -o poker cmd/poker.go
 
-    - name: Test
-      run: go test -v ./...
+    - name: Run coverage
+      run: go test -race -coverprofile=coverage.out -covermode=atomic ./...
       
-    - name: Upload coverage reports to Codecov
-      run: |
-        curl -Os https://uploader.codecov.io/latest/linux/codecov
-        chmod +x codecov
-        ./codecov
+    - name: Upload coverage reports to Codecov with GitHub Action
+      uses: codecov/codecov-action@v3
