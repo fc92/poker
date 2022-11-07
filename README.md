@@ -19,11 +19,11 @@
 
 ## Game description
 
-*poker* is a planing poker game **limiting vote influence** between the players. The goal is to collect an independent vote from each player and to improve the vote experience of distributed teams.
+*poker* is a planning poker game (or scrum poker) limiting vote influence between the players. The goals are to collect an independent vote from each player and to improve the vote experience of distributed teams.
 
-- vote progress is shared without showing vote values to avoid influence between players,
-- only when vote is closed vote values are revealed and the vote distribution is displayed,
-- players can join or leave at any time.
+- Vote progress is shared without showing vote values to avoid influence between players.
+- Vote values are revealed only when the vote session is closed, and the vote distribution is displayed.
+- Players can join or leave at any time.
 
 ![short demo](4players.gif)
 
