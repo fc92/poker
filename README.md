@@ -58,6 +58,10 @@ Server main features:
 
 ## Usage
 
+Binary or docker image version can be used to start the server or a client.
+
+### Binary
+
 The same binary file is used to start the server and console clients. Various platform are supported. See [latest release page](https://github.com/fc92/poker/releases/latest) for more details.
 
 Start a single server instance (dedicated for one team):
@@ -99,6 +103,31 @@ subcommand 'client'
 ```
 
 Each player can navigate the client console and send commands using keyboard and mouse.
+
+NB: in mobaXterm mouse events are not always correctly handled
+
+### Docker image
+
+By default the docker image runs a server listening on 0.0.0.0:8080. 
+
+Using the docker command line it is possible to expose that port outside of the conatainer and to modify the IP and port of the server. 
+
+Server: 
+
+```
+docker run -p 8080:8080  ghcr.io/fc92/poker:main
+subcommand 'server'
+  websocket: 0.0.0.0:8080`
+```
+
+Client with IP *192.168.0.10*:
+
+It is also possible to start a client instance. 
+
+```
+docker run -it ghcr.io/fc92/poker:main /poker client -name PlayerName -websocket 192.168.0.10:8080
+```
+
 
 ## Information for developers
 
