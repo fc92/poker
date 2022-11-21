@@ -6,17 +6,19 @@ package server
 
 import (
 	"flag"
-	"log"
 	"net/http"
+
+	"github.com/rs/zerolog/log"
 )
 
 func serveHome(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.URL)
 	if r.URL.Path != "/" {
+		log.Error().Msgf("URL not supported: %s", r.URL)
 		http.Error(w, "Not found", http.StatusNotFound)
 		return
 	}
 	if r.Method != http.MethodGet {
+		log.Error().Msgf("URL %s, method not supported: %s", r.URL, r.Method)
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -34,6 +36,6 @@ func StartServer(ws string) {
 	})
 	err := http.ListenAndServe(*addr, nil)
 	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
+		log.Fatal().Err(err).Msg("")
 	}
 }

@@ -2,27 +2,33 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"time"
 
 	"github.com/goombaio/namegenerator"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 
 	"github.com/fc92/poker/internal/player"
 	"github.com/fc92/poker/internal/server"
 )
 
 func main() {
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	// Default level for this example is info, unless debug flag is present
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+
 	clientCmd := flag.NewFlagSet("client", flag.ExitOnError)
 	clientName := clientCmd.String("name", "", "name of the player")
 	serverWS := clientCmd.String("websocket", "localhost:8080", "hostname and port of the server websocket")
 
-	serverCmd := flag.NewFlagSet("bar", flag.ExitOnError)
+	serverCmd := flag.NewFlagSet("server", flag.ExitOnError)
 	websocket := serverCmd.String("websocket", "localhost:8080", "hostname and port of the websocket to open")
+	debug := serverCmd.Bool("debug", false, "sets log level to debug")
 
 	if len(os.Args) < 2 {
-		fmt.Println("expected 'client' or 'server' subcommands")
-		os.Exit(1)
+		log.Fatal().Msg("expected 'client' or 'server' subcommands")
 	}
 
 	switch os.Args[1] {
@@ -35,17 +41,19 @@ func main() {
 			nameGenerator := namegenerator.NewNameGenerator(seed)
 			*clientName = nameGenerator.Generate()
 		}
-		fmt.Println("subcommand 'client'")
-		fmt.Println("  name:", *clientName)
-		fmt.Println("  server websocket:", *serverWS)
+		log.Info().Msg("subcommand 'client'")
+		log.Info().Msgf("  name: %s", *clientName)
+		log.Info().Msgf("  server websocket: %s", *serverWS)
 		player.Play(*clientName, *serverWS)
 	case "server":
 		serverCmd.Parse(os.Args[2:])
-		fmt.Println("subcommand 'server'")
-		fmt.Println("  websocket:", *websocket)
+		if *debug {
+			zerolog.SetGlobalLevel(zerolog.DebugLevel)
+		}
+		log.Info().Msg("subcommand 'server'")
+		log.Info().Msgf("  websocket: %s", *websocket)
 		server.StartServer(*websocket)
 	default:
-		fmt.Println("expected 'client' or 'server' subcommands")
-		os.Exit(1)
+		log.Fatal().Msg("expected 'client' or 'server' subcommands")
 	}
 }

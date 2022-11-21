@@ -7,7 +7,8 @@ package server
 
 import (
 	"encoding/json"
-	"log"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/fc92/poker/internal/common"
 )
@@ -47,7 +48,7 @@ func (h *Hub) broadcastRoom() {
 		filteredRoom := h.room.FilterVoteData(client.voterId)
 		jsonRoom, err := json.Marshal(filteredRoom)
 		if err != nil {
-			log.Printf("error: %jsonRoom", err)
+			log.Err(err).Msg("")
 			return
 		}
 

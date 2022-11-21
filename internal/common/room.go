@@ -4,10 +4,9 @@
 package common
 
 import (
-	"log"
-
 	"github.com/google/uuid"
 	"github.com/kyokomi/emoji/v2"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/exp/maps"
 )
 
@@ -182,7 +181,7 @@ func (room *Room) UpdateFromParticipant(voterReceived Participant) {
 			// update room with data received from player
 			if voter.Id == voterReceived.Id {
 				room.Voters[i] = &voterReceived
-				log.Println("last command from ", room.Voters[i].Name, ": ", voterReceived.LastCommand, " vote: ", voterReceived.Vote)
+				log.Debug().Msgf("last command from %s: %s, vote: %s", room.Voters[i].Name, voterReceived.LastCommand, voterReceived.Vote)
 				switch voterReceived.LastCommand {
 				case CommandStartVote:
 					room.OpenVote()

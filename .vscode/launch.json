@@ -12,6 +12,8 @@
             "program": "${workspaceFolder}/cmd",
             "args": [
                 "server",
+                "-debug",
+                "true",
             ],
         },
         {

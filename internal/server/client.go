@@ -9,12 +9,12 @@ package server
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
+	"github.com/rs/zerolog/log"
 
 	"github.com/fc92/poker/internal/common"
 )
@@ -72,13 +72,14 @@ func (c *Client) readPump() {
 		_, message, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				log.Printf("error: %v", err)
+				log.Error().Err(err).Msg("")
 			}
 			return
 		}
+		log.Debug().Msgf("receive message %s", string(message))
 		voterReceived := common.Participant{}
 		if err := json.Unmarshal(message, &voterReceived); err != nil {
-			log.Printf("unknown message, not a participant: %v", err)
+			log.Error().Err(err).Msg("unknown message, not a participant")
 			return
 		}
 		c.voterId = voterReceived.Id
@@ -116,6 +117,7 @@ func (c *Client) writePump() {
 			if err := w.Close(); err != nil {
 				return
 			}
+			log.Debug().Msgf("sent message %s", string(jsonRoom))
 
 		case <-ticker.C:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
@@ -130,7 +132,7 @@ func (c *Client) writePump() {
 func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		log.Error().Err(err).Msg("")
 		return
 	}
 	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}

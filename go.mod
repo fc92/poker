@@ -7,7 +7,13 @@ require (
 	github.com/gorilla/websocket v1.5.0
 	github.com/kyokomi/emoji/v2 v2.2.10
 	github.com/rivo/tview v0.0.0-20220916081518-2e69b7385a37
+	github.com/rs/zerolog v1.28.0
 	golang.org/x/exp v0.0.0-20221012211006-4de253d81b95
+)
+
+require (
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.16 // indirect
 )
 
 require (
@@ -18,7 +24,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/navidys/tvxwidgets v0.1.1
 	github.com/rivo/uniseg v0.4.2 // indirect
-	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d // indirect
 	golang.org/x/text v0.4.0 // indirect
 )
