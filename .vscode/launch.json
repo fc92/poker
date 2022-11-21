@@ -13,7 +13,6 @@
             "args": [
                 "server",
                 "-debug",
-                "true",
             ],
         },
         {

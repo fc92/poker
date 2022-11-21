@@ -12,9 +12,12 @@
     - [Client console](#client-console)
     - [Server](#server)
   - [Usage](#usage)
+    - [Binary](#binary)
+    - [Docker image](#docker-image)
   - [Information for developers](#information-for-developers)
     - [High level design](#high-level-design)
     - [Low level design](#low-level-design)
+    - [Debug log](#debug-log)
     - [Ideas for the future](#ideas-for-the-future)
 
 ## Game description
@@ -159,6 +162,10 @@ Server and console client are written in pure Go language.
 The software is packaged as a single binary file for each supported platform. The same file is used with different parameters to start a server or a client instance from a text console.
 
 It should be possible to write other client implementations using other languages supporting websocket and JSON. The focus of this project is pure GO so far.
+
+### Debug log
+
+Server debug logs can be activated using the `-debug` flag
 
 ### Ideas for the future
 
