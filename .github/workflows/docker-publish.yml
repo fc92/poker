@@ -29,6 +29,7 @@ jobs:
       # This is used to complete the identity challenge
       # with sigstore/fulcio when running outside of PRs.
       id-token: write
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
 
     steps:
       - name: Checkout repository
@@ -51,7 +52,7 @@ jobs:
       # https://github.com/docker/login-action
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        uses: docker/login-action@57396166ad8aefe6098280995947635806a0e6ea
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -83,8 +84,7 @@ jobs:
         uses: aquasecurity/trivy-action@9ab158e8597f3b310480b9a69402b419bc03dbd5
         with:
           image-ref: "${{ steps.meta.outputs.tags }}"
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
+          format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
 
