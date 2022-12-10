@@ -8,7 +8,6 @@ import (
 	"os/signal"
 
 	"github.com/gorilla/websocket"
-	"golang.org/x/exp/maps"
 
 	co "github.com/fc92/poker/internal/common"
 	console "github.com/fc92/poker/internal/player/console"
@@ -110,7 +109,7 @@ func Play(name string, serverAddress string) {
 		case message := <-controlFromServer:
 			// remove locally stored commands to keep only received commands
 			for _, voter := range room.Voters {
-				maps.Clear(voter.AvailableCommands)
+				voter.AvailableCommands = make(map[string]string)
 			}
 			// update room with data received from server
 			if err = json.Unmarshal(message, room); err != nil {

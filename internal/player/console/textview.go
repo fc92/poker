@@ -8,7 +8,6 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/navidys/tvxwidgets"
 	"github.com/rivo/tview"
-	"golang.org/x/exp/maps"
 
 	co "github.com/fc92/poker/internal/common"
 )
@@ -94,7 +93,10 @@ func refreshLoop(displayControl <-chan bool, main *tview.TextView, room *co.Room
 func updateCommands(voteList *tview.List, commandList *tview.Form, voter *co.Participant, room *co.Room, controlFromUI chan<- string, app *tview.Application) {
 	voteList.Clear()
 	commandList.ClearButtons()
-	commands := maps.Keys(voter.AvailableCommands)
+	commands := []string{}
+	for k := range voter.AvailableCommands {
+		commands = append(commands, k)
+	}
 	sort.Strings(commands)
 	for _, shortcut := range commands {
 		key := []rune(shortcut)[0]

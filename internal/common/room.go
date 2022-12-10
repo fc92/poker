@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/kyokomi/emoji/v2"
 	"github.com/rs/zerolog/log"
-	"golang.org/x/exp/maps"
 )
 
 type RoomVoteStatus int
@@ -124,9 +123,13 @@ func (room Room) DisplayVotersStatus() []string {
 func (room *Room) OpenVote() {
 	room.RoomStatus = VoteOpen
 	for i := range room.Voters {
-		maps.Clear(room.Voters[i].AvailableCommands)
-		maps.Copy(room.Voters[i].AvailableCommands, room.TurnStartedCommands())
-		maps.Copy(room.Voters[i].AvailableCommands, room.VoteCommands())
+		room.Voters[i].AvailableCommands = make(map[string]string)
+		for k := range room.TurnStartedCommands() {
+			room.Voters[i].AvailableCommands[k] = room.TurnStartedCommands()[k]
+		}
+		for l := range room.VoteCommands() {
+			room.Voters[i].AvailableCommands[l] = room.VoteCommands()[l]
+		}
 		room.Voters[i].Vote = VoteNotReceived
 		room.Voters[i].LastCommand = VoteNotReceived
 	}
@@ -136,8 +139,10 @@ func (room *Room) OpenVote() {
 func (room *Room) CloseVote() {
 	room.RoomStatus = VoteClosed
 	for i := range room.Voters {
-		maps.Clear(room.Voters[i].AvailableCommands)
-		maps.Copy(room.Voters[i].AvailableCommands, room.TurnFinishedCommands())
+		room.Voters[i].AvailableCommands = make(map[string]string)
+		for k := range room.TurnFinishedCommands() {
+			room.Voters[i].AvailableCommands[k] = room.TurnFinishedCommands()[k]
+		}
 		// cannot start vote if player is alone
 		if len(room.Voters) < 2 {
 			delete(room.Voters[i].AvailableCommands, CommandStartVote)
@@ -200,8 +205,12 @@ func (room *Room) UpdateFromParticipant(voterReceived Participant) {
 			// add new player
 			if i == len(room.Voters)-1 {
 				if room.RoomStatus == VoteOpen {
-					maps.Copy(voterReceived.AvailableCommands, room.TurnStartedCommands())
-					maps.Copy(voterReceived.AvailableCommands, room.VoteCommands())
+					for k := range room.TurnStartedCommands() {
+						room.Voters[i].AvailableCommands[k] = room.TurnStartedCommands()[k]
+					}
+					for l := range room.VoteCommands() {
+						room.Voters[i].AvailableCommands[l] = room.VoteCommands()[l]
+					}
 					room.Voters = append(room.Voters, &voterReceived)
 				} else {
 					room.Voters = append(room.Voters, &voterReceived)
