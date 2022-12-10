@@ -1,8 +1,4 @@
 github.com/coreos/go-systemd/v22 v22.3.3-0.20220203105225-a9a7ef127534/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
-github.com/fc92/tview v0.0.1 h1:dRw6sN+DWl434Zvc/zXR0ATOm5J979+tfeq2XRAERaY=
-github.com/fc92/tview v0.0.1/go.mod h1:qZaVhv/VLAKPWT7ZkRBfbTeE2a8Xy/WLIc9+XJurgx4=
-github.com/fc92/uniseg v0.0.1 h1:dQhGLA+gGssZS3VZpGk6PFoAjTInvC3pNwPPbzb/3Jg=
-github.com/fc92/uniseg v0.0.1/go.mod h1:FmOrNFiX/B+EcdfA3swnuYPlcC3KKnyinQ9FQZj0gnA=
 github.com/fc92/uniseg v0.0.2 h1:kVQjhYhRiMJK/aA58UXNPqLYKEYLWojt3qcz7wwnUtk=
 github.com/fc92/uniseg v0.0.2/go.mod h1:FmOrNFiX/B+EcdfA3swnuYPlcC3KKnyinQ9FQZj0gnA=
 github.com/gdamore/encoding v1.0.0 h1:+7OoQ1Bc6eTm5niUzBa0Ctsh6JbMW6Ra+YNuAtDBdko=
