@@ -34,6 +34,11 @@
 
 ## Install
 
+The are different ways of deploying this client/server game:
+
+- with Web based access for better user experience (recommended),
+- using CLI in console mode (advanced).
+
 ### Deploy the game for Web based access (recommended)
 
 Prerequisite: server with docker and [tty2web](https://github.com/kost/tty2web) binary  (tested on Linux x86_64).
