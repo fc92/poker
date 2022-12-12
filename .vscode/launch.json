@@ -23,6 +23,7 @@
             "program": "${workspaceFolder}/cmd",
             "args": [
                 "client",
+                "-websocket",
                 "localhost:8080"
             ],
             "console": "integratedTerminal",
