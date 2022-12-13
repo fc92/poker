@@ -47,7 +47,7 @@ To simplify the user experience it is recommended to:
 
 - start the server in a docker container:
 
-```
+```bash
 docker run -p 192.168.0.1:8080:8080/tcp  ghcr.io/fc92/poker:main
 ```
 
@@ -55,7 +55,7 @@ to expose the server on address 192.168.0.1 port TCP 8080
 
 - provide user access in a web browser using [tty2web](https://github.com/kost/tty2web):
 
-```
+```bash
 tty2web --title-format Poker --permit-arguments -a 192.168.0.1 -p 8081 -w docker run -it --rm ghcr.io/fc92/poker:main /poker client -websocket 192.168.0.1:8080
 ```
 
@@ -80,7 +80,7 @@ Start a single server instance (dedicated for one team):
 - using default websocket:
 
 ```bash
-$ ./poker server
+./poker server
 subcommand 'server'
   websocket: localhost:8080
 ```
@@ -88,7 +88,7 @@ subcommand 'server'
 - or specifying the websocket to open:
 
 ```bash
-$ ./poker server -websocket 127.0.0.1:7878
+./poker server -websocket 127.0.0.1:7878
 subcommand 'server'
   websocket: 127.0.0.1:7878
 ```
@@ -98,7 +98,7 @@ When the server is started, start a client for each player. It must be able to c
 - example of client specifying a player name and the websocket value:
 
 ```bash
-$ ./poker client -name Player1 -websocket 127.0.0.1:7878
+./poker client -name Player1 -websocket 127.0.0.1:7878
 subcommand 'client'
   name: Player1
   server websocket: 127.0.0.1:7878
@@ -125,7 +125,7 @@ Using the docker command line it is possible to expose that port outside of the 
 
 Server:
 
-```
+```bash
 docker run -p 8080:8080  ghcr.io/fc92/poker:main
 subcommand 'server'
   websocket: 0.0.0.0:8080`
@@ -135,7 +135,7 @@ Client with IP *192.168.0.10*:
 
 It is also possible to start a client instance.
 
-```
+```bash
 docker run -it ghcr.io/fc92/poker:main /poker client -name PlayerName -websocket 192.168.0.10:8080
 ```
 
@@ -208,7 +208,7 @@ Server debug logs can be activated using the `-debug` flag
 - [ ] [WebAssembly.sh](https://webassembly.sh) support: tinygo WASI support is not yes sufficient
 
 ```bash
-$ tinygo build -wasm-abi=generic -target=wasi -o poker.wasm cmd/poker.go 
+tinygo build -wasm-abi=generic -target=wasi -o poker.wasm cmd/poker.go 
 # golang.org/x/sys/unix
 ../.go/pkg/mod/golang.org/x/sys@v0.0.0-20220722155257-8c9f86f7a55f/unix/syscall_unix.go:526:17: Exec not declared by package syscall
 ```
