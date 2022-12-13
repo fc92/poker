@@ -47,13 +47,17 @@ To simplify the user experience it is recommended to:
 
 - start the server in a docker container:
 
-```docker run -p 192.168.0.1:8080:8080/tcp  ghcr.io/fc92/poker:main```
+```
+docker run -p 192.168.0.1:8080:8080/tcp  ghcr.io/fc92/poker:main
+```
 
 to expose the server on address 192.168.0.1 port TCP 8080
 
 - provide user access in a web browser using [tty2web](https://github.com/kost/tty2web):
 
-```tty2web --title-format Poker --permit-arguments -a 192.168.0.1 -p 8081 -w docker run -it --rm ghcr.io/fc92/poker:main /poker client -websocket 192.168.0.1:8080```
+```
+tty2web --title-format Poker --permit-arguments -a 192.168.0.1 -p 8081 -w docker run -it --rm ghcr.io/fc92/poker:main /poker client -websocket 192.168.0.1:8080
+```
 
 so that users can connect to <http://192.168.0.1:8081/?arg=-name&arg=Mary> to join the game in a browser with player name *Mary*.
 
