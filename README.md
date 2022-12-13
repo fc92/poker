@@ -53,9 +53,9 @@ to expose the server on address 192.168.0.1 port TCP 8080
 
 - provide user access in a web browser using [tty2web](https://github.com/kost/tty2web):
 
-```tty2web -a 192.168.0.1 -p 8081 -w docker run -it --rm  ghcr.io/fc92/poker:main /poker client -websocket 192.168.0.1:8080```
+```tty2web --title-format Poker --permit-arguments -a 192.168.0.1 -p 8081 -w docker run -it --rm ghcr.io/fc92/poker:main /poker client -websocket 192.168.0.1:8080```
 
-so that users can connect to <http://192.168.0.1:8081> to join the game with a browser.
+so that users can connect to <http://192.168.0.1:8081/?arg=-name&arg=Mary> to join the game in a browser with player name *Mary*.
 
 There are multiple benefits with this tty2web deployment method:
 
