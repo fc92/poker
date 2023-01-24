@@ -58,9 +58,9 @@ func (room *Room) initCommands() {
 	room.turnStartedCommands = map[string]string{}
 	room.voteCommands = map[string]string{}
 
-	room.turnFinishedCommands[CommandStartVote] = "start new vote"
+	room.turnFinishedCommands[CommandStartVote] = "Start new vote"
 
-	room.turnStartedCommands[CommandCloseVote] = "close vote"
+	room.turnStartedCommands[CommandCloseVote] = "Close vote"
 
 	room.voteCommands[CommandNotVoting] = "?"
 	room.voteCommands[CommandVote1] = "vote 1"
