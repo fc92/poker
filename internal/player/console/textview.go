@@ -50,6 +50,8 @@ func Display(localPlayer *co.Participant, room *co.Room, controlFromUI chan<- st
 	barGraph.AddBar("13", 0, tcell.ColorRed)
 	barGraph.AddBar("?", 0, tcell.ColorGray)
 
+	gitHubLink := tview.NewTextView().SetText("\nhttps://github.com/fc92/poker")
+
 	grid := tview.NewGrid().
 		SetRows(3, 0, 3, 3).
 		SetColumns(15, 0, 40).
@@ -60,7 +62,8 @@ func Display(localPlayer *co.Participant, room *co.Room, controlFromUI chan<- st
 		AddItem(main, 1, 1, 2, 1, 0, 100, false).
 		AddItem(barGraph, 1, 2, 1, 1, 0, 100, false).
 		AddItem(gauge, 2, 2, 1, 1, 0, 100, false).
-		AddItem(commandList, 3, 0, 1, 3, 0, 100, false)
+		AddItem(commandList, 3, 0, 1, 2, 0, 50, false).
+		AddItem(gitHubLink, 3, 2, 1, 1, 0, 50, false)
 
 	// wait for server update before refreshing
 	go refreshLoop(displayControl, main, room, voteList, commandList, barGraph, gauge, localPlayer, controlFromUI, grid, app)
