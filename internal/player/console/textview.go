@@ -29,7 +29,7 @@ func Display(localPlayer *co.Participant, room *co.Room, controlFromUI chan<- st
 		})
 	main.SetBorder(true).SetTitle("Team votes")
 	voteList := tview.NewList().ShowSecondaryText(false)
-	voteList.SetBorder(true).SetTitle("Player vote")
+	voteList.SetBorder(true).SetTitle("Your vote")
 	commandList := tview.NewForm().SetButtonsAlign(tview.AlignCenter)
 
 	gauge := tvxwidgets.NewPercentageModeGauge()
@@ -55,7 +55,7 @@ func Display(localPlayer *co.Participant, room *co.Room, controlFromUI chan<- st
 	grid := tview.NewGrid().
 		SetRows(3, 0, 3, 3).
 		SetColumns(15, 0, 40).
-		AddItem(newPrimitive("Team poker\nPlayer: "+localPlayer.Name+"\n"), 0, 0, 1, 3, 0, 0, false)
+		AddItem(newPrimitive("Team poker\nYou are: "+localPlayer.Name+"\n"), 0, 0, 1, 3, 0, 0, false)
 
 	// Layout for screens wider than 100 cells.
 	grid.AddItem(voteList, 1, 0, 2, 1, 0, 100, true).
