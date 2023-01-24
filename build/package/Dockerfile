@@ -19,7 +19,14 @@ RUN go test -v ./cmd
 WORKDIR /go/src/app/cmd
 RUN CGO_ENABLED=0 go build -o /go/bin/poker 
 
-FROM gcr.io/distroless/static-debian11
-
+# for tty2web an image with a shell is required
+FROM alpine:latest
+# required for client using infocmp
+RUN apk add ncurses
 COPY --from=build /go/bin /
+ADD https://github.com/kost/tty2web/releases/download/v2.7.0/tty2web_linux_amd64 /tty2web
+RUN chmod +x /tty2web
+
+# for tty2web start the container with dedicated parameters instead of the default CMD 
+# example: docker run -it -p 8081:8081/tcp ghcr.io/fc92/poker:main "/tty2web" "--title-format" "Poker" "--permit-arguments" "-w" "-p" "8081" "/bin/sh" "-c" "/poker client -websocket 192.168.0.1:8080" &
 CMD ["/poker","server","-websocket", "0.0.0.0:8080"]
