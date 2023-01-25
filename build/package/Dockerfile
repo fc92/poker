@@ -21,13 +21,12 @@ RUN CGO_ENABLED=0 go build -o /go/bin/poker
 
 # for tty2web an image with a shell is required
 FROM alpine:latest
-USER 1000
 # required for client using infocmp
-RUN apk add ncurses
 COPY --from=build /go/bin /
-COPY https://github.com/kost/tty2web/releases/download/v2.7.0/tty2web_linux_amd64 /tty2web
+ADD https://github.com/kost/tty2web/releases/download/v2.7.0/tty2web_linux_amd64 /tty2web
 RUN chmod +x /tty2web
+USER 1000
 
 # for tty2web start the container with dedicated parameters instead of the default CMD 
-# example: docker run -it -p 8081:8081/tcp ghcr.io/fc92/poker:main "/tty2web" "--title-format" "Poker" "--permit-arguments" "-w" "-p" "8081" "/bin/sh" "-c" "/poker client -websocket 192.168.0.1:8080" &
+# example: docker run -dt -p 8081:8081/tcp ghcr.io/fc92/poker:main "/tty2web" "--title-format" "Poker" "--permit-arguments" "-w" "-p" "8081" "/bin/sh" "-c" "/poker client -websocket 192.168.0.1:8080" &
 CMD ["/poker","server","-websocket", "0.0.0.0:8080"]
