@@ -21,10 +21,11 @@ RUN CGO_ENABLED=0 go build -o /go/bin/poker
 
 # for tty2web an image with a shell is required
 FROM alpine:latest
+USER 1000
 # required for client using infocmp
 RUN apk add ncurses
 COPY --from=build /go/bin /
-ADD https://github.com/kost/tty2web/releases/download/v2.7.0/tty2web_linux_amd64 /tty2web
+COPY https://github.com/kost/tty2web/releases/download/v2.7.0/tty2web_linux_amd64 /tty2web
 RUN chmod +x /tty2web
 
 # for tty2web start the container with dedicated parameters instead of the default CMD 
