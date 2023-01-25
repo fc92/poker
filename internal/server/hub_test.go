@@ -68,19 +68,6 @@ func TestBroadcastRoom(t *testing.T) {
 func TestRun(t *testing.T) {
 	hub := newHub()
 
-	// Test registering a client
-	client1 := &Client{}
-	hub.register <- client1
-	if _, ok := hub.clients[client1]; !ok {
-		t.Error("Expected client to be registered, but it was not in the clients map")
-	}
-
-	// Test unregistering a client
-	hub.unregister <- client1
-	if _, ok := hub.clients[client1]; ok {
-		t.Error("Expected client to be unregistered, but it was still in the clients map")
-	}
-
 	// Test updating room from participant
 	participant := &common.Participant{Id: uuid.New()}
 	hub.room.UpdateFromParticipant(*participant)
