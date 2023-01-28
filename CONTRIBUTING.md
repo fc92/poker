@@ -192,6 +192,7 @@ Server debug logs can be activated using the `-debug` flag
 
 ## Ideas for the future
 
+- [ ] replace the need for tty2web with a WebAssembly client running in the browser using xterm.js
 - [ ] [WebAssembly.sh](https://webassembly.sh) support: tinygo WASI support is not yes sufficient
 
 ```bash
