@@ -28,12 +28,13 @@ COPY --from=build /go/bin /
 # download tty2web binary
 ADD https://github.com/kost/tty2web/releases/download/v2.7.0/tty2web_linux_amd64 /tty2web
 
+COPY build/package/poker.sh /
+COPY build/package/clients.sh /
 # prepare a script /clients.sh to launch the server as well as tty2web to welcome incoming clients
 # make the script and binary executable
 RUN chmod +x /tty2web \
-    && echo '#!/bin/sh' > /clients.sh \
-    && echo '/poker server -websocket localhost:8080 & /tty2web --title-format Poker --permit-arguments -w -p $1 /bin/sh -c "/poker client -websocket localhost:8080"' >> /clients.sh \
-    && chmod +x /clients.sh
+    && chmod +x /clients.sh \
+    && chmod +x poker.sh
 
 # avoid running as ROOT
 USER 1000
