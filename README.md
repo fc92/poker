@@ -45,10 +45,10 @@ docker run -p 8081:8081 -td ghcr.io/fc92/poker:main
 
 The port can be modified, to add a second poker room for example:
 
-- Server using non default HTTP port 8083:
+- Server using non default HTTP port 8083 and room name "TeamOne":
 
 ```bash
-docker run -p 8083:8083 -td ghcr.io/fc92/poker:main ./clients.sh 8083
+docker run -p 8083:8083 -td ghcr.io/fc92/poker:main ./clients.sh 8083 TeamOne
 ```
 
 - Browser URL to connect as player *Mary*:
