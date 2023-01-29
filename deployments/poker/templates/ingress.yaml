@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  name: room-ingress
+  namespace: poker
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: poker.local
+    http:
+      paths:
+{{- range $index, $room := .Values.rooms }}
+      - backend:
+          service:
+            name: room-{{ $room | lower }}
+            port:
+              number: {{ $.Values.tty2webPort | add $index }}
+        path: /room-{{ $room | lower }}(/|$)(.*)
+        pathType: Prefix
+{{- end }}    

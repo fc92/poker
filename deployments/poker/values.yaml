@@ -1,0 +1,5 @@
+rooms: # room name one word
+  - TeamRed
+  - TeamBlue
+  - TeamYellow
+tty2webPort: 8083
