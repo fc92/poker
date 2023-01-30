@@ -204,24 +204,29 @@ func (room *Room) UpdateFromParticipant(voterReceived Participant) {
 
 			// add new player
 			if i == len(room.Voters)-1 {
-				if room.RoomStatus == VoteOpen {
-					for k := range room.TurnStartedCommands() {
-						room.Voters[i].AvailableCommands[k] = room.TurnStartedCommands()[k]
-					}
-					for l := range room.VoteCommands() {
-						room.Voters[i].AvailableCommands[l] = room.VoteCommands()[l]
-					}
-					room.Voters = append(room.Voters, &voterReceived)
-				} else {
-					room.Voters = append(room.Voters, &voterReceived)
-					// update command menu
-					room.CloseVote()
-				}
+				// update command menu
+				updateCommandMenu(room, i, voterReceived)
 			}
 		}
 
 	}
 	room.updateFromVotes()
+}
+
+func updateCommandMenu(room *Room, i int, voterReceived Participant) {
+	if room.RoomStatus == VoteOpen {
+		for k := range room.TurnStartedCommands() {
+			room.Voters[i].AvailableCommands[k] = room.TurnStartedCommands()[k]
+		}
+		for l := range room.VoteCommands() {
+			room.Voters[i].AvailableCommands[l] = room.VoteCommands()[l]
+		}
+		room.Voters = append(room.Voters, &voterReceived)
+	} else {
+		room.Voters = append(room.Voters, &voterReceived)
+
+		room.CloseVote()
+	}
 }
 
 // apply vote rules
