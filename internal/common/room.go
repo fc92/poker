@@ -185,20 +185,8 @@ func (room *Room) UpdateFromParticipant(voterReceived Participant) {
 		for i, voter := range room.Voters {
 			// update room with data received from player
 			if voter.Id == voterReceived.Id {
-				room.Voters[i] = &voterReceived
-				log.Debug().Msgf("last command from %s: %s, vote: %s", room.Voters[i].Name, voterReceived.LastCommand, voterReceived.Vote)
-				switch voterReceived.LastCommand {
-				case CommandStartVote:
-					room.OpenVote()
-				case CommandCloseVote:
-					// update status of the received voter based on existing vote existence
-					if voterReceived.Vote == VoteNotReceived {
-						voterReceived.LastCommand = VoteNotReceived
-					} else {
-						voterReceived.LastCommand = VoteReceived
-					}
-					room.CloseVote()
-				}
+				// update status of the received voter based on existing vote existence
+				updateRoomFromReceivedPlayer(room, i, voterReceived)
 				break
 			}
 
@@ -211,6 +199,23 @@ func (room *Room) UpdateFromParticipant(voterReceived Participant) {
 
 	}
 	room.updateFromVotes()
+}
+
+func updateRoomFromReceivedPlayer(room *Room, i int, voterReceived Participant) {
+	room.Voters[i] = &voterReceived
+	log.Debug().Msgf("last command from %s: %s, vote: %s", room.Voters[i].Name, voterReceived.LastCommand, voterReceived.Vote)
+	switch voterReceived.LastCommand {
+	case CommandStartVote:
+		room.OpenVote()
+	case CommandCloseVote:
+
+		if voterReceived.Vote == VoteNotReceived {
+			voterReceived.LastCommand = VoteNotReceived
+		} else {
+			voterReceived.LastCommand = VoteReceived
+		}
+		room.CloseVote()
+	}
 }
 
 func updateCommandMenu(room *Room, i int, voterReceived Participant) {
