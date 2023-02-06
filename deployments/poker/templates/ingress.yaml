@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: poker.local
+  - host: {{ .Values.externalDomain }}
     http:
       paths:
 {{- range $index, $room := .Values.rooms }}

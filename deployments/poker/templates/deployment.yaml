@@ -21,7 +21,7 @@ spec:
     spec:
       serviceAccountName: poker-sa
       containers:
-        - image: ghcr.io/fc92/poker:main
+        - image: {{ $.Values.image }}
           tty: true # this is required for tty2web to work
           name: room
           command: ["./clients.sh"]

@@ -3,3 +3,5 @@ rooms: # room name one word
   - TeamBlue
   - TeamYellow
 tty2webPort: 8083
+image: ghcr.io/fc92/poker:main
+externalDomain: harbor.lab.dev # UPDATE required for target domain
