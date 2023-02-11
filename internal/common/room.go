@@ -190,10 +190,10 @@ func (room *Room) UpdateFromParticipant(voterReceived Participant) {
 				break
 			}
 
-			// add new player
+			// add new player, not found in the room
 			if i == len(room.Voters)-1 {
 				// update command menu
-				updateCommandMenu(room, i, voterReceived)
+				room.addPlayer(voterReceived)
 			}
 		}
 
@@ -201,9 +201,9 @@ func (room *Room) UpdateFromParticipant(voterReceived Participant) {
 	room.updateFromVotes()
 }
 
-func updateRoomFromReceivedPlayer(room *Room, i int, voterReceived Participant) {
-	room.Voters[i] = &voterReceived
-	log.Debug().Msgf("last command from %s: %s, vote: %s", room.Voters[i].Name, voterReceived.LastCommand, voterReceived.Vote)
+func updateRoomFromReceivedPlayer(room *Room, voterPosition int, voterReceived Participant) {
+	room.Voters[voterPosition] = &voterReceived
+	log.Debug().Msgf("last command from %s: %s, vote: %s", room.Voters[voterPosition].Name, voterReceived.LastCommand, voterReceived.Vote)
 	switch voterReceived.LastCommand {
 	case CommandStartVote:
 		room.OpenVote()
@@ -218,18 +218,17 @@ func updateRoomFromReceivedPlayer(room *Room, i int, voterReceived Participant) 
 	}
 }
 
-func updateCommandMenu(room *Room, i int, voterReceived Participant) {
+func (room *Room) addPlayer(voterReceived Participant) {
+	room.Voters = append(room.Voters, &voterReceived)
+	// init menu
 	if room.RoomStatus == VoteOpen {
 		for k := range room.TurnStartedCommands() {
-			room.Voters[i].AvailableCommands[k] = room.TurnStartedCommands()[k]
+			room.Voters[len(room.Voters)-1].AvailableCommands[k] = room.TurnStartedCommands()[k]
 		}
 		for l := range room.VoteCommands() {
-			room.Voters[i].AvailableCommands[l] = room.VoteCommands()[l]
+			room.Voters[len(room.Voters)-1].AvailableCommands[l] = room.VoteCommands()[l]
 		}
-		room.Voters = append(room.Voters, &voterReceived)
 	} else {
-		room.Voters = append(room.Voters, &voterReceived)
-
 		room.CloseVote()
 	}
 }
