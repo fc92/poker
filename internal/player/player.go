@@ -97,7 +97,7 @@ func Play(name string, serverAddress string) {
 				voter.Vote = room.VoteCommands()[command]
 				voter.LastCommand = command
 				sendVoter(c, voter)
-			case co.CommandVote1, co.CommandVote2, co.CommandVote3, co.CommandVote5, co.CommandVote8, co.CommandVote13:
+			case co.CommandVote1, co.CommandVote2, co.CommandVote3, co.CommandVote5, co.CommandVote8, co.CommandVote13, co.CommandVote21:
 				voter.Vote = room.VoteCommands()[command]
 				voter.LastCommand = co.VoteReceived
 				sendVoter(c, voter)

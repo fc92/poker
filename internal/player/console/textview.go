@@ -42,24 +42,25 @@ func Display(localPlayer *co.Participant, room *co.Room, controlFromUI chan<- st
 	barGraph.SetRect(4, 2, 50, 20)
 	barGraph.SetBorder(true)
 	barGraph.SetTitle("Distribution of votes")
-	barGraph.AddBar(co.CommandVote1, 0, tcell.ColorGreen)
-	barGraph.AddBar(co.CommandVote2, 0, tcell.ColorYellow)
-	barGraph.AddBar(co.CommandVote3, 0, tcell.ColorBlue)
-	barGraph.AddBar(co.CommandVote5, 0, tcell.ColorOrange)
-	barGraph.AddBar(co.CommandVote8, 0, tcell.ColorIndianRed)
+	barGraph.AddBar(co.CommandVote1, 0, tcell.ColorBlue)
+	barGraph.AddBar(co.CommandVote2, 0, tcell.ColorGreen)
+	barGraph.AddBar(co.CommandVote3, 0, tcell.ColorYellowGreen)
+	barGraph.AddBar(co.CommandVote5, 0, tcell.ColorYellow)
+	barGraph.AddBar(co.CommandVote8, 0, tcell.ColorOrange)
 	barGraph.AddBar("13", 0, tcell.ColorRed)
+	barGraph.AddBar("21", 0, tcell.ColorDarkMagenta)
 	barGraph.AddBar("?", 0, tcell.ColorGray)
 
 	gitHubLink := tview.NewTextView().SetText("\nhttps://github.com/fc92/poker")
 
 	grid := tview.NewGrid().
 		SetRows(3, 0, 3, 3).
-		SetColumns(15, 0, 40).
+		SetColumns(16, 0, 44).
 		AddItem(newPrimitive("Team poker\nYou are: "+localPlayer.Name+"\n"), 0, 0, 1, 3, 0, 0, false)
 
 	// Layout for screens wider than 100 cells.
 	grid.AddItem(voteList, 1, 0, 2, 1, 0, 100, true).
-		AddItem(main, 1, 1, 2, 1, 0, 100, false).
+		AddItem(main, 1, 1, 2, 1, 0, 50, false).
 		AddItem(barGraph, 1, 2, 1, 1, 0, 100, false).
 		AddItem(gauge, 2, 2, 1, 1, 0, 100, false).
 		AddItem(commandList, 3, 0, 1, 2, 0, 50, false).
@@ -154,6 +155,7 @@ func updateBarChart(barGraph *tvxwidgets.BarChart, room co.Room, grid *tview.Gri
 		barGraph.SetBarValue(co.CommandVote5, voteSum[room.VoteCommands()[co.CommandVote5]])
 		barGraph.SetBarValue(co.CommandVote8, voteSum[room.VoteCommands()[co.CommandVote8]])
 		barGraph.SetBarValue("13", voteSum[room.VoteCommands()[co.CommandVote13]])
+		barGraph.SetBarValue("21", voteSum[room.VoteCommands()[co.CommandVote21]])
 		barGraph.SetBarValue("?", voteSum[room.VoteCommands()[co.CommandNotVoting]])
 		barGraph.SetMaxValue(len(room.Voters))
 	} else {
@@ -163,6 +165,7 @@ func updateBarChart(barGraph *tvxwidgets.BarChart, room co.Room, grid *tview.Gri
 		barGraph.SetBarValue(co.CommandVote5, 0)
 		barGraph.SetBarValue(co.CommandVote8, 0)
 		barGraph.SetBarValue("13", 0)
+		barGraph.SetBarValue("21", 0)
 		barGraph.SetBarValue("?", 0)
 		barGraph.SetMaxValue(len(room.Voters))
 	}

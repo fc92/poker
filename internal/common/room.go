@@ -28,6 +28,7 @@ const (
 	CommandVote5     = "5"
 	CommandVote8     = "8"
 	CommandVote13    = "d"
+	CommandVote21    = "m"
 )
 
 // vote status
@@ -62,13 +63,14 @@ func (room *Room) initCommands() {
 
 	room.turnStartedCommands[CommandCloseVote] = "Close vote"
 
-	room.voteCommands[CommandNotVoting] = "?"
+	room.voteCommands[CommandNotVoting] = "not voting"
 	room.voteCommands[CommandVote1] = "vote 1"
 	room.voteCommands[CommandVote2] = "vote 2"
 	room.voteCommands[CommandVote3] = "vote 3"
 	room.voteCommands[CommandVote5] = "vote 5"
 	room.voteCommands[CommandVote8] = "vote 8"
 	room.voteCommands[CommandVote13] = "vote 13"
+	room.voteCommands[CommandVote21] = "vote 21"
 }
 
 func (room Room) TurnFinishedCommands() map[string]string {
