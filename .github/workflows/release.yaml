@@ -19,15 +19,15 @@ jobs:
           - goarch: arm64
             goos: windows
     steps:
-    - uses: actions/checkout@v3
-    - uses: wangyoucao577/go-release-action@v1.32
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        goos: ${{ matrix.goos }}
-        goarch: ${{ matrix.goarch }}
-        goversion: "https://dl.google.com/go/go1.19.3.linux-amd64.tar.gz"
-        project_path: "./cmd"
-        binary_name: "poker"
-        extra_files: LICENSE README.md
-        retry: 10
-        overwrite: true
+      - uses: actions/checkout@v3
+      - uses: wangyoucao577/go-release-action@v1.32
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goos: ${{ matrix.goos }}
+          goarch: ${{ matrix.goarch }}
+          goversion: "https://dl.google.com/go/go1.20.linux-amd64.tar.gz"
+          project_path: "./cmd"
+          binary_name: "poker"
+          extra_files: LICENSE README.md
+          retry: 10
+          overwrite: true

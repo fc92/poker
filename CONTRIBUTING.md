@@ -20,7 +20,7 @@ This page provide technical information to facilitate future maintenance of the 
 Prerequisites:
 
 - internet access
-- recent go version (tested with 1.19.x)
+- recent go version (tested with 1.19.x and 1.20)
 
 Get the sources and build the `poker` binary:
 
