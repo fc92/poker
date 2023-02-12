@@ -1,4 +1,4 @@
-FROM golang:1.19.5 as build
+FROM golang:1.20 as build
 LABEL org.opencontainers.image.authors="Florent Carré"
 LABEL org.opencontainers.image.source=https://github.com/fc92/poker
 LABEL org.opencontainers.image.description="poker image running client and server components"
