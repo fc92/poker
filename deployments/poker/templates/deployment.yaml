@@ -31,8 +31,14 @@ spec:
               name: {{ $room | lower }}-port
               containerPort: {{ $.Values.tty2webPort | add $index }}
           securityContext:
+            capabilities:
+              drop:
+                - all
             runAsUser: 1234
             runAsGroup: 1234
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+          automountServiceAccountToker: false
           resources:
             requests:
               cpu: 50m
