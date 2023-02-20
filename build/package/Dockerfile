@@ -21,7 +21,7 @@ WORKDIR /go/src/app/cmd
 RUN CGO_ENABLED=0 go build -o /go/bin/poker 
 
 # for tty2web an image with a shell is required
-FROM alpine:latest
+FROM alpine:3.17.2
 # required for client using infocmp
 COPY --from=build /go/bin /
 
@@ -37,7 +37,7 @@ RUN chmod +x /tty2web \
     && chmod +x poker.sh
 
 # avoid running as ROOT
-USER 1000
+USER 1000:1000
 
 # start server and tty2web to welcome clients on specified port
 CMD ["/clients.sh", "8081"]
