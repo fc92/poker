@@ -1,21 +1,30 @@
-{{- range $index, $room := .Values.rooms }}
+# {{- range $index, $room := .Values.rooms }}
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   labels:
+#     app: room-{{ $room | lower }}-app
+#   name: room-{{ $room | lower }}
+#   namespace: poker
+# spec:
+#   ports:
+#   - port: {{ $.Values.tty2webPort | add $index }}
+#     protocol: TCP
+#     targetPort: {{ $.Values.tty2webPort | add $index }}
+#   selector:
+#     app: room-{{ $room | lower }}-app
+# ---
+# {{- end }}    
+# for Run without debug config add debug port
 apiVersion: v1
 kind: Service
 metadata:
-  creationTimestamp: null
   labels:
-    app: room-{{ $room | lower }}-app
-    app.kubernetes.io/managed-by: Helm
-  name: room-{{ $room | lower }}
+    app: groom-app
+  name: groom  
   namespace: poker
 spec:
   ports:
-  - port: {{ $.Values.tty2webPort | add $index }}
+  - port: 9229
     protocol: TCP
-    targetPort: {{ $.Values.tty2webPort | add $index }}
-  selector:
-    app: room-{{ $room | lower }}-app
-status:
-  loadBalancer: {}
----
-{{- end }}    
+    targetPort: 9229
