@@ -2,7 +2,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
   labels:
     app: room-{{ $room | lower }}-app
   name: room-{{ $room | lower }}
@@ -21,7 +20,8 @@ spec:
     spec:
       serviceAccountName: poker-sa
       containers:
-        - image: {{ $.Values.image }}
+        - image: {{ $.Values.image.repository }}:{{ $.Values.image.tag}}
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
           tty: true # this is required for tty2web to work
           name: room
           command: ["./clients.sh"]
@@ -31,14 +31,14 @@ spec:
               name: {{ $room | lower }}-port
               containerPort: {{ $.Values.tty2webPort | add $index }}
           securityContext:
-            capabilities:
-              drop:
-                - all
+            # capabilities:
+            #   drop:
+            #     - all
             runAsUser: 1234
             runAsGroup: 1234
             readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
-          automountServiceAccountToker: false
+          # automountServiceAccountToker: false
           resources:
             requests:
               cpu: 50m
@@ -46,6 +46,5 @@ spec:
             limits:
               cpu: 500m
               memory: 200Mi
-status: {}
 ---
 {{- end }}    

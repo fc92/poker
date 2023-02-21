@@ -2,15 +2,15 @@ apiVersion: skaffold/v4beta2
 kind: Config
 build:
   artifacts:
-  # - image: pokerImage
-  #   context: .
-  #   docker:
-  #     # noCache: true
-  #     dockerfile: build/package/Dockerfile.dev
-  #     # buildArgs:
-  #     #   script: clients.sh
-  #   sync:
-  #     auto: true
+  - image: pokerImage
+    context: .
+    docker:
+      # noCache: true
+      dockerfile: build/package/Dockerfile
+      # buildArgs:
+      #   script: clients.sh
+    sync:
+      auto: true
   - image: groomImage
     context: .
     docker:

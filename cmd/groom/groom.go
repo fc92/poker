@@ -20,6 +20,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
 	"time"
 
 	//
@@ -27,14 +29,12 @@ import (
 	//
 	// Or uncomment to load specific auth plugins
 
+	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v3/pkg/cli"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
-	// _ "k8s.io/client-go/plugin/pkg/client/auth"
-	// _ "k8s.io/client-go/plugin/pkg/client/auth/azure"
-	// _ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	// _ "k8s.io/client-go/plugin/pkg/client/auth/oidc"
 )
 
 func main() {
@@ -70,6 +70,30 @@ func main() {
 		} else {
 			fmt.Printf("Found example-xxxxx pod in poker namespace\n")
 		}
+
+		settings := cli.New()
+
+		actionConfig := new(action.Configuration)
+		// You can pass an empty string instead of settings.Namespace() to list
+		// all namespaces
+		if err := actionConfig.Init(settings.RESTClientGetter(), settings.Namespace(), os.Getenv("HELM_DRIVER"), log.Printf); err != nil {
+			log.Printf("%+v", err)
+			os.Exit(1)
+		}
+
+		client := action.NewList(actionConfig)
+		// Only list deployed
+		client.Deployed = true
+		results, err := client.Run()
+		if err != nil {
+			log.Printf("%+v", err)
+			os.Exit(1)
+		}
+
+		// for _, rel := range results {
+		// 	log.Printf("helm results: %+v", rel)
+		// }
+		log.Printf("helm results: %+v", results[0].Config["rooms"])
 
 		time.Sleep(10 * time.Second)
 	}

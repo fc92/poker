@@ -1,7 +1,7 @@
 rooms: # room name one word
   - TeamRed
-  # - TeamBlue
-  # - TeamYellow
+  - TeamBlue
+  - TeamYellow
 tty2webPort: 8083
 image:
   repository: harbor.lab.dev/poker/poker # default repo

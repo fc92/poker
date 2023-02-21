@@ -1,37 +1,27 @@
-FROM golang:1.20 as build
+FROM golang:1.20.1-alpine as build
+ARG script
 LABEL org.opencontainers.image.authors="Florent Carré"
 LABEL org.opencontainers.image.source=https://github.com/fc92/poker
 LABEL org.opencontainers.image.description="poker image running client and server components"
 LABEL org.opencontainers.image.licenses=MIT
 
 # build poker binary using multi stage build for go
-WORKDIR /go/src/app
-COPY go.mod ./
-COPY go.sum ./
+WORKDIR /
+COPY . /
+RUN CGO_ENABLED=0 go install github.com/go-delve/delve/cmd/dlv@latest
 
 RUN go mod download
-COPY cmd/ cmd/
-COPY internal/ internal/
-RUN pwd
-RUN ls cmd
-RUN go vet -v ./...
-RUN go test -v ./...
 
-WORKDIR /go/src/app/cmd/groom
-RUN CGO_ENABLED=0 go build -o /go/bin/groom 
+RUN CGO_ENABLED=0 go build -gcflags="all=-N -l" -o /groom /cmd/groom/groom.go
 
-# for tty2web an image with a shell is required
-FROM alpine:latest
-# required for client using infocmp
-COPY --from=build /go/bin /
+# prepare a script /clients.sh to launch the server as well as tty2web to welcome incoming clients
+# make the script and binary executable
+RUN cp /go/bin/dlv / && \
+    chmod +x /dlv && \
+    chmod +x /groom
 
-# download tty2web binary
-ADD https://github.com/kost/tty2web/releases/download/v2.7.0/tty2web_linux_amd64 /tty2web
+# avoid running as ROOT -- DO NOT USE for debug
+# USER 1000:1000
 
-RUN chmod +x /groom
-
-# avoid running as ROOT
-USER 1000
-
-# start server and tty2web to welcome clients on specified port
-CMD ["/groom"]
+# if manual debugger is needed overwrite CMD outside of Dockerfile
+ENTRYPOINT ["/groom"]

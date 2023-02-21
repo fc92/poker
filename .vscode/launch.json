@@ -12,6 +12,7 @@
             "watch": true,
             "cleanUp": true,
             "portForward": true,
+            "autoStop": false
         },
         {
             "name": "attach",
