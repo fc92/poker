@@ -12,3 +12,5 @@ imagegroom:
   tag: latest # default tag 
   pullPolicy: IfNotPresent # default PullPolicy
 externalDomain: poker.local # UPDATE required for target domain
+debug: true
+debugPort: 9229

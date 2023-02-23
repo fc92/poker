@@ -12,7 +12,18 @@
             "watch": true,
             "cleanUp": true,
             "portForward": true,
-            "autoStop": false
+            "autoStop": false,
+            // NOT working so far (initContainer not injected)
+            // "debug": [
+            //     {
+            //         "program": "cmd/groom/groom.go",
+            //         "image": "groomImage",
+            //         "containerName": "groom",
+            //         "sourceFileMap": {
+            //             "${workspaceFolder}": "/go/src"
+            //         }
+            //     }
+            // ]
         },
         {
             "name": "attach",
@@ -73,6 +84,17 @@
             "mode": "debug",
             "program": "${workspaceFolder}/cmd/groom",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Remote debug in Kubernetes",
+            "type": "go",
+            "request": "attach",
+            "mode": "remote",
+            "remotePath": "/go/src",
+            "cwd": "${workspaceFolder}",
+            "port": 9229,
+            "host": "127.0.0.1",
+            "showLog": true
         }
     ]
 }

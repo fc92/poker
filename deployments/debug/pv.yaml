@@ -1,0 +1,30 @@
+# apply this file once to debug without rebuilding docker image
+# minikube mount is required
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: go-pv
+  namespace: poker
+spec:
+  storageClassName: hostpath
+  capacity:
+    storage: 256Mi
+  accessModes:
+  - ReadWriteOnce
+  hostPath:
+    path: /go/src
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: go-pvc
+  namespace: poker
+spec:
+  storageClassName: hostpath
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi

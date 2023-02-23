@@ -17,11 +17,9 @@ build:
       # noCache: true
       dockerfile: build/package/groom/Dockerfile
     sync:
-      auto: true # makes pod attach unstable ?
-      # infer:
-      #   - '**/*.yml'
-      #   - '**/*.go'
+      auto: true
   local:
+    concurrency: 2
     push: false
 deploy:
   helm:
@@ -42,5 +40,4 @@ deploy:
         imagegroom.repository: "{{.IMAGE_REPO_groomImage}}"
         imagegroom.tag: "{{.IMAGE_TAG_groomImage}}@{{.IMAGE_DIGEST_groomImage}}"
       setValues:
-        image.pullPolicy: IfNotPresent
         containerPort: 8083

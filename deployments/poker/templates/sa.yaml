@@ -3,3 +3,59 @@ kind: ServiceAccount
 metadata:
   name: poker-sa
   namespace: poker
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: groom-sa
+  namespace: poker
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: readsecret
+  namespace: poker
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  - pods
+  - configmaps
+  - services
+  - serviceaccounts
+  verbs:
+  - '*'
+- apiGroups:
+  - "apps"
+  resources:
+  - deployments
+  verbs:
+  - '*'
+- apiGroups:
+  - "rbac.authorization.k8s.io"
+  resources:
+  - roles
+  - rolebindings
+  verbs:
+  - '*'
+- apiGroups:
+  - "networking.k8s.io"
+  resources:
+  - ingresses
+  verbs:
+  - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: groomrb
+  namespace: poker
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: readsecret
+subjects:
+- kind: ServiceAccount
+  name: groom-sa
+  namespace: poker

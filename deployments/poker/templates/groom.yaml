@@ -15,31 +15,46 @@ spec:
       labels:
         app: groom-app
     spec:
-      # serviceAccountName: poker-sa
+      serviceAccountName: groom-sa
+      volumes:
+        - name: go-volume
+          persistentVolumeClaim:
+            claimName: go-pvc
       containers:
-        - image: {{ .Values.imagegroom.repository }}:{{ .Values.imagegroom.tag}}
+        - image: {{ .Values.imagegroom.repository }}:{{ .Values.imagegroom.tag }}
           imagePullPolicy: {{ .Values.imagegroom.pullPolicy }}
           name: groom
-          # for Run without debug config add debug port
+          # add debug config if needed
+          {{ if .Values.debug }}
           ports: 
             - name: groom-port
               protocol: "TCP"
-              containerPort: 9229
-          command: ["/dlv"]
-          args: [ "exec", "/groom", "--headless", "--continue", "--accept-multiclient", "--listen=:9229", "--api-version=2" ]
-          # securityContext:
-            # capabilities:
-            #   drop:
-            #     - all
-            # runAsUser: 1234
-            # runAsGroup: 1234
-            # readOnlyRootFilesystem: true
-            # allowPrivilegeEscalation: false
-          # automountServiceAccountToken: false
+              containerPort: {{ .Values.debugPort }}
+          workingDir: /go/src
+          command: [ "/dlv" ]
+          args: [ "debug", "/go/src/cmd/groom", "--headless", "--accept-multiclient", "--listen=:{{ .Values.debugPort }}", "--api-version=2" ]
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          # otherwise applyse security
+          {{ else }}
+          securityContext:
+            capabilities:
+              drop:
+                - all
+            runAsUser: 0
+            runAsGroup: 0
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+          automountServiceAccountToken: false
+          {{ end }}
           resources:
             requests:
               cpu: 50m
-              memory: 200Mi
+              memory: 2000Mi
             limits:
               cpu: 4
-              memory: 200Mi
+              memory: 2000Mi
+          volumeMounts:
+            - mountPath: "/go/src"
+              name: go-volume

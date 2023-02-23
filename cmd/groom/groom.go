@@ -19,7 +19,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -30,71 +29,113 @@ import (
 	// Or uncomment to load specific auth plugins
 
 	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/cli"
-	"k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
+	"helm.sh/helm/v3/pkg/release"
 )
 
 func main() {
-	// creates the in-cluster config
-	config, err := rest.InClusterConfig()
-	if err != nil {
-		panic(err.Error())
+	// // creates the in-cluster config
+	// config, err := rest.InClusterConfig()
+
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+	// // creates the clientset
+	// clientset, err := kubernetes.NewForConfig(config)
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+
+	// pods, err := clientset.CoreV1().Pods("poker").List(context.TODO(), metav1.ListOptions{})
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+	// fmt.Printf("There are %d pods in the cluster\n", len(pods.Items))
+
+	// _, err = clientset.CoreV1().Pods("poker").Get(context.TODO(), "example-xxxxx", metav1.GetOptions{})
+	// if errors.IsNotFound(err) {
+	// 	fmt.Printf("Pod example-xxxxx not found in poker namespace\n")
+	// } else if statusError, isStatus := err.(*errors.StatusError); isStatus {
+	// 	fmt.Printf("Error getting pod %v\n", statusError.ErrStatus.Message)
+	// } else if err != nil {
+	// 	panic(err.Error())
+	// } else {
+	// 	fmt.Printf("Found example-xxxxx pod in poker namespace\n")
+	// }
+
+	settings := cli.New()
+
+	actionConfig := new(action.Configuration)
+
+	if err := actionConfig.Init(settings.RESTClientGetter(), settings.Namespace(), os.Getenv("HELM_DRIVER"), log.Printf); err != nil {
+		log.Printf("%+v", err)
+		os.Exit(1)
 	}
-	// creates the clientset
-	clientset, err := kubernetes.NewForConfig(config)
+
+	clientRead := action.NewList(actionConfig)
+
+	clientRead.Deployed = true
+	results, err := clientRead.Run()
 	if err != nil {
-		panic(err.Error())
+		log.Printf("%+v", err)
+		os.Exit(1)
 	}
-	for {
-		// get pods in all the namespaces by omitting namespace
-		// Or specify namespace to get pods in particular namespace
-		pods, err := clientset.CoreV1().Pods("poker").List(context.TODO(), metav1.ListOptions{})
-		if err != nil {
-			panic(err.Error())
-		}
-		fmt.Printf("There are %d pods in the cluster\n", len(pods.Items))
 
-		// Examples for error handling:
-		// - Use helper functions e.g. errors.IsNotFound()
-		// - And/or cast to StatusError and use its properties like e.g. ErrStatus.Message
-		_, err = clientset.CoreV1().Pods("poker").Get(context.TODO(), "example-xxxxx", metav1.GetOptions{})
-		if errors.IsNotFound(err) {
-			fmt.Printf("Pod example-xxxxx not found in poker namespace\n")
-		} else if statusError, isStatus := err.(*errors.StatusError); isStatus {
-			fmt.Printf("Error getting pod %v\n", statusError.ErrStatus.Message)
-		} else if err != nil {
-			panic(err.Error())
-		} else {
-			fmt.Printf("Found example-xxxxx pod in poker namespace\n")
+	if len(results) > 0 {
+		for _, room := range results[0].Config["rooms"].([]interface{}) {
+			if room.(string) == "TeamRed" {
+				log.Printf("found %+v value", room)
+
+			}
 		}
 
-		settings := cli.New()
-
-		actionConfig := new(action.Configuration)
-		// You can pass an empty string instead of settings.Namespace() to list
-		// all namespaces
-		if err := actionConfig.Init(settings.RESTClientGetter(), settings.Namespace(), os.Getenv("HELM_DRIVER"), log.Printf); err != nil {
-			log.Printf("%+v", err)
-			os.Exit(1)
-		}
-
-		client := action.NewList(actionConfig)
-		// Only list deployed
-		client.Deployed = true
-		results, err := client.Run()
-		if err != nil {
-			log.Printf("%+v", err)
-			os.Exit(1)
-		}
-
-		// for _, rel := range results {
-		// 	log.Printf("helm results: %+v", rel)
-		// }
 		log.Printf("helm results: %+v", results[0].Config["rooms"])
+	}
+	modifyRooms(results[0])
 
-		time.Sleep(10 * time.Second)
+	time.Sleep(10 * time.Second)
+}
+
+func modifyRooms(currentRelease *release.Release) {
+	settings := cli.New()
+	cfg := new(action.Configuration)
+	if err := cfg.Init(settings.RESTClientGetter(), settings.Namespace(), os.Getenv("HELM_DRIVER"), log.Printf); err != nil {
+		log.Printf("%+v", err)
+		os.Exit(1)
+	}
+	cfg.KubeClient.IsReachable()
+	client := action.NewUpgrade(cfg)
+
+	client.Namespace = settings.Namespace()
+	name := "poker"
+	if err := chartutil.ValidateReleaseName(name); err != nil {
+		log.Printf("release name is invalid: %s", name)
+		os.Exit(1)
+	}
+	ctx := context.Background()
+
+	newValues := make(map[string]interface{})
+	for k, v := range currentRelease.Config {
+		newValues[k] = v
+		// replace rooms
+		if k == "rooms" {
+			newValues[k] = []string{
+				"John",
+				"Paul",
+				"George",
+				"Ringo"}
+		}
+	}
+	// newValues["rooms"] = append(newValues["rooms"].([]string), "OOOoooOOO")
+	// var values = map[string]interface{}{"rooms": []string{
+	// 	"John",
+	// 	"Paul",
+	// 	"George",
+	// 	"Ringo"},
+	// }
+	if _, err := client.RunWithContext(ctx, name, currentRelease.Chart, newValues); err != nil {
+		log.Printf("run upgrade gives error: %s", err)
+		os.Exit(1)
 	}
 }
