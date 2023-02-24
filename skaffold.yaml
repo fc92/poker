@@ -33,7 +33,7 @@ deploy:
       chartPath: deployments/poker
       # skipBuildDependencies: true
       valuesFiles:
-      - deployments/poker/values-debug.yaml
+      - deployments/debug/values-debug.yaml
       setValueTemplates:
         image.repository: "{{.IMAGE_REPO_pokerImage}}"
         image.tag: "{{.IMAGE_TAG_pokerImage}}@{{.IMAGE_DIGEST_pokerImage}}"
