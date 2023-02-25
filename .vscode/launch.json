@@ -4,6 +4,8 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        // if necessary use kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission -v 6
+        // to solve Error: INSTALLATION FAILED: Internal error occurred: failed calling webhook "validate.nginx.ingress.kubernetes.io": failed to call webhook
         {
             "name": "Kubernetes: Run/Debug", // do not use Debug or make sure dlv entrypoint is injected
             "type": "cloudcode.kubernetes",
@@ -24,20 +26,6 @@
             //         }
             //     }
             // ]
-        },
-        {
-            "name": "attach",
-            "type": "go",
-            "request": "attach",
-            "mode": "remote",
-            "debugAdapter": "dlv-dap",
-            "substitutePath": [
-                {
-                    "from": "${workspaceFolder}",
-                    "to": "/",
-                },
-            ],
-            "port": 9229
         },
         {
             "name": "Attach to Kubernetes Pod",
@@ -85,6 +73,7 @@
             "program": "${workspaceFolder}/cmd/groom",
             "console": "integratedTerminal"
         },
+        // use minikube mount .:/go/src to debug in local cluster
         {
             "name": "Remote debug in Kubernetes",
             "type": "go",
