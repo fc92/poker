@@ -32,7 +32,7 @@ spec:
               containerPort: {{ .Values.debugPort }}
           workingDir: /go/src
           command: [ "/dlv" ]
-          args: [ "debug", "/go/src/cmd/groom", "--headless", "--accept-multiclient", "--listen=:{{ .Values.debugPort }}", "--api-version=2" ]
+          args: [ "debug", "/go/src/cmd/groom", "--headless", "--listen=:{{ .Values.debugPort }}", "--api-version=2" ]
           securityContext:
             runAsUser: 0
             runAsGroup: 0
