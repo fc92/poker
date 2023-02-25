@@ -98,6 +98,7 @@ func AddRoom(roomName string) (rooms []string, err error) {
 	if exists {
 		return rooms, errors.New("Room named " + roomName + " already exists. No change applied.")
 	}
+	zlog.Info().Msgf("Adding room %v", roomName)
 	return updateRoom(roomName, true)
 }
 
@@ -109,6 +110,7 @@ func RemoveRoom(roomName string) (rooms []string, err error) {
 		return nil, err
 	}
 	if exists {
+		zlog.Info().Msgf("Removing room %v", roomName)
 		return updateRoom(roomName, false)
 	}
 	return rooms, errors.New("Room named " + roomName + " not found. No change applied.")
