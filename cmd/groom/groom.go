@@ -26,30 +26,37 @@ func main() {
 	// Default level for this example is info, unless debug flag is present
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
-	// get list of deployed rooms
-	rooms, err := groom.RoomDeployed()
-	if err != nil {
-		log.Fatal().Msg("unable to get list of rooms deployed...")
-		os.Exit(1)
-	} else {
-		log.Info().Msgf("Found rooms: %v", rooms)
+	if len(os.Args) != 2 {
+		log.Fatal().Msg("Usage: groom serverUrl\nExample: groom http://localhost")
 	}
+	serverUrl := os.Args[1]
 
-	// TO DO replace this code
-	rooms, err = groom.AddRoom("TeamGreen")
-	if err != nil {
-		log.Warn().Msgf("%v", err)
-	} else {
-		log.Info().Msgf("Found rooms: %v", rooms)
-	}
+	// // get list of deployed rooms
+	rooms := []string{"TeamBlue", "TeamRed", "TeamBlack"}
+	// rooms, err := groom.RoomDeployed()
+	// if err != nil {
+	// 	log.Fatal().Msg("unable to get list of rooms deployed...")
+	// 	os.Exit(1)
+	// } else {
+	// 	log.Info().Msgf("Found rooms: %v", rooms)
+	// }
 
-	rooms, err = groom.RemoveRoom("TeamPink")
-	if err != nil {
-		log.Warn().Msgf("%v", err)
-	} else {
-		log.Info().Msgf("Found rooms: %v", rooms)
-	}
+	// // TO DO replace this code
+	// rooms, err = groom.AddRoom("TeamGreen")
+	// if err != nil {
+	// 	log.Warn().Msgf("%v", err)
+	// } else {
+	// 	log.Info().Msgf("Found rooms: %v", rooms)
+	// }
+
+	// rooms, err = groom.RemoveRoom("TeamPink")
+	// if err != nil {
+	// 	log.Warn().Msgf("%v", err)
+	// } else {
+	// 	log.Info().Msgf("Found rooms: %v", rooms)
+	// }
 	// display welcome screen
+	groom.DisplayWelcome(rooms, serverUrl)
 
 	// handle updates from user input or helm release
 
