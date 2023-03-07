@@ -16,45 +16,66 @@ spec:
         app: groom-app
     spec:
       serviceAccountName: groom-sa
+      # add debug config if needed
+      {{ if .Values.debug }}
       volumes:
         - name: go-volume
           persistentVolumeClaim:
             claimName: go-pvc
+      {{ end }}
       containers:
         - image: {{ .Values.imagegroom.repository }}:{{ .Values.imagegroom.tag }}
           imagePullPolicy: {{ .Values.imagegroom.pullPolicy }}
           name: groom
-          # add debug config if needed
-          {{ if .Values.debug }}
+          tty: true # this is required for tty2web to work
+          command: [ "/clients.sh" ]
+          args: [ "{{ .Values.groomPort }}" ]
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.groomPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
           ports: 
-            - name: groom-port
-              protocol: "TCP"
-              containerPort: {{ .Values.debugPort }}
-          workingDir: /go/src
-          command: [ "/dlv" ]
-          args: [ "debug", "/go/src/cmd/groom", "--headless", "--listen=:{{ .Values.debugPort }}", "--api-version=2" ]
-          securityContext:
-            runAsUser: 0
-            runAsGroup: 0
-          # otherwise applyse security
-          {{ else }}
-          securityContext:
-            capabilities:
-              drop:
-                - all
-            runAsUser: 0
-            runAsGroup: 0
-            readOnlyRootFilesystem: true
-            allowPrivilegeEscalation: false
+            - protocol: "TCP"
+              name: groom-port
+              containerPort: {{ .Values.groomPort }}
+          # add debug config if needed
+          # {{ if .Values.debug }}
+          #   - name: debug-port
+          #     protocol: "TCP"
+          #     containerPort: {{ .Values.debugPort }}
+          # workingDir: /go/src
+          # command: [ "/dlv" ]
+          # args: [ "debug", "/go/src/cmd/groom", "--headless", "--listen=:{{ .Values.debugPort }}", "--api-version=2", "--", "http://{{ .Values.externalDomain }}" ]
+          # securityContext:
+          #   runAsUser: 0
+          #   runAsGroup: 0
+          # resources:
+          #   requests:
+          #     cpu: 50m
+          #     memory: 2000Mi
+          #   limits:
+          #     cpu: 4
+          #     memory: 2000Mi
+          # volumeMounts:
+          #   - mountPath: "/go/src"
+          #     name: go-volume
+          # otherwise apply security
+          # {{ else }}
+          # securityContext:
+            # capabilities:
+            #   drop:
+            #     - all
+            # readOnlyRootFilesystem: true
+            # allowPrivilegeEscalation: false
           automountServiceAccountToken: false
-          {{ end }}
           resources:
             requests:
               cpu: 50m
-              memory: 2000Mi
+              memory: 20Mi
             limits:
-              cpu: 4
-              memory: 2000Mi
-          volumeMounts:
-            - mountPath: "/go/src"
-              name: go-volume
+              cpu: 200m
+              memory: 20Mi
+          # {{ end }}

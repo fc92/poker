@@ -9,7 +9,10 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${fileDirname}"
+            "program": "${fileDirname}",
+            "args": [
+                "poker.local"
+            ]
         },
         // if necessary use kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission -v 6
         // to solve Error: INSTALLATION FAILED: Internal error occurred: failed calling webhook "validate.nginx.ingress.kubernetes.io": failed to call webhook
@@ -68,7 +71,7 @@
             "args": [
                 "client",
                 "-websocket",
-                "localhost:8080"
+                "poker.local/room-teamred"
             ],
             "console": "integratedTerminal"
         },
@@ -78,6 +81,9 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}/cmd/groom",
+            "args": [
+                "http://localhost:8080"
+            ],
             "console": "integratedTerminal"
         },
         // use minikube mount .:/go/src to debug in local cluster
@@ -90,7 +96,8 @@
             "cwd": "${workspaceFolder}",
             "port": 9229,
             "host": "127.0.0.1",
-            "showLog": true
+            "showLog": true,
+            "console": "integratedTerminal"
         },
     ]
 }

@@ -22,42 +22,15 @@ import (
 
 func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	log.Logger = log.With().Caller().Logger()
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	// Default level for this example is info, unless debug flag is present
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 
 	if len(os.Args) != 2 {
-		log.Fatal().Msg("Usage: groom serverUrl\nExample: groom http://localhost")
+		log.Fatal().Msg("Usage: groom serverUrl\nExample: groom localhost")
 	}
 	serverUrl := os.Args[1]
 
-	// // get list of deployed rooms
-	rooms := []string{"TeamBlue", "TeamRed", "TeamBlack"}
-	// rooms, err := groom.RoomDeployed()
-	// if err != nil {
-	// 	log.Fatal().Msg("unable to get list of rooms deployed...")
-	// 	os.Exit(1)
-	// } else {
-	// 	log.Info().Msgf("Found rooms: %v", rooms)
-	// }
-
-	// // TO DO replace this code
-	// rooms, err = groom.AddRoom("TeamGreen")
-	// if err != nil {
-	// 	log.Warn().Msgf("%v", err)
-	// } else {
-	// 	log.Info().Msgf("Found rooms: %v", rooms)
-	// }
-
-	// rooms, err = groom.RemoveRoom("TeamPink")
-	// if err != nil {
-	// 	log.Warn().Msgf("%v", err)
-	// } else {
-	// 	log.Info().Msgf("Found rooms: %v", rooms)
-	// }
-	// display welcome screen
-	groom.DisplayWelcome(rooms, serverUrl)
-
-	// handle updates from user input or helm release
-
+	groom.DisplayWelcome(serverUrl)
 }

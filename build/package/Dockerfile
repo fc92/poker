@@ -26,7 +26,8 @@ FROM alpine:3.17.2
 COPY --from=build /go/bin /
 
 # download tty2web binary
-ADD https://github.com/kost/tty2web/releases/download/v2.7.0/tty2web_linux_amd64 /tty2web
+# ADD https://github.com/kost/tty2web/releases/download/v2.7.0/tty2web_linux_amd64 /tty2web
+COPY tty2web /tty2web
 
 COPY build/package/poker.sh /
 COPY build/package/clients.sh /

@@ -9,6 +9,7 @@ metadata:
 spec:
   ports:
   - port: {{ $.Values.tty2webPort | add $index }}
+    name: {{ $room | lower }}-port
     protocol: TCP
     targetPort: {{ $.Values.tty2webPort | add $index }}
   selector:
@@ -16,7 +17,6 @@ spec:
 ---
 {{- end }}    
 # expose debug port if needed
-{{ if .Values.debug }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -26,7 +26,15 @@ metadata:
   namespace: poker
 spec:
   ports:
+{{ if .Values.debug }}
   - port: {{ .Values.debugPort }}
+    name: debug
     protocol: TCP
     targetPort: {{ .Values.debugPort }}
 {{ end }}
+  - port: {{ .Values.groomPort }}
+    name: groom-port
+    protocol: TCP
+    targetPort: {{ .Values.groomPort }}
+  selector:
+    app: groom-app
