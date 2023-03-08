@@ -1,4 +1,4 @@
-FROM golang:1.20.1-alpine as build
+FROM golang:1.20.2-alpine as build
 ARG script
 LABEL org.opencontainers.image.authors="Florent Carré"
 LABEL org.opencontainers.image.source=https://github.com/fc92/poker
@@ -11,8 +11,7 @@ COPY build/package/groom/groom.sh /
 COPY build/package/groom/clients.sh /
 RUN CGO_ENABLED=0 go install github.com/go-delve/delve/cmd/dlv@latest
 # download tty2web binary
-# ADD https://github.com/kost/tty2web/releases/download/v2.7.0/tty2web_linux_amd64 /tty2web
-COPY tty2web /tty2web
+ADD https://github.com/kost/tty2web/releases/download/v2.7.1/tty2web_linux_amd64 /tty2web
 
 RUN go mod download
 
