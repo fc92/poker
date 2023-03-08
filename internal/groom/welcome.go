@@ -33,7 +33,7 @@ func DisplayWelcome(serverUrl string) {
 	flex := tview.NewFlex().SetDirection(tview.FlexRow)
 
 	// Title
-	pokerFigure := figure.NewFigure("Poker", "", true)
+	pokerFigure := figure.NewFigure("Team Poker", "", true)
 	title := pokerFigure.String()
 
 	// github link
