@@ -17,8 +17,9 @@ RUN ls cmd
 RUN go vet -v ./...
 RUN go test -v ./...
 
-WORKDIR /go/src/app/cmd
-RUN CGO_ENABLED=0 go build -o /go/bin/poker 
+WORKDIR /go/src/app
+RUN CGO_ENABLED=0 go build -o /go/bin/poker cmd/poker.go
+RUN CGO_ENABLED=0 go build -o /go/bin/groom cmd/groom/groom.go
 
 # for tty2web an image with a shell is required
 FROM alpine:3.17.2
@@ -30,11 +31,15 @@ ADD https://github.com/kost/tty2web/releases/download/v2.7.1/tty2web_linux_amd64
 
 COPY build/package/poker.sh /
 COPY build/package/clients.sh /
+COPY build/package/groom.sh /
+COPY build/package/groom-clients.sh /
 # prepare a script /clients.sh to launch the server as well as tty2web to welcome incoming clients
 # make the script and binary executable
 RUN chmod +x /tty2web \
     && chmod +x /clients.sh \
-    && chmod +x poker.sh
+    && chmod +x /groom.sh \
+    && chmod +x /groom-clients.sh \
+    && chmod +x /poker.sh
 
 RUN mkdir /log && chmod 777 /log
 RUN chown 1000:1000 /log

@@ -28,7 +28,7 @@ spec:
           imagePullPolicy: {{ .Values.imagegroom.pullPolicy }}
           name: groom
           tty: true # this is required for tty2web to work
-          command: [ "/clients.sh" ]
+          command: [ "/groom-clients.sh" ]
           args: [ "{{ .Values.groomPort }}" ]
           readinessProbe:
             httpGet:

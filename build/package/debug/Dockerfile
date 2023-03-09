@@ -7,8 +7,8 @@ LABEL org.opencontainers.image.licenses=MIT
 
 WORKDIR /go/src
 COPY . /go/src
-COPY build/package/groom/groom.sh /
-COPY build/package/groom/clients.sh /
+COPY build/package/groom.sh /
+COPY build/package/groom-clients.sh /
 RUN CGO_ENABLED=0 go install github.com/go-delve/delve/cmd/dlv@latest
 # download tty2web binary
 ADD https://github.com/kost/tty2web/releases/download/v2.7.1/tty2web_linux_amd64 /tty2web
@@ -23,7 +23,7 @@ RUN cp /go/bin/dlv / && \
     chmod +x /dlv && \
     chmod +x /groom && \
     chmod +x /groom.sh && \
-    chmod +x /clients.sh && \
+    chmod +x /groom-clients.sh && \
     chmod +x /tty2web
 
 RUN mkdir /log && chmod 777 /log

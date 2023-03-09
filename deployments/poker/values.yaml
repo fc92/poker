@@ -7,4 +7,9 @@ image:
   repository: ghcr.io/fc92/poker
   tag: main
   pullPolicy: IfNotPresent # default PullPolicy
+imagegroom:
+  repository: ghcr.io/fc92/poker
+  tag: main
+  pullPolicy: IfNotPresent # default PullPolicy
 externalDomain: poker.local # UPDATE required for target domain
+groomPort: 38888
