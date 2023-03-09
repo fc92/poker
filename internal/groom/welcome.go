@@ -34,7 +34,7 @@ func DisplayWelcome(serverUrl string) {
 	if err != nil {
 		log.Error().Msg("unable to get list of rooms deployed...")
 	} else {
-		log.Debug().Msgf("Found rooms: %v", rooms)
+		log.Debug().Msgf("Found initial rooms: %v", rooms)
 	}
 	rooms = append(rooms, openRoomLabel)
 	app := tview.NewApplication()
@@ -123,12 +123,11 @@ func DisplayWelcome(serverUrl string) {
 		AddItem(form, 9, 1, true).
 		AddItem(githubLink, 1, 1, false)
 
-	if err := app.SetRoot(flex, true).EnableMouse(true).Run(); err != nil {
-		panic(err)
-	}
+	go app.SetRoot(flex, true).EnableMouse(true).Run()
 
 	// refresh rooms available
 	for {
+		log.Debug().Msg("starting room list refresh")
 		time.Sleep(time.Second * 5)
 
 		rooms, err = RoomDeployed()
