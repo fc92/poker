@@ -18,6 +18,10 @@ const (
 	inputSize     = 20
 )
 
+func init() {
+	initLogger()
+}
+
 // Terminal welcome page to choose player name and poker room
 // serverUrl designate the url used by the browser to reach the poker room
 func DisplayWelcome(serverUrl string) {

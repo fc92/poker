@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	stdlog "log"
 	"os"
 	"time"
 
@@ -15,9 +16,12 @@ import (
 
 func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	// Open log file in write mode
+	file := openLogFile()
 	// Default level for this example is info, unless debug flag is present
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	log.Logger = log.With().CallerWithSkipFrameCount(1).Logger()
+	log.Logger = log.Output(file)
 
 	clientCmd := flag.NewFlagSet("client", flag.ExitOnError)
 	clientName := clientCmd.String("name", "", "name of the player")
@@ -56,4 +60,20 @@ func main() {
 	default:
 		log.Fatal().Msg("expected 'client' or 'server' subcommands")
 	}
+}
+
+func openLogFile() *os.File {
+	if _, err := os.Stat("./log"); os.IsNotExist(err) {
+
+		err := os.Mkdir("./log", 0755)
+		if err != nil {
+			stdlog.Fatal(err)
+		}
+	}
+	file, err := os.OpenFile("./log/poker.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		stdlog.Fatal(err)
+	}
+	defer file.Close()
+	return file
 }

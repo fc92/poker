@@ -36,6 +36,9 @@ RUN chmod +x /tty2web \
     && chmod +x /clients.sh \
     && chmod +x poker.sh
 
+RUN mkdir /log && chmod 777 /log
+RUN chown 1000:1000 /log
+
 # avoid running as ROOT
 USER 1000:1000
 

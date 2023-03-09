@@ -26,6 +26,9 @@ RUN cp /go/bin/dlv / && \
     chmod +x /clients.sh && \
     chmod +x /tty2web
 
+RUN mkdir /log && chmod 777 /log
+RUN chown 1000:1000 /log
+
 # avoid running as root
 USER 1000:1000
 
