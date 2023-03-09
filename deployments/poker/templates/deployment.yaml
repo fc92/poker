@@ -20,11 +20,18 @@ spec:
     spec:
       serviceAccountName: poker-sa
       containers:
-        - image: {{ $.Values.image.repository }}:{{ $.Values.image.tag}}
-          imagePullPolicy: {{ $.Values.image.pullPolicy }}
-          tty: true # this is required for tty2web to work
+        - image: {{ $.Values.image.repository }}:{{ $.Values.image.tag }}
           name: room
-          command: ["./clients.sh"]
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ $.Values.tty2webPort | add $index }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          tty: true # this is required for tty2web to work
+          command: [ "./clients.sh" ]
           args: [ "{{ $.Values.tty2webPort | add $index }}", "{{ $room }}" ]
           ports:
             - protocol: "TCP"
@@ -34,9 +41,9 @@ spec:
             # capabilities:
             #   drop:
             #     - all
-            runAsUser: 1234
-            runAsGroup: 1234
-            readOnlyRootFilesystem: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            readOnlyRootFilesystem: false
             allowPrivilegeEscalation: false
           # automountServiceAccountToker: false
           resources:
