@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 
+	"github.com/fc92/poker/internal/common"
 	"github.com/rs/zerolog/log"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chartutil"
@@ -20,7 +21,7 @@ const (
 )
 
 func init() {
-	initLogger()
+	common.InitLogger()
 }
 
 // get list of deployed rooms

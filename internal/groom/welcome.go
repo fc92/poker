@@ -3,23 +3,28 @@
 package groom
 
 import (
+	"fmt"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/common-nighthawk/go-figure"
 	"github.com/rivo/tview"
 	"github.com/rs/zerolog/log"
+
+	"github.com/fc92/poker/internal/common"
 )
 
 const (
 	newRoomLabel  = "New room name (letters only):"
 	openRoomLabel = "open new room"
-	urlLabel      = "Use this url to join the poker room: "
+	urlLabel      = "Use this url to join the poker room : "
+	tipsLabel     = "(pop-up needs to be allowed, multiple click work best)"
 	inputSize     = 20
 )
 
 func init() {
-	initLogger()
+	common.InitLogger()
 }
 
 // Terminal welcome page to choose player name and poker room
@@ -60,6 +65,7 @@ func DisplayWelcome(serverUrl string) {
 	nameInput := tview.NewInputField().SetLabel("Enter your name:").SetFieldWidth(inputSize)
 	newRoom := tview.NewInputField().SetLabel(newRoomLabel).SetFieldWidth(inputSize)
 	displayUrl := tview.NewTextView().SetLabel(urlLabel)
+	tipsUrl := tview.NewTextView().SetLabel(tipsLabel)
 	roomSelection := tview.NewDropDown().
 		SetFieldWidth(inputSize).
 		SetLabel("Select poker room:")
@@ -76,18 +82,14 @@ func DisplayWelcome(serverUrl string) {
 					// existing room
 					if roomSelected != openRoomLabel {
 						roomUrl = serverUrl + "/room-" + roomSelected + "/?arg=-name&arg=" + playerName
-						flex.Clear()
-						flex.AddItem(textView, 6, 1, false).AddItem(displayUrl, 10, 1, true).AddItem(githubLink, 1, 1, false)
+						displayResultUrl(flex, textView, displayUrl, tipsUrl, githubLink)
 					} else {
 						// open new room
 						newRoomName := strings.TrimSpace(newRoom.GetText())
 						if len(newRoomName) > 0 {
 							AddRoom(newRoomName)
 							roomUrl = serverUrl + "/room-" + newRoomName + "/?arg=-name&arg=" + playerName
-							flex.Clear()
-							flex.AddItem(textView, 6, 1, false).
-								AddItem(displayUrl, 10, 1, true).
-								AddItem(githubLink, 1, 1, false)
+							displayResultUrl(flex, textView, displayUrl, tipsUrl, githubLink)
 						}
 					}
 					// display room url
@@ -97,6 +99,8 @@ func DisplayWelcome(serverUrl string) {
 		}).
 		AddButton("Quit", func() {
 			app.Stop()
+			fmt.Print("Exiting poker groom. You can close this web page or refresh it to join again.")
+			os.Exit(0)
 		})
 
 	// Show/Hide new room name in form
@@ -135,7 +139,7 @@ func DisplayWelcome(serverUrl string) {
 		}
 		rooms = append(rooms, openRoomLabel)
 
-		// Show/Hide new room name in form
+		// update room list
 		roomSelection.SetOptions(rooms, func(option string, index int) {
 			if option == openRoomLabel {
 				if form.GetFormItemByLabel(newRoomLabel) == nil {
@@ -149,5 +153,14 @@ func DisplayWelcome(serverUrl string) {
 				newRoom.SetText("")
 			}
 		})
+		app.Draw()
 	}
+}
+
+func displayResultUrl(flex *tview.Flex, textView *tview.TextView, displayUrl *tview.TextView, tipsUrl *tview.TextView, githubLink *tview.TextView) {
+	flex.Clear()
+	flex.AddItem(textView, 6, 1, false).
+		AddItem(displayUrl, 10, 1, true).
+		AddItem(tipsUrl, 10, 1, true).
+		AddItem(githubLink, 1, 1, false)
 }
