@@ -7,6 +7,7 @@ This page provide technical information to facilitate future maintenance of the 
   - [Deployments methods](#deployments-methods)
     - [Use CLI in console mode](#use-cli-in-console-mode)
     - [Deploy the game for Web based access](#deploy-the-game-for-web-based-access)
+    - [Helm chart deployment for Kubernetes](#helm-chart-deployment-for-kubernetes)
   - [Information for developers](#information-for-developers)
     - [Client console](#client-console)
     - [Server](#server)
@@ -44,7 +45,8 @@ go test -v ./...
 The are different ways of deploying this client/server game:
 
 - using CLI in console mode (recommended for development or native client on a wide range of platforms),
-- with Web based access for better user experience (recommended for end users).
+- with Web based access for better user experience (recommended for end users),
+- with Web based access to a Kubernetes cluster (adds support for multiple poker rooms for different teams)
 
 ### Use CLI in console mode
 
@@ -125,6 +127,18 @@ There are multiple benefits with this tty2web deployment method:
 - users only need a web browser with proper network access to play the game,
 - users can play on platforms that are not natively supported like iOS or Android,
 - the server and each player process run inside a restricted container for security.
+
+### Helm chart deployment for Kubernetes
+
+When the Helm chart is installed, it will deployed a list of rooms defined in the values.yaml file. Each room is composed of:
+
+- a pod hosting a server instance accessible locally and welcome web players through the tty2web mechanism. Each player connection instantiates a dedicated shell with the poker client inside this pod. It has local access to the server.
+- a service to expose the pod.
+- a dedicated ingress rule to route the HTTP or HTTPS traffic to the room based on a prefix.
+
+When a player asks for a new room, the groom program will modify the values of the Helm chart to deploy the stack for the new room (pod + service + ingress rule).
+
+It is recommended to use ResourceQuota to limit the number of rooms.
 
 ## Information for developers
 

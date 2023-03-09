@@ -3,5 +3,8 @@ rooms: # room name one word
   - TeamBlue
   - TeamYellow
 tty2webPort: 8083
-image: ghcr.io/fc92/poker:main
+image: 
+  repository: ghcr.io/fc92/poker
+  tag: main
+  pullPolicy: IfNotPresent # default PullPolicy
 externalDomain: poker.local # UPDATE required for target domain

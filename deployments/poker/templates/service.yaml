@@ -2,20 +2,39 @@
 apiVersion: v1
 kind: Service
 metadata:
-  creationTimestamp: null
   labels:
     app: room-{{ $room | lower }}-app
-    app.kubernetes.io/managed-by: Helm
   name: room-{{ $room | lower }}
   namespace: poker
 spec:
   ports:
   - port: {{ $.Values.tty2webPort | add $index }}
+    name: {{ $room | lower }}-port
     protocol: TCP
     targetPort: {{ $.Values.tty2webPort | add $index }}
   selector:
     app: room-{{ $room | lower }}-app
-status:
-  loadBalancer: {}
 ---
 {{- end }}    
+# expose debug port if needed
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: groom-app
+  name: groom  
+  namespace: poker
+spec:
+  ports:
+{{ if .Values.debug }}
+  - port: {{ .Values.debugPort }}
+    name: debug
+    protocol: TCP
+    targetPort: {{ .Values.debugPort }}
+{{ end }}
+  - port: {{ .Values.groomPort }}
+    name: groom-port
+    protocol: TCP
+    targetPort: {{ .Values.groomPort }}
+  selector:
+    app: groom-app

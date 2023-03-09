@@ -9,16 +9,16 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
+	"github.com/fc92/poker/internal/common"
 	"github.com/fc92/poker/internal/player"
 	"github.com/fc92/poker/internal/server"
 )
 
-func main() {
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	// Default level for this example is info, unless debug flag is present
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+func init() {
+	common.InitLogger()
+}
 
+func main() {
 	clientCmd := flag.NewFlagSet("client", flag.ExitOnError)
 	clientName := clientCmd.String("name", "", "name of the player")
 	serverWS := clientCmd.String("websocket", "localhost:8080", "hostname and port of the server websocket")

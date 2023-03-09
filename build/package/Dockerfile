@@ -1,4 +1,4 @@
-FROM golang:1.20 as build
+FROM golang:1.20.2 as build
 LABEL org.opencontainers.image.authors="Florent Carré"
 LABEL org.opencontainers.image.source=https://github.com/fc92/poker
 LABEL org.opencontainers.image.description="poker image running client and server components"
@@ -21,12 +21,12 @@ WORKDIR /go/src/app/cmd
 RUN CGO_ENABLED=0 go build -o /go/bin/poker 
 
 # for tty2web an image with a shell is required
-FROM alpine:latest
+FROM alpine:3.17.2
 # required for client using infocmp
 COPY --from=build /go/bin /
 
 # download tty2web binary
-ADD https://github.com/kost/tty2web/releases/download/v2.7.0/tty2web_linux_amd64 /tty2web
+ADD https://github.com/kost/tty2web/releases/download/v2.7.1/tty2web_linux_amd64 /tty2web
 
 COPY build/package/poker.sh /
 COPY build/package/clients.sh /
@@ -36,8 +36,11 @@ RUN chmod +x /tty2web \
     && chmod +x /clients.sh \
     && chmod +x poker.sh
 
+RUN mkdir /log && chmod 777 /log
+RUN chown 1000:1000 /log
+
 # avoid running as ROOT
-USER 1000
+USER 1000:1000
 
 # start server and tty2web to welcome clients on specified port
 CMD ["/clients.sh", "8081"]

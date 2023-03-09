@@ -2,12 +2,13 @@ package player
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 	"net/url"
 	"os"
 	"os/signal"
 
 	"github.com/gorilla/websocket"
+	"github.com/rs/zerolog/log"
 
 	co "github.com/fc92/poker/internal/common"
 	console "github.com/fc92/poker/internal/player/console"
@@ -17,12 +18,12 @@ import (
 func sendVoter(c *websocket.Conn, voter *co.Participant) {
 	jsonVoter, err := json.Marshal(voter)
 	if err != nil {
-		log.Println("json error:", err)
+		log.Err(err).Msg("json error")
 		return
 	}
 	err = c.WriteMessage(websocket.TextMessage, jsonVoter)
 	if err != nil {
-		log.Println("write:", err)
+		log.Err(err).Msg("write message error")
 	}
 }
 
@@ -42,7 +43,7 @@ func cleanExit(c *websocket.Conn) {
 	// waiting (with timeout) for the server to close the connection.
 	err := c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 	if err != nil {
-		log.Println("write close:", err)
+		log.Err(err).Msg("write close error")
 		return
 	}
 }
@@ -58,7 +59,7 @@ func Play(name string, serverAddress string) {
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
-		log.Fatal("dial:", err)
+		log.Fatal().Msg("websocket dial error")
 	}
 	defer c.Close()
 	// inform server of the new voter
@@ -83,7 +84,7 @@ func Play(name string, serverAddress string) {
 		case command := <-controlFromUI:
 			switch command {
 			case co.CommandQuit:
-				log.Println("user quit")
+				fmt.Print("Exiting poker room. You can close this web page.")
 				cleanExit(c)
 				return
 			case co.CommandStartVote:
@@ -104,7 +105,7 @@ func Play(name string, serverAddress string) {
 			}
 		case <-interrupt:
 			cleanExit(c)
-			log.Println("interrupt")
+			log.Info().Msg("interrupt")
 			return
 		case message := <-controlFromServer:
 			// remove locally stored commands to keep only received commands
