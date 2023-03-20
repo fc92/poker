@@ -8,8 +8,14 @@ metadata:
   namespace: poker
 spec:
   ports:
+{{ if $.Values.debugPoker }}
+  - port: {{ $.Values.debugPokerPort | add $index }}
+    name: debugp-{{ $room | lower }}
+    protocol: TCP
+    targetPort: {{ $.Values.debugPokerPort | add $index }}
+{{ end }}
   - port: {{ $.Values.tty2webPort | add $index }}
-    name: {{ $room | lower }}-port
+    name: {{ $room | lower }}
     protocol: TCP
     targetPort: {{ $.Values.tty2webPort | add $index }}
   selector:
@@ -26,11 +32,11 @@ metadata:
   namespace: poker
 spec:
   ports:
-{{ if .Values.debug }}
-  - port: {{ .Values.debugPort }}
-    name: debug
+{{ if .Values.debugGroom }}
+  - port: {{ .Values.debugGroomPort }}
+    name: debug-groom
     protocol: TCP
-    targetPort: {{ .Values.debugPort }}
+    targetPort: {{ .Values.debugGroomPort }}
 {{ end }}
   - port: {{ .Values.groomPort }}
     name: groom-port

@@ -1,30 +1,20 @@
 apiVersion: skaffold/v4beta2
 kind: Config
 build:
+  # tagPolicy:
+  #   sha256: {}
   artifacts:
   - image: pokerImage
     context: .
     docker:
       # noCache: true
-      # cacheFrom:
-      #   - "pokerImage"
       dockerfile: build/package/Dockerfile
-      # buildArgs:
-      #   script: clients.sh
-    sync:
-      auto: true
-  - image: groomImage
-    context: .
-    docker:
-      # noCache: true
-      # cacheFrom:
-      #   - "groomImage"
-      dockerfile: build/package/groom/Dockerfile
     sync:
       auto: true
   local:
-    concurrency: 2
+    concurrency: 0
     push: false
+    tryImportMissing: true # saves time with cache
 deploy:
   helm:
     # flags: 
@@ -35,13 +25,22 @@ deploy:
     releases:
     - name: poker
       chartPath: deployments/poker
-      # skipBuildDependencies: true
+      skipBuildDependencies: true
       valuesFiles:
-      - deployments/debug/values-debug.yaml
+      - deployments/poker/values.yaml
       setValueTemplates:
         image.repository: "{{.IMAGE_REPO_pokerImage}}"
         image.tag: "{{.IMAGE_TAG_pokerImage}}@{{.IMAGE_DIGEST_pokerImage}}"
-        imagegroom.repository: "{{.IMAGE_REPO_groomImage}}"
-        imagegroom.tag: "{{.IMAGE_TAG_groomImage}}@{{.IMAGE_DIGEST_groomImage}}"
+        imagegroom.repository: "{{.IMAGE_REPO_pokerImage}}"
+        imagegroom.tag: "{{.IMAGE_TAG_pokerImage}}@{{.IMAGE_DIGEST_pokerImage}}"
       setValues:
         containerPort: 8083
+profiles:
+  - name: dev
+    patches:
+      - op: replace
+        path: /build/artifacts/0/docker/dockerfile
+        value: build/package/debug/Dockerfile
+      - op: replace
+        path: /deploy/helm/releases/0/valuesFiles/0
+        value: deployments/debug/values-debug.yaml

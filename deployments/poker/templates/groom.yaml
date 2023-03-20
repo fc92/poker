@@ -17,7 +17,7 @@ spec:
     spec:
       serviceAccountName: groom-sa
       # add debug config if needed
-      {{ if .Values.debug }}
+      {{ if .Values.debugGroom }}
       volumes:
         - name: go-volume
           persistentVolumeClaim:
@@ -28,8 +28,6 @@ spec:
           imagePullPolicy: {{ .Values.imagegroom.pullPolicy }}
           name: groom
           tty: true # this is required for tty2web to work
-          command: [ "/groom-clients.sh" ]
-          args: [ "{{ .Values.groomPort }}" ]
           readinessProbe:
             httpGet:
               path: /
@@ -42,35 +40,39 @@ spec:
               name: groom-port
               containerPort: {{ .Values.groomPort }}
           # add debug config if needed
-          # {{ if .Values.debug }}
-          #   - name: debug-port
-          #     protocol: "TCP"
-          #     containerPort: {{ .Values.debugPort }}
-          # workingDir: /go/src
-          # command: [ "/dlv" ]
-          # args: [ "debug", "/go/src/cmd/groom", "--headless", "--listen=:{{ .Values.debugPort }}", "--api-version=2", "--", "http://{{ .Values.externalDomain }}" ]
-          # securityContext:
-          #   runAsUser: 0
-          #   runAsGroup: 0
-          # resources:
-          #   requests:
-          #     cpu: 50m
-          #     memory: 2000Mi
-          #   limits:
-          #     cpu: 4
-          #     memory: 2000Mi
-          # volumeMounts:
-          #   - mountPath: "/go/src"
-          #     name: go-volume
+          {{ if .Values.debugGroom }}
+            - name: debug-groomp
+              protocol: "TCP"
+              containerPort: {{ .Values.debugGroomPort }}
+          workingDir: /go/src
+          command: [ "/dlv" ]
+          args: [ "debug", "/go/src/cmd/groom", "--headless", "--listen=:{{ .Values.debugGroomPort }}", "--api-version=2", "--", "http://{{ .Values.externalDomain }}" ]
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          resources:
+            requests:
+              cpu: 50m
+              memory: 2000Mi
+            limits:
+              cpu: 4
+              memory: 2000Mi
+          volumeMounts:
+            - mountPath: "/go/src"
+              name: go-volume
           # otherwise apply security
-          # {{ else }}
-          # securityContext:
+          {{ else }}
+          command: [ "/groom-clients.sh" ]
+          args: [ "{{ .Values.groomPort }}" ]
+          securityContext:
             # capabilities:
             #   drop:
             #     - all
             # readOnlyRootFilesystem: true
-            # allowPrivilegeEscalation: false
-          automountServiceAccountToken: false
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+          # automountServiceAccountToken: false
           resources:
             requests:
               cpu: 50m
@@ -78,4 +80,4 @@ spec:
             limits:
               cpu: 200m
               memory: 50Mi
-          # {{ end }}
+          {{ end }}

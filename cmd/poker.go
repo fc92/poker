@@ -9,13 +9,13 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	"github.com/fc92/poker/internal/common"
+	"github.com/fc92/poker/internal/common/logger"
 	"github.com/fc92/poker/internal/player"
 	"github.com/fc92/poker/internal/server"
 )
 
 func init() {
-	common.InitLogger()
+	logger.InitLogger()
 }
 
 func main() {

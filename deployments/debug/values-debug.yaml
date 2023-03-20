@@ -1,17 +1,19 @@
 rooms: # room name one word
   - TeamRed
-  - TeamBlue
-  - TeamYellow
+  # - TeamBlue
+  # - TeamYellow
 tty2webPort: 8083
 image:
   repository: harbor.lab.dev/poker/poker # default repo
   tag: latest # default tag 
   pullPolicy: IfNotPresent # default PullPolicy
 imagegroom:
-  repository: harbor.lab.dev/poker/groom # default repo
+  repository: harbor.lab.dev/poker/poker # default repo
   tag: latest # default tag 
   pullPolicy: IfNotPresent # default PullPolicy
 externalDomain: poker.local # UPDATE required for target domain
-debug: true
-debugPort: 9229
+debugPoker: true
+debugGroom: true
+debugPokerPort: 9229
+debugGroomPort: 8229
 groomPort: 38888

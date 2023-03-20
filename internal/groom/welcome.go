@@ -12,7 +12,7 @@ import (
 	"github.com/rivo/tview"
 	"github.com/rs/zerolog/log"
 
-	"github.com/fc92/poker/internal/common"
+	"github.com/fc92/poker/internal/common/logger"
 )
 
 const (
@@ -24,7 +24,7 @@ const (
 )
 
 func init() {
-	common.InitLogger()
+	logger.InitLogger()
 }
 
 // Terminal welcome page to choose player name and poker room

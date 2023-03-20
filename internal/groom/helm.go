@@ -13,7 +13,7 @@ import (
 	"helm.sh/helm/v3/pkg/cli"
 	"helm.sh/helm/v3/pkg/release"
 
-	"github.com/fc92/poker/internal/common"
+	"github.com/fc92/poker/internal/common/logger"
 )
 
 const (
@@ -22,7 +22,7 @@ const (
 )
 
 func init() {
-	common.InitLogger()
+	logger.InitLogger()
 }
 
 // get list of deployed rooms

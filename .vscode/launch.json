@@ -17,7 +17,7 @@
         // if necessary use kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission -v 6
         // to solve Error: INSTALLATION FAILED: Internal error occurred: failed calling webhook "validate.nginx.ingress.kubernetes.io": failed to call webhook
         {
-            "name": "Kubernetes: Run/Debug", // do not use Debug or make sure dlv entrypoint is injected
+            "name": "Kubernetes: run", // do not use Debug or make sure dlv entrypoint is injected
             "type": "cloudcode.kubernetes",
             "request": "launch", // launch the deployment, use attach for debug
             "skaffoldConfig": "${workspaceFolder}/skaffold.yaml",
@@ -25,6 +25,7 @@
             "cleanUp": true,
             "portForward": true,
             "autoStop": false,
+            "profile": "dev",
             // NOT working so far (initContainer not injected)
             // "debug": [
             //     {
@@ -38,15 +39,29 @@
             // ]
         },
         {
-            "name": "Attach to Kubernetes Pod",
+            "name": "Attach to groomDebug",
+            "type": "cloudcode.kubernetes",
+            "request": "attach",
+            "language": "Go",
+            "debugPort": 8229,
+            "protocol": "auto",
+            "containerName": "groom",
+            "podSelector": {
+                "app": "groom-app"
+            },
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/",
+        },
+        {
+            "name": "Attach to pokerDebug",
             "type": "cloudcode.kubernetes",
             "request": "attach",
             "language": "Go",
             "debugPort": 9229,
             "protocol": "auto",
-            "containerName": "groom",
+            "containerName": "room",
             "podSelector": {
-                "app": "groom-app"
+                "app": "room-teamred-app"
             },
             "localRoot": "${workspaceFolder}",
             "remoteRoot": "/",

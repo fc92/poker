@@ -18,7 +18,7 @@ spec:
       labels:
         app: room-{{ $room | lower }}-app
     spec:
-      serviceAccountName: poker-sa
+      serviceAccountName: groom-sa
       containers:
         - image: {{ $.Values.image.repository }}:{{ $.Values.image.tag }}
           name: room
@@ -31,12 +31,45 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
           tty: true # this is required for tty2web to work
-          command: [ "./clients.sh" ]
-          args: [ "{{ $.Values.tty2webPort | add $index }}", "{{ $room }}" ]
           ports:
             - protocol: "TCP"
               name: {{ $room | lower }}-port
               containerPort: {{ $.Values.tty2webPort | add $index }}
+          # add debug config if needed
+          {{ if $.Values.debugPoker }}
+            - protocol: "TCP"
+              name: debugp-{{ $room | lower }}
+              containerPort: {{ $.Values.debugPokerPort }}
+          workingDir: /go/src
+          command: [ "/dlv" ]
+          args: [ "debug", "/go/src/cmd", "--headless", "--listen=:{{ $.Values.debugPokerPort }}", "--api-version=2", "--", "client", "-websocket", "localhost:8080" ]
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          resources:
+            requests:
+              cpu: 50m
+              memory: 2000Mi
+            limits:
+              cpu: 4
+              memory: 2000Mi
+          volumeMounts:
+            - mountPath: "/go/src"
+              name: go-volume
+      volumes:
+        - name: go-volume
+          persistentVolumeClaim:
+            claimName: go-pvc
+          {{ else }}
+          command: [ "./clients.sh" ]
+          args: [ "{{ $.Values.tty2webPort | add $index }}", "{{ $room }}" ]
+          resources:
+            requests:
+              cpu: 50m
+              memory: 50Mi
+            limits:
+              cpu: 500m
+              memory: 50Mi
           securityContext:
             # capabilities:
             #   drop:
@@ -46,12 +79,6 @@ spec:
             readOnlyRootFilesystem: false
             allowPrivilegeEscalation: false
           # automountServiceAccountToker: false
-          resources:
-            requests:
-              cpu: 50m
-              memory: 50Mi
-            limits:
-              cpu: 500m
-              memory: 50Mi
+          {{ end }}    
 ---
 {{- end }}    
