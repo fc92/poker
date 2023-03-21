@@ -57,8 +57,6 @@
             "program": "${workspaceFolder}/cmd",
             "args": [
                 "client",
-                "-websocket",
-                "poker.local/room-teamred"
             ],
             "console": "integratedTerminal"
         },
