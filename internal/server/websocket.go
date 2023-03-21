@@ -9,6 +9,7 @@ import (
 	"flag"
 	"net/http"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog/log"
 )
 
@@ -32,6 +33,7 @@ func StartServer(ws string) {
 	hub := newHub()
 	go hub.run()
 	http.HandleFunc("/", serveHome)
+	http.Handle("/metrics", promhttp.Handler())
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
 	})

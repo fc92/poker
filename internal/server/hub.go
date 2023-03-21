@@ -8,6 +8,7 @@ package server
 import (
 	"encoding/json"
 
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rs/zerolog/log"
 
 	"github.com/fc92/poker/internal/common"
@@ -30,6 +31,19 @@ type Hub struct {
 
 	// channel to update room from hub and clients
 	participantReceived chan common.Participant
+}
+
+var connectedClients prometheus.Gauge
+
+func init() {
+	connectedClients = prometheus.NewGauge(prometheus.GaugeOpts{
+		Namespace: "poker",
+		Subsystem: "server",
+		Name:      "number_of_connected_clients",
+		Help:      "Number of poker clients connected.",
+	})
+	prometheus.MustRegister(connectedClients)
+	connectedClients.Set(0)
 }
 
 func newHub() *Hub {
@@ -67,11 +81,13 @@ func (h *Hub) run() {
 		select {
 		case client := <-h.register:
 			h.clients[client] = true
+			connectedClients.Inc()
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
 				delete(h.clients, client)
 				h.removeVoter(client)
 				close(client.send)
+				connectedClients.Dec()
 				h.broadcastRoom()
 			}
 		case participantReceived := <-h.participantReceived:
