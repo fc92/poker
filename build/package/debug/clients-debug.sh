@@ -7,4 +7,4 @@ SERVER=localhost:8080
 
 /dlv debug /go/src/cmd --headless --listen=:$DEBUG_PORT --api-version=2 -- client -websocket $SERVER
 
-# use kubect attach -it to access the UI
+# use kubect attach -it to access the UI, stdin is not working...
