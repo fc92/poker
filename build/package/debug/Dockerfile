@@ -1,4 +1,4 @@
-FROM golang:1.20.1-alpine as build
+FROM golang:1.20.2-alpine as build
 ARG script
 LABEL org.opencontainers.image.authors="Florent Carré"
 LABEL org.opencontainers.image.source=https://github.com/fc92/poker
@@ -10,6 +10,7 @@ COPY . /go/src
 COPY build/package/groom.sh /
 COPY build/package/poker.sh /
 COPY build/package/clients.sh /
+COPY build/package/debug/clients-debug.sh /
 COPY build/package/groom-clients.sh /
 RUN CGO_ENABLED=0 go install github.com/go-delve/delve/cmd/dlv@latest
 # download tty2web binary
@@ -27,6 +28,7 @@ RUN cp /go/bin/dlv / && \
     chmod +x /groom && \
     chmod +x /poker && \
     chmod +x /clients.sh && \
+    chmod +x /clients-debug.sh && \
     chmod +x /poker.sh && \
     chmod +x /groom.sh && \
     chmod +x /groom-clients.sh && \

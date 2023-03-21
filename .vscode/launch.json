@@ -39,34 +39,6 @@
             // ]
         },
         {
-            "name": "Attach to groomDebug",
-            "type": "cloudcode.kubernetes",
-            "request": "attach",
-            "language": "Go",
-            "debugPort": 8229,
-            "protocol": "auto",
-            "containerName": "groom",
-            "podSelector": {
-                "app": "groom-app"
-            },
-            "localRoot": "${workspaceFolder}",
-            "remoteRoot": "/",
-        },
-        {
-            "name": "Attach to pokerDebug",
-            "type": "cloudcode.kubernetes",
-            "request": "attach",
-            "language": "Go",
-            "debugPort": 9229,
-            "protocol": "auto",
-            "containerName": "room",
-            "podSelector": {
-                "app": "room-teamred-app"
-            },
-            "localRoot": "${workspaceFolder}",
-            "remoteRoot": "/",
-        },
-        {
             "name": "Launch server",
             "type": "go",
             "request": "launch",

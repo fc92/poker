@@ -16,13 +16,6 @@ spec:
         app: groom-app
     spec:
       serviceAccountName: groom-sa
-      # add debug config if needed
-      {{ if .Values.debugGroom }}
-      volumes:
-        - name: go-volume
-          persistentVolumeClaim:
-            claimName: go-pvc
-      {{ end }}
       containers:
         - image: {{ .Values.imagegroom.repository }}:{{ .Values.imagegroom.tag }}
           imagePullPolicy: {{ .Values.imagegroom.pullPolicy }}
@@ -60,6 +53,10 @@ spec:
           volumeMounts:
             - mountPath: "/go/src"
               name: go-volume
+      volumes:
+        - name: go-volume
+          persistentVolumeClaim:
+            claimName: go-pvc
           # otherwise apply security
           {{ else }}
           command: [ "/groom-clients.sh" ]
@@ -76,8 +73,8 @@ spec:
           resources:
             requests:
               cpu: 50m
-              memory: 50Mi
+              memory: 200Mi
             limits:
               cpu: 200m
-              memory: 50Mi
+              memory: 200Mi
           {{ end }}
