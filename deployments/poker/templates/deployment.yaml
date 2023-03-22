@@ -34,8 +34,10 @@ spec:
               name: debugp-{{ $room | lower }}
               containerPort: {{ $.Values.debugPokerPort }}
           workingDir: /go/src
-          command: [ "/clients-debug.sh" ]
-          args: [ "{{ $.Values.debugPokerPort }}" ]
+          # make container sleep, use kubectl exec to start debuger later
+          # then in /go/src # /clients-debug.sh 9229
+          command: [ "/bin/sh", "-c", "--" ]
+          args: [ "while true; do sleep 30; done;" ]
           securityContext:
             runAsUser: 0
             runAsGroup: 0
