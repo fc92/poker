@@ -13,6 +13,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+var httpListenAndServe = http.ListenAndServe
+
 func serveHome(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		log.Error().Msgf("URL not supported: %s", r.URL)
@@ -27,7 +29,7 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "home.html")
 }
 
-func StartServer(ws string) {
+func StartServer(ws string) error {
 	var addr = flag.String("addr", ws, "http service address")
 	flag.Parse()
 	hub := newHub()
@@ -37,8 +39,9 @@ func StartServer(ws string) {
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
 	})
-	err := http.ListenAndServe(*addr, nil)
+	err := httpListenAndServe(*addr, nil)
 	if err != nil {
-		log.Fatal().Err(err).Msg("")
+		return err
 	}
+	return nil
 }

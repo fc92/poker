@@ -5,30 +5,20 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/fc92/poker/internal/common"
 )
 
 func TestNewHub(t *testing.T) {
 	hub := newHub()
-	if hub == nil {
-		t.Error("Expected a new hub, but got nil")
-	}
-	if hub.register == nil {
-		t.Error("Expected register channel, but got nil")
-	}
-	if hub.unregister == nil {
-		t.Error("Expected unregister channel, but got nil")
-	}
-	if hub.clients == nil {
-		t.Error("Expected clients map, but got nil")
-	}
-	if hub.room == nil {
-		t.Error("Expected room, but got nil")
-	}
-	if hub.participantReceived == nil {
-		t.Error("Expected participantReceived channel, but got nil")
-	}
+	assert.NotNil(t, hub, "Expected a new hub, but got nil")
+	assert.NotNil(t, hub.register, "Expected register channel, but got nil")
+	assert.NotNil(t, hub.unregister, "Expected unregister channel, but got nil")
+	assert.NotNil(t, hub.clients, "Expected clients map, but got nil")
+	assert.NotNil(t, hub.room, "Expected room, but got nil")
+	assert.NotNil(t, hub.participantReceived, "Expected participantReceived")
+
 }
 
 func TestBroadcastRoom(t *testing.T) {
