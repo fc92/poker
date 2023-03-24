@@ -1,7 +1,10 @@
 rooms: # room name one word
-  - TeamRed
-  - TeamBlue
-  - TeamYellow
+  - name: TeamRed
+    index: 0
+  - name: TeamBlue
+    index: 1
+  - name: Yellow
+    index: 2
 tty2webPort: 8083
 image: 
   repository: ghcr.io/fc92/poker
