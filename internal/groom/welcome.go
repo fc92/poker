@@ -36,7 +36,7 @@ func DisplayWelcome(serverUrl string) {
 	} else {
 		log.Debug().Msgf("Found initial rooms: %v", rooms)
 	}
-	rooms = append(rooms, openRoomLabel)
+	rooms = append(rooms, map[string]interface{}{"name": openRoomLabel, "index": -1})
 	app := tview.NewApplication()
 	roomUrl := ""
 	flex := tview.NewFlex().SetDirection(tview.FlexRow)

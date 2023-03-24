@@ -17,8 +17,6 @@ metadata:
       if ($request_uri = /groom) {
         return 301 /groom/?arg=https%3A%2F%2Fpoker.local;
       }
-    nginx.ingress.kubernetes.io/error-pages: |
-      404 /groom/?arg=https://{{ .Values.externalDomain }}
   name: room-ingress
   namespace: poker
 spec:

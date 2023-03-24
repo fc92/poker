@@ -25,7 +25,7 @@
             "cleanUp": true,
             "portForward": true,
             "autoStop": false,
-            "profile": "dev",
+            // "profile": "dev",
             // NOT working so far (initContainer not injected)
             // "debug": [
             //     {
