@@ -4,9 +4,6 @@ LABEL org.opencontainers.image.source=https://github.com/fc92/poker
 LABEL org.opencontainers.image.description="poker image running client and server components"
 LABEL org.opencontainers.image.licenses=MIT
 
-# Créer un utilisateur non privilégié pour l'exécution des commandes
-RUN addgroup -S myapp && adduser -S myapp -G myapp
-
 # build poker binary using multi stage build for go
 WORKDIR /go/src/app
 COPY go.mod ./
@@ -26,6 +23,9 @@ RUN CGO_ENABLED=0 go build -o /go/bin/groom cmd/groom/groom.go
 
 # for tty2web an image with a shell is required
 FROM alpine:3.17.2
+# Créer un utilisateur non privilégié pour l'exécution des commandes
+RUN addgroup -S myapp && adduser -S myapp -G myapp
+
 # required for client using infocmp
 COPY --from=build /go/bin /
 
