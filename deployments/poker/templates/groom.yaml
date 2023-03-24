@@ -38,8 +38,10 @@ spec:
               protocol: "TCP"
               containerPort: {{ .Values.debugGroomPort }}
           workingDir: /go/src
-          command: [ "/dlv" ]
-          args: [ "debug", "/go/src/cmd/groom", "--headless", "--listen=:{{ .Values.debugGroomPort }}", "--api-version=2", "--", "http://{{ .Values.externalDomain }}" ]
+          # make container sleep, use kubectl exec to start debuger later
+          # then in pod # /dlv debug /go/src/cmd/groom --headless --listen=:8229 --api-version=2 -- http://fake.domain
+          command: [ "/bin/sh", "-c", "--" ]
+          args: [ "while true; do sleep 30; done;" ]
           securityContext:
             runAsUser: 0
             runAsGroup: 0
@@ -72,9 +74,9 @@ spec:
           # automountServiceAccountToken: false
           resources:
             requests:
-              cpu: 50m
+              cpu: 500m
               memory: 200Mi
             limits:
-              cpu: 200m
+              cpu: 1
               memory: 200Mi
           {{ end }}

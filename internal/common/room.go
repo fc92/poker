@@ -299,8 +299,11 @@ func closeRoom(roomFromPod string) {
 	}
 
 	for _, room := range rooms {
-		if strings.EqualFold(room, roomFromPod) {
-			groom.RemoveRoom(room)
+		roomMap := room.(map[string]interface{})
+
+		if strings.EqualFold(roomMap["name"].(string), roomFromPod) {
+			groom.RemoveRoom(roomMap["name"].(string))
+			return
 		}
 	}
 }

@@ -3,20 +3,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: room-{{ $room | lower }}-app
-  name: room-{{ $room | lower }}
+    app: room-{{ $room.name | lower }}-app
+  name: room-{{ $room.name | lower }}
   namespace: poker
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: room-{{ $room | lower }}-app
+      app: room-{{ $room.name | lower }}-app
   strategy: {}
   template:
     metadata:
-      creationTimestamp: null
+      annotations:
+        checksum/config: {{ print $room | sha256sum }} # avoid pod restart when a room is removed
       labels:
-        app: room-{{ $room | lower }}-app
+        app: room-{{ $room.name | lower }}-app
     spec:
       serviceAccountName: groom-sa
       containers:
@@ -26,12 +27,12 @@ spec:
           tty: true # this is required for tty2web to work
           ports:
             - protocol: "TCP"
-              name: {{ $room | lower }}-port
-              containerPort: {{ $.Values.tty2webPort | add $index }}
+              name: {{ $room.name | lower }}-port
+              containerPort: {{ $.Values.tty2webPort | add $room.index }}
           # add debug config if needed
           {{ if $.Values.debugPoker }}
             - protocol: "TCP"
-              name: debugp-{{ $room | lower }}
+              name: debugp-{{ $room.name | lower }}
               containerPort: {{ $.Values.debugPokerPort }}
           workingDir: /go/src
           # make container sleep, use kubectl exec to start debuger later
@@ -58,13 +59,13 @@ spec:
             claimName: go-pvc
           {{ else }}
           command: [ "./clients.sh" ]
-          args: [ "{{ $.Values.tty2webPort | add $index }}", "{{ $room }}" ]
+          args: [ "{{ $.Values.tty2webPort | add $room.index }}", "{{ $room.name }}" ]
           resources:
             requests:
-              cpu: 50m
+              cpu: 500m
               memory: 200Mi
             limits:
-              cpu: 500m
+              cpu: 2
               memory: 200Mi
           securityContext:
             # capabilities:
@@ -78,10 +79,10 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: {{ $.Values.tty2webPort | add $index }}
+              port: {{ $.Values.tty2webPort | add $room.index }}
             initialDelaySeconds: 5
             periodSeconds: 10
             timeoutSeconds: 5
           {{ end }}    
 ---
-{{- end }}    
+{{- end }}

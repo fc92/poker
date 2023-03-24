@@ -3,23 +3,23 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: room-{{ $room | lower }}-app
-  name: room-{{ $room | lower }}
+    app: room-{{ $room.name | lower }}-app
+  name: room-{{ $room.name | lower }}
   namespace: poker
 spec:
   ports:
 {{ if $.Values.debugPoker }}
-  - port: {{ $.Values.debugPokerPort | add $index }}
-    name: debugp-{{ $room | lower }}
+  - port: {{ $.Values.debugPokerPort | add $room.index }}
+    name: debugp-{{ $room.name | lower }}
     protocol: TCP
-    targetPort: {{ $.Values.debugPokerPort | add $index }}
+    targetPort: {{ $.Values.debugPokerPort | add $room.index }}
 {{ end }}
-  - port: {{ $.Values.tty2webPort | add $index }}
-    name: {{ $room | lower }}
+  - port: {{ $.Values.tty2webPort | add $room.index }}
+    name: {{ $room.name | lower }}
     protocol: TCP
-    targetPort: {{ $.Values.tty2webPort | add $index }}
+    targetPort: {{ $.Values.tty2webPort | add $room.index }}
   selector:
-    app: room-{{ $room | lower }}-app
+    app: room-{{ $room.name | lower }}-app
 ---
 {{- end }}    
 # expose debug port if needed

@@ -4,6 +4,9 @@ LABEL org.opencontainers.image.source=https://github.com/fc92/poker
 LABEL org.opencontainers.image.description="poker image running client and server components"
 LABEL org.opencontainers.image.licenses=MIT
 
+# Créer un utilisateur non privilégié pour l'exécution des commandes
+RUN addgroup -S myapp && adduser -S myapp -G myapp
+
 # build poker binary using multi stage build for go
 WORKDIR /go/src/app
 COPY go.mod ./
@@ -42,7 +45,7 @@ RUN chmod +x /tty2web \
     && chmod +x /poker.sh
 
 # avoid running as ROOT
-USER 1000:1000
+USER myapp
 
 # start server and tty2web to welcome clients on specified port
 CMD ["/clients.sh", "8081"]
