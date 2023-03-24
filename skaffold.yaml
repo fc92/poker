@@ -1,21 +1,22 @@
 apiVersion: skaffold/v4beta2
 kind: Config
 build:
-  # tagPolicy:
-  #   sha256: {}
+  tagPolicy:
+    gitCommit: {}
   artifacts:
   - image: pokerImage
     context: .
     docker:
-      # noCache: true
+      noCache: true
       dockerfile: build/package/Dockerfile
     sync:
       auto: true
   local:
     concurrency: 0
     push: false
-    tryImportMissing: true # saves time with cache
+    # tryImportMissing: true # saves time with cache
 deploy:
+  kubeContext: minikube
   helm:
     # flags: 
     #   upgrade: 

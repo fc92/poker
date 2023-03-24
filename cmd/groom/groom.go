@@ -8,17 +8,22 @@ in dedicated pods and services
 package main
 
 import (
-	"github.com/fc92/poker/internal/groom"
 	"log"
 	"os"
+
+	"github.com/fc92/poker/internal/groom"
+)
+
+var (
+	osArgs         = func() []string { return os.Args }
+	displayWelcome = groom.DisplayWelcome
 )
 
 func main() {
-
-	if len(os.Args) != 2 {
+	if len(osArgs()) != 2 {
 		log.Fatal("Usage: groom serverUrl\nExample: groom localhost")
 	}
-	serverUrl := os.Args[1]
+	serverUrl := osArgs()[1]
 
-	groom.DisplayWelcome(serverUrl)
+	displayWelcome(serverUrl)
 }

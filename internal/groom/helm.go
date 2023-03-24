@@ -21,22 +21,25 @@ const (
 	roomsValueName = "rooms"
 )
 
+var index int
+
 func init() {
 	logger.InitLogger()
+	index = 30
 }
 
 // get list of deployed rooms
-func RoomDeployed() (roomDeployed []string, err error) {
+func RoomDeployed() (roomDeployed []interface{}, err error) {
 	pokerRelease, err := getPokerRelease()
 	if err != nil {
 		log.Logger.Error().Msg("unable to get helm release for poker")
-		return []string{}, err
+		return []interface{}{}, err
 	}
 
-	rooms := []string{}
+	rooms := []interface{}{}
 	// get rooms
 	for _, room := range pokerRelease.Config[roomsValueName].([]interface{}) {
-		rooms = append(rooms, room.(string))
+		rooms = append(rooms, room)
 	}
 	return rooms, nil
 }
@@ -48,7 +51,8 @@ func roomExists(roomName string) (exists bool, err error) {
 		return false, err
 	}
 	for _, room := range roomDeployed {
-		if room == roomName {
+		roomMap := room.(map[string]interface{})
+		if roomMap["name"] == roomName {
 			return true, nil
 		}
 	}
@@ -108,17 +112,20 @@ func AddRoom(roomName string) (rooms []string, err error) {
 }
 
 // remove room named roomName
-func RemoveRoom(roomName string) (rooms []string, err error) {
+func RemoveRoom(roomName string) {
 	// check if room already exists
 	exists, err := roomExists(roomName)
 	if err != nil {
-		return nil, err
+		log.Logger.Error().Msgf("checking room %s exists failed with error %v", roomName, err)
 	}
 	if exists {
 		log.Logger.Info().Msgf("Removing room %v", roomName)
-		return updateRoom(roomName, false)
+		_, err = updateRoom(roomName, false)
+		if err != nil {
+			log.Logger.Error().Msgf("removal of room %s failed with error %v", roomName, err)
+		}
 	}
-	return rooms, errors.New("Room named " + roomName + " not found. No change applied.")
+	log.Logger.Error().Msgf("removal of room %s failed", roomName)
 }
 
 // add or remove room based on isAdd value
@@ -138,6 +145,7 @@ func updateRoom(roomName string, isAdd bool) (rooms []string, err error) {
 		return nil, err
 	}
 	client := action.NewUpgrade(cfg)
+	client.ReuseValues = true
 
 	client.Namespace = settings.Namespace()
 	if err := chartutil.ValidateReleaseName(releaseName); err != nil {
@@ -155,12 +163,12 @@ func updateRoom(roomName string, isAdd bool) (rooms []string, err error) {
 		return nil, err
 	}
 	for _, room := range newValues[roomsValueName].([]interface{}) {
-		rooms = append(rooms, room.(string))
+		roomMap := room.(map[string]interface{})
+		rooms = append(rooms, roomMap["name"].(string))
 	}
 	return rooms, nil
 }
 
-// prepare values to apply to the current helm release to add/remove one room
 func prepareValues(pokerRelease *release.Release, isAdd bool, roomName string) map[string]interface{} {
 	newValues := make(map[string]interface{})
 	for k, v := range pokerRelease.Config {
@@ -168,14 +176,20 @@ func prepareValues(pokerRelease *release.Release, isAdd bool, roomName string) m
 		if k == roomsValueName {
 			// add roomName
 			if isAdd {
-				newValues[k] = append(newValues[k].([]interface{}), roomName)
+				newRoom := make(map[string]interface{})
+				index++
+				newRoom["name"] = roomName
+				newRoom["index"] = index
+
+				newValues[k] = append(newValues[k].([]interface{}), newRoom)
 			} else {
 				// delete roomName
 				newValues[k] = []interface{}{} // remove all rooms
-				for _, name := range v.([]interface{}) {
+				for _, room := range v.([]interface{}) {
+					roomMap := room.(map[string]interface{})
 					// re-add other rooms only
-					if name != roomName {
-						newValues[k] = append(newValues[k].([]interface{}), name)
+					if roomMap["name"] != roomName {
+						newValues[k] = append(newValues[k].([]interface{}), room)
 					}
 				}
 			}

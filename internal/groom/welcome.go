@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	newRoomLabel  = "New room name (letters only):"
+	newRoomLabel  = "New room name (4-10 letters only):"
 	openRoomLabel = "open new room"
 	urlLabel      = "Use this url to join the poker room : "
 	tipsLabel     = "(pop-up needs to be allowed, multiple click work best)"
@@ -104,7 +104,7 @@ func DisplayWelcome(serverUrl string) {
 		})
 
 	// Show/Hide new room name in form
-	roomSelection.SetOptions(rooms, func(option string, index int) {
+	roomSelection.SetOptions(getRoomsName(rooms), func(option string, index int) {
 		if option == openRoomLabel {
 			if form.GetFormItemByLabel(newRoomLabel) == nil {
 				form.AddFormItem(newRoom)
@@ -136,10 +136,10 @@ func DisplayWelcome(serverUrl string) {
 		} else {
 			log.Debug().Msgf("Found rooms: %v", rooms)
 		}
-		rooms = append(rooms, openRoomLabel)
+		rooms = append(rooms, map[string]interface{}{"name": openRoomLabel, "index": -1})
 
 		// update room list
-		roomSelection.SetOptions(rooms, func(option string, index int) {
+		roomSelection.SetOptions(getRoomsName(rooms), func(option string, index int) {
 			if option == openRoomLabel {
 				if form.GetFormItemByLabel(newRoomLabel) == nil {
 					form.AddFormItem(newRoom)
@@ -162,4 +162,16 @@ func displayResultUrl(flex *tview.Flex, textView *tview.TextView, displayUrl *tv
 		AddItem(displayUrl, 10, 1, true).
 		AddItem(tipsUrl, 10, 1, true).
 		AddItem(githubLink, 1, 1, false)
+}
+
+func getRoomsName(rooms []interface{}) []string {
+	var options []string
+	for _, room := range rooms {
+		if roomMap, ok := room.(map[string]interface{}); ok {
+			if name, ok := roomMap["name"].(string); ok {
+				options = append(options, name)
+			}
+		}
+	}
+	return options
 }
