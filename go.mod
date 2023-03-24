@@ -10,6 +10,8 @@ require (
 	github.com/rs/zerolog v1.29.0
 )
 
+require github.com/pmezard/go-difflib v1.0.0 // indirect
+
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/BurntSushi/toml v1.2.1 // indirect
@@ -138,6 +140,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.14 // indirect
 	github.com/navidys/tvxwidgets v0.3.0
 	github.com/rivo/uniseg v0.4.3 // indirect
+	github.com/stretchr/testify v1.8.2
 	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/term v0.5.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
