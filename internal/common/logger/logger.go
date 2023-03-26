@@ -2,10 +2,9 @@
 package logger
 
 import (
-	"os"
-
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 const (
@@ -13,15 +12,17 @@ const (
 )
 
 func InitLogger() {
-	// Configure logger to write to the file and include caller information
-	log.Logger = log.With().Caller().Logger()
-	log.Logger = log.With().CallerWithSkipFrameCount(1).Logger()
-	// Create a file for logging
-	file, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to open log file")
+	// Create a new lumberjack logger
+	logFile := &lumberjack.Logger{
+		Filename:   logFile,
+		MaxSize:    1,    // Max size in megabytes
+		MaxBackups: 5,    // Max number of old log files to keep
+		MaxAge:     30,   // Max number of days to keep old log files
+		Compress:   true, // Whether to compress old log files
 	}
-	log.Logger = log.Output(file)
+
+	// Create a new zerolog logger with the lumberjack logger as the output
+	log.Logger = zerolog.New(logFile).With().Timestamp().Logger()
 
 	// Set global log level to debug
 	zerolog.SetGlobalLevel(zerolog.DebugLevel)

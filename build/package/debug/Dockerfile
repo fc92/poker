@@ -5,6 +5,7 @@ LABEL org.opencontainers.image.source=https://github.com/fc92/poker
 LABEL org.opencontainers.image.description="poker image to choose poker room in k8s deployment context"
 LABEL org.opencontainers.image.licenses=MIT
 
+RUN addgroup -S myapp && adduser -S myapp -G myapp
 WORKDIR /go/src
 COPY . /go/src
 COPY build/package/groom.sh /
@@ -34,11 +35,9 @@ RUN cp /go/bin/dlv / && \
     chmod +x /groom-clients.sh && \
     chmod +x /tty2web
 
-RUN mkdir /log && chmod 777 /log
-RUN chown 1000:1000 /log
 
-# avoid running as root
-USER 1000:1000
+# avoid running as ROOT
+USER myapp
 
 WORKDIR /
 

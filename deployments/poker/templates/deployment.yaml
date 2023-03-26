@@ -71,8 +71,6 @@ spec:
             # capabilities:
             #   drop:
             #     - all
-            runAsUser: 1000
-            runAsGroup: 1000
             readOnlyRootFilesystem: false
             allowPrivilegeEscalation: false
           # automountServiceAccountToker: false
