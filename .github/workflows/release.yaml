@@ -49,9 +49,12 @@ jobs:
 
       - name: Install Helm
         uses: azure/setup-helm@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.5.0
         with:
           charts_dir: deployments/poker
+        env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
