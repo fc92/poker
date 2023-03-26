@@ -55,4 +55,4 @@ jobs:
         with:
           charts_dir: deployments/poker
         env:
-          CR_TOKEN: "${{ secrets.HELM_SECRET }}"
+          CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
