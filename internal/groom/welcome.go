@@ -104,19 +104,7 @@ func DisplayWelcome(serverUrl string) {
 		})
 
 	// Show/Hide new room name in form
-	roomSelection.SetOptions(getRoomsName(rooms), func(option string, index int) {
-		if option == openRoomLabel {
-			if form.GetFormItemByLabel(newRoomLabel) == nil {
-				form.AddFormItem(newRoom)
-			}
-			app.SetFocus(newRoom)
-		} else {
-			if form.GetFormItemByLabel(newRoomLabel) != nil {
-				form.RemoveFormItem(form.GetFormItemIndex(newRoomLabel))
-			}
-			newRoom.SetText("")
-		}
-	})
+	setRoomSelectionOptions(roomSelection, form, newRoom, app, openRoomLabel, newRoomLabel, &rooms)
 
 	// Build screen
 	flex.AddItem(textView, 6, 1, false).
@@ -139,21 +127,25 @@ func DisplayWelcome(serverUrl string) {
 		rooms = append(rooms, map[string]interface{}{"name": openRoomLabel, "index": -1})
 
 		// update room list
-		roomSelection.SetOptions(getRoomsName(rooms), func(option string, index int) {
-			if option == openRoomLabel {
-				if form.GetFormItemByLabel(newRoomLabel) == nil {
-					form.AddFormItem(newRoom)
-				}
-				app.SetFocus(newRoom)
-			} else {
-				if form.GetFormItemByLabel(newRoomLabel) != nil {
-					form.RemoveFormItem(form.GetFormItemIndex(newRoomLabel))
-				}
-				newRoom.SetText("")
-			}
-		})
+		setRoomSelectionOptions(roomSelection, form, newRoom, app, openRoomLabel, newRoomLabel, &rooms)
 		app.Draw()
 	}
+}
+
+func setRoomSelectionOptions(roomSelection *tview.DropDown, form *tview.Form, newRoom *tview.InputField, app *tview.Application, openRoomLabel string, newRoomLabel string, rooms *[]interface{}) {
+	roomSelection.SetOptions(getRoomsName(*rooms), func(option string, index int) {
+		if option == openRoomLabel {
+			if form.GetFormItemByLabel(newRoomLabel) == nil {
+				form.AddFormItem(newRoom)
+			}
+			app.SetFocus(newRoom)
+		} else {
+			if form.GetFormItemByLabel(newRoomLabel) != nil {
+				form.RemoveFormItem(form.GetFormItemIndex(newRoomLabel))
+			}
+			newRoom.SetText("")
+		}
+	})
 }
 
 func displayResultUrl(flex *tview.Flex, textView *tview.TextView, displayUrl *tview.TextView, tipsUrl *tview.TextView, githubLink *tview.TextView) {
