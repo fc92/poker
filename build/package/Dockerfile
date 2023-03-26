@@ -23,7 +23,6 @@ RUN CGO_ENABLED=0 go build -o /go/bin/groom cmd/groom/groom.go
 
 # for tty2web an image with a shell is required
 FROM alpine:3.17.2
-# Créer un utilisateur non privilégié pour l'exécution des commandes
 RUN addgroup -S myapp && adduser -S myapp -G myapp
 
 # required for client using infocmp
