@@ -1,12 +1,6 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: poker-sa
-  namespace: poker
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
   name: groom-sa
   namespace: poker
 ---
