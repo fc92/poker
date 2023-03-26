@@ -46,13 +46,7 @@ func DisplayWelcome(serverUrl string) {
 	title := pokerFigure.String()
 
 	// github link
-	githubLink := tview.NewTextView().SetTextColor(tview.Styles.PrimaryTextColor).
-		SetTextAlign(tview.AlignRight).
-		SetMaxLines(1).
-		SetText("https://github.com/fc92/poker").
-		SetChangedFunc(func() {
-			app.Draw()
-		})
+	githubLink := projectLink(app)
 
 	// Form fields
 	textView := tview.NewTextView().SetTextColor(tview.Styles.PrimaryTextColor).
@@ -71,6 +65,49 @@ func DisplayWelcome(serverUrl string) {
 		SetLabel("Select poker room:")
 
 	// Form
+	form := newForm(nameInput, roomSelection, roomUrl, serverUrl, flex, textView, displayUrl, tipsUrl, githubLink, newRoom, app)
+
+	// Show/Hide new room name in form
+	setRoomSelectionOptions(roomSelection, form, newRoom, app, openRoomLabel, newRoomLabel, &rooms)
+
+	// Build screen
+	flex.AddItem(textView, 6, 1, false).
+		AddItem(form, 9, 1, true).
+		AddItem(githubLink, 1, 1, false)
+
+	go app.SetRoot(flex, true).EnableMouse(true).Run()
+
+	// refresh rooms available
+	for {
+		log.Debug().Msg("starting room list refresh")
+		time.Sleep(time.Second * 5)
+
+		rooms, err = RoomDeployed()
+		if err != nil {
+			log.Error().Msg("unable to get list of rooms deployed...")
+		} else {
+			log.Debug().Msgf("Found rooms: %v", rooms)
+		}
+		rooms = append(rooms, map[string]interface{}{"name": openRoomLabel, "index": -1})
+
+		// update room list
+		setRoomSelectionOptions(roomSelection, form, newRoom, app, openRoomLabel, newRoomLabel, &rooms)
+		app.Draw()
+	}
+}
+
+func projectLink(app *tview.Application) *tview.TextView {
+	githubLink := tview.NewTextView().SetTextColor(tview.Styles.PrimaryTextColor).
+		SetTextAlign(tview.AlignRight).
+		SetMaxLines(1).
+		SetText("https://github.com/fc92/poker").
+		SetChangedFunc(func() {
+			app.Draw()
+		})
+	return githubLink
+}
+
+func newForm(nameInput *tview.InputField, roomSelection *tview.DropDown, roomUrl string, serverUrl string, flex *tview.Flex, textView *tview.TextView, displayUrl *tview.TextView, tipsUrl *tview.TextView, githubLink *tview.TextView, newRoom *tview.InputField, app *tview.Application) *tview.Form {
 	form := tview.NewForm().
 		AddFormItem(nameInput).
 		AddFormItem(roomSelection).
@@ -102,34 +139,7 @@ func DisplayWelcome(serverUrl string) {
 			fmt.Print("Exiting poker groom. You can close this web page or refresh it to join again.")
 			os.Exit(0)
 		})
-
-	// Show/Hide new room name in form
-	setRoomSelectionOptions(roomSelection, form, newRoom, app, openRoomLabel, newRoomLabel, &rooms)
-
-	// Build screen
-	flex.AddItem(textView, 6, 1, false).
-		AddItem(form, 9, 1, true).
-		AddItem(githubLink, 1, 1, false)
-
-	go app.SetRoot(flex, true).EnableMouse(true).Run()
-
-	// refresh rooms available
-	for {
-		log.Debug().Msg("starting room list refresh")
-		time.Sleep(time.Second * 5)
-
-		rooms, err = RoomDeployed()
-		if err != nil {
-			log.Error().Msg("unable to get list of rooms deployed...")
-		} else {
-			log.Debug().Msgf("Found rooms: %v", rooms)
-		}
-		rooms = append(rooms, map[string]interface{}{"name": openRoomLabel, "index": -1})
-
-		// update room list
-		setRoomSelectionOptions(roomSelection, form, newRoom, app, openRoomLabel, newRoomLabel, &rooms)
-		app.Draw()
-	}
+	return form
 }
 
 func setRoomSelectionOptions(roomSelection *tview.DropDown, form *tview.Form, newRoom *tview.InputField, app *tview.Application, openRoomLabel string, newRoomLabel string, rooms *[]interface{}) {
