@@ -31,7 +31,7 @@ func init() {
 // get list of deployed rooms
 func RoomDeployed() (roomDeployed []interface{}, err error) {
 	pokerRelease, err := getPokerRelease()
-	if err != nil {
+	if err != nil || pokerRelease.Config[roomsValueName] == nil {
 		log.Logger.Error().Msg("unable to get helm release for poker")
 		return []interface{}{}, err
 	}
