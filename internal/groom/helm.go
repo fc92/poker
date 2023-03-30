@@ -36,8 +36,12 @@ func RoomDeployed() (roomDeployed []interface{}, err error) {
 		return []interface{}{}, err
 	}
 
+	rooms := []interface{}{}
 	// get rooms
-	return pokerRelease.Config[roomsValueName].([]interface{}), nil
+	for _, room := range pokerRelease.Config[roomsValueName].([]interface{}) {
+		rooms = append(rooms, room)
+	}
+	return rooms, nil
 }
 
 // check if room named roomName exists
