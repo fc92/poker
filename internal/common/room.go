@@ -295,7 +295,7 @@ func runsInKube() bool {
 func closeRoom(roomFromPod string) {
 	rooms, err := groom.RoomDeployed()
 	if err != nil {
-		log.Error().Msg("unable to get list of rooms deployed...")
+		log.Err(err).Msg("unable to get list of rooms deployed...")
 	}
 
 	for _, room := range rooms {
