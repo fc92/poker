@@ -1,3 +1,5 @@
+# IMPORTANT : Always use helm with -f path/to/values.yaml
+# or access to chart values will not work in the Go code
 rooms: # room name one word
   - name: TeamRed
     index: 0

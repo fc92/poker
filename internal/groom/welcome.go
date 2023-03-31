@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/common-nighthawk/go-figure"
 	"github.com/rivo/tview"
@@ -32,7 +33,7 @@ func init() {
 func DisplayWelcome(serverUrl string) {
 	rooms, err := RoomDeployed()
 	if err != nil {
-		log.Error().Msg("unable to get list of rooms deployed...")
+		log.Err(err).Msg("unable to get list of rooms deployed...")
 	} else {
 		log.Debug().Msgf("Found initial rooms: %v", rooms)
 	}
@@ -58,6 +59,17 @@ func DisplayWelcome(serverUrl string) {
 		})
 	nameInput := tview.NewInputField().SetLabel("Enter your name:").SetFieldWidth(inputSize)
 	newRoom := tview.NewInputField().SetLabel(newRoomLabel).SetFieldWidth(inputSize)
+	newRoom.SetAcceptanceFunc(func(textToCheck string, lastChar rune) bool {
+
+		// each char must be a letter
+		for _, char := range textToCheck {
+			if !unicode.IsLetter(char) {
+				return false
+			}
+		}
+
+		return true
+	})
 	displayUrl := tview.NewTextView().SetLabel(urlLabel)
 	tipsUrl := tview.NewTextView().SetLabel(tipsLabel)
 	roomSelection := tview.NewDropDown().
@@ -78,19 +90,22 @@ func DisplayWelcome(serverUrl string) {
 	go app.SetRoot(flex, true).EnableMouse(true).Run()
 
 	// refresh rooms available
+	refreshRoomList(rooms, err, roomSelection, form, newRoom, app)
+}
+
+func refreshRoomList(rooms []interface{}, err error, roomSelection *tview.DropDown, form *tview.Form, newRoom *tview.InputField, app *tview.Application) {
 	for {
 		log.Debug().Msg("starting room list refresh")
 		time.Sleep(time.Second * 5)
 
 		rooms, err = RoomDeployed()
 		if err != nil {
-			log.Error().Msg("unable to get list of rooms deployed...")
+			log.Err(err).Msg("unable to get list of rooms deployed...")
 		} else {
 			log.Debug().Msgf("Found rooms: %v", rooms)
 		}
 		rooms = append(rooms, map[string]interface{}{"name": openRoomLabel, "index": -1})
 
-		// update room list
 		setRoomSelectionOptions(roomSelection, form, newRoom, app, openRoomLabel, newRoomLabel, &rooms)
 		app.Draw()
 	}
@@ -123,7 +138,7 @@ func newForm(nameInput *tview.InputField, roomSelection *tview.DropDown, roomUrl
 					} else {
 						// open new room
 						newRoomName := strings.TrimSpace(newRoom.GetText())
-						if len(newRoomName) > 0 {
+						if len(newRoomName) > 3 && len(newRoomName) < 11 {
 							AddRoom(newRoomName)
 							roomUrl = serverUrl + "/room-" + newRoomName + "/?arg=-name&arg=" + playerName
 							displayResultUrl(flex, textView, displayUrl, tipsUrl, githubLink)

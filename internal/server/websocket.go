@@ -11,7 +11,13 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog/log"
+
+	"github.com/fc92/poker/internal/common/logger"
 )
+
+func init() {
+	logger.InitLogger()
+}
 
 var httpListenAndServe = http.ListenAndServe
 
