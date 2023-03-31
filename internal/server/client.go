@@ -72,14 +72,14 @@ func (c *Client) readPump() {
 		_, message, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				log.Error().Err(err).Msg("")
+				log.Err(err).Err(err).Msg("could not read message")
 			}
 			return
 		}
 		log.Debug().Msgf("receive message %s", string(message))
 		voterReceived := common.Participant{}
 		if err := json.Unmarshal(message, &voterReceived); err != nil {
-			log.Error().Err(err).Msg("unknown message, not a participant")
+			log.Err(err).Err(err).Msg("unknown message, not a participant")
 			return
 		}
 		c.voterId = voterReceived.Id
@@ -132,7 +132,7 @@ func (c *Client) writePump() {
 func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Error().Err(err).Msg("")
+		log.Err(err).Err(err).Msg("could not upgrade to websocket protocol")
 		return
 	}
 	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
