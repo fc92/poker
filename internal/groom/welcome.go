@@ -32,7 +32,7 @@ func init() {
 func DisplayWelcome(serverUrl string) {
 	rooms, err := RoomDeployed()
 	if err != nil {
-		log.Error().Msg("unable to get list of rooms deployed...")
+		log.Err(err).Msg("unable to get list of rooms deployed...")
 	} else {
 		log.Debug().Msgf("Found initial rooms: %v", rooms)
 	}
@@ -84,7 +84,7 @@ func DisplayWelcome(serverUrl string) {
 
 		rooms, err = RoomDeployed()
 		if err != nil {
-			log.Error().Msg("unable to get list of rooms deployed...")
+			log.Err(err).Msg("unable to get list of rooms deployed...")
 		} else {
 			log.Debug().Msgf("Found rooms: %v", rooms)
 		}
