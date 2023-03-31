@@ -32,7 +32,7 @@ func init() {
 func RoomDeployed() (roomDeployed []interface{}, err error) {
 	pokerRelease, err := getPokerRelease()
 	if err != nil || pokerRelease.Config[roomsValueName] == nil {
-		log.Logger.Error().Msg("unable to get helm release for poker")
+		log.Logger.Err(err).Msg("unable to get helm release for poker")
 		return []interface{}{}, err
 	}
 
@@ -64,12 +64,13 @@ func getPokerRelease() (pokerRelease *release.Release, err error) {
 	// get list of Helm chart releases deployed
 	releases, err := getReleases()
 	if err != nil {
-		log.Logger.Error().Msg("unable to get helm releases")
+		log.Logger.Err(err).Msg("unable to get helm releases")
 		return nil, err
 	}
 
 	// identify release for poker
 	for _, rel := range releases {
+		log.Logger.Debug().Msgf("found release %s", rel.Name)
 		if rel.Name == releaseName {
 			return rel, nil
 		}
@@ -116,16 +117,16 @@ func RemoveRoom(roomName string) {
 	// check if room already exists
 	exists, err := roomExists(roomName)
 	if err != nil {
-		log.Logger.Error().Msgf("checking room %s exists failed with error %v", roomName, err)
+		log.Logger.Err(err).Msgf("checking room %s exists failed with error %v", roomName, err)
 	}
 	if exists {
 		log.Logger.Info().Msgf("Removing room %v", roomName)
 		_, err = updateRoom(roomName, false)
 		if err != nil {
-			log.Logger.Error().Msgf("removal of room %s failed with error %v", roomName, err)
+			log.Logger.Err(err).Msgf("removal of room %s failed with error %v", roomName, err)
 		}
 	}
-	log.Logger.Error().Msgf("removal of room %s failed", roomName)
+	log.Logger.Err(err).Msgf("removal of room %s failed", roomName)
 }
 
 // add or remove room based on isAdd value
@@ -137,11 +138,11 @@ func updateRoom(roomName string, isAdd bool) (rooms []string, err error) {
 	settings := cli.New()
 	cfg := new(action.Configuration)
 	if err := cfg.Init(settings.RESTClientGetter(), settings.Namespace(), os.Getenv("HELM_DRIVER"), log.Printf); err != nil {
-		log.Logger.Error().Msg("unable to init helm client for upgrade")
+		log.Logger.Err(err).Msg("unable to init helm client for upgrade")
 		return nil, err
 	}
 	if err = cfg.KubeClient.IsReachable(); err != nil {
-		log.Logger.Error().Msg("unable to connect to the kubernetes cluster with helm client for upgrade")
+		log.Logger.Err(err).Msg("unable to connect to the kubernetes cluster with helm client for upgrade")
 		return nil, err
 	}
 	client := action.NewUpgrade(cfg)
@@ -149,7 +150,7 @@ func updateRoom(roomName string, isAdd bool) (rooms []string, err error) {
 
 	client.Namespace = settings.Namespace()
 	if err := chartutil.ValidateReleaseName(releaseName); err != nil {
-		log.Logger.Error().Msg("unable to validate release name with helm client for upgrade")
+		log.Logger.Err(err).Msg("unable to validate release name with helm client for upgrade")
 		return nil, err
 	}
 	ctx := context.Background()
@@ -159,7 +160,7 @@ func updateRoom(roomName string, isAdd bool) (rooms []string, err error) {
 
 	// apply changes on kubernetes namespace
 	if _, err := client.RunWithContext(ctx, releaseName, pokerRelease.Chart, newValues); err != nil {
-		log.Logger.Error().Msg("helm client for upgrade FAILED to apply release update")
+		log.Logger.Err(err).Msg("helm client for upgrade FAILED to apply release update")
 		return nil, err
 	}
 	for _, room := range newValues[roomsValueName].([]interface{}) {
