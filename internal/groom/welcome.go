@@ -90,6 +90,10 @@ func DisplayWelcome(serverUrl string) {
 	go app.SetRoot(flex, true).EnableMouse(true).Run()
 
 	// refresh rooms available
+	refreshRoomList(rooms, err, roomSelection, form, newRoom, app)
+}
+
+func refreshRoomList(rooms []interface{}, err error, roomSelection *tview.DropDown, form *tview.Form, newRoom *tview.InputField, app *tview.Application) {
 	for {
 		log.Debug().Msg("starting room list refresh")
 		time.Sleep(time.Second * 5)
@@ -102,7 +106,6 @@ func DisplayWelcome(serverUrl string) {
 		}
 		rooms = append(rooms, map[string]interface{}{"name": openRoomLabel, "index": -1})
 
-		// update room list
 		setRoomSelectionOptions(roomSelection, form, newRoom, app, openRoomLabel, newRoomLabel, &rooms)
 		app.Draw()
 	}
