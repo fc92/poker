@@ -32,11 +32,11 @@ func init() {
 func RoomDeployed() (roomDeployed []interface{}, err error) {
 	pokerRelease, err := getPokerRelease()
 	if err != nil || pokerRelease.Config[roomsValueName] == nil {
-		log.Logger.Err(err).Msg("unable to get helm release for poker")
+		log.Logger.Err(err).Msg("unable to get rooms out of release for poker")
 		return []interface{}{}, err
 	}
 
-	rooms := []interface{}{}
+	rooms := make([]interface{}, 0)
 	// get rooms
 	for _, room := range pokerRelease.Config[roomsValueName].([]interface{}) {
 		rooms = append(rooms, room)
