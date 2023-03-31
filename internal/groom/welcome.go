@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/common-nighthawk/go-figure"
 	"github.com/rivo/tview"
@@ -58,6 +59,17 @@ func DisplayWelcome(serverUrl string) {
 		})
 	nameInput := tview.NewInputField().SetLabel("Enter your name:").SetFieldWidth(inputSize)
 	newRoom := tview.NewInputField().SetLabel(newRoomLabel).SetFieldWidth(inputSize)
+	newRoom.SetAcceptanceFunc(func(textToCheck string, lastChar rune) bool {
+
+		// each char must be a letter
+		for _, char := range textToCheck {
+			if !unicode.IsLetter(char) {
+				return false
+			}
+		}
+
+		return true
+	})
 	displayUrl := tview.NewTextView().SetLabel(urlLabel)
 	tipsUrl := tview.NewTextView().SetLabel(tipsLabel)
 	roomSelection := tview.NewDropDown().
@@ -123,7 +135,7 @@ func newForm(nameInput *tview.InputField, roomSelection *tview.DropDown, roomUrl
 					} else {
 						// open new room
 						newRoomName := strings.TrimSpace(newRoom.GetText())
-						if len(newRoomName) > 0 {
+						if len(newRoomName) > 3 && len(newRoomName) < 11 {
 							AddRoom(newRoomName)
 							roomUrl = serverUrl + "/room-" + newRoomName + "/?arg=-name&arg=" + playerName
 							displayResultUrl(flex, textView, displayUrl, tipsUrl, githubLink)
