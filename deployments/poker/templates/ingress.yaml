@@ -18,7 +18,7 @@ metadata:
         return 301 /groom/?arg=https%3A%2F%2Fpoker.local;
       }
   name: room-ingress
-  namespace: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   ingressClassName: nginx
   rules:

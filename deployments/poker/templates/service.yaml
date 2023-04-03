@@ -5,7 +5,7 @@ metadata:
   labels:
     app: room-{{ $room.name | lower }}-app
   name: room-{{ $room.name | lower }}
-  namespace: {{ $.Release.Name }}
+  namespace: {{ $.Release.Namespace }}
 spec:
   ports:
 {{ if $.Values.debugPoker }}
@@ -29,7 +29,7 @@ metadata:
   labels:
     app: groom-app
   name: groom  
-  namespace: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   ports:
 {{ if .Values.debugGroom }}

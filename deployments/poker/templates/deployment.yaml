@@ -5,7 +5,7 @@ metadata:
   labels:
     app: room-{{ $room.name | lower }}-app
   name: room-{{ $room.name | lower }}
-  namespace: {{ $.Release.Name }}
+  namespace: {{ $.Release.Namespace }}
 spec:
   replicas: 1
   selector:
