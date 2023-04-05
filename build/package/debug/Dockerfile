@@ -1,4 +1,4 @@
-FROM golang:1.20.2-alpine as build
+FROM golang:1.20.3-alpine as build
 ARG script
 LABEL org.opencontainers.image.authors="Florent Carré"
 LABEL org.opencontainers.image.source=https://github.com/fc92/poker
