@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"os"
-	"time"
 
 	"github.com/rs/zerolog/log"
 	"helm.sh/helm/v3/pkg/action"
