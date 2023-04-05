@@ -12,7 +12,7 @@ build:
 
 run: build
 	if helm ls | grep poker ; then helm uninstall poker ; fi
-	helm install poker -f deployments/poker/values.yaml deployments/poker
+	helm install poker -f deployments/poker/values.yaml --set image.repository=poker,image.tag=latest,imagegroom.repository=poker,imagegroom.tag=latest deployments/poker
 
 clean:
 	docker image rm poker:latest poker:debug
