@@ -1,4 +1,4 @@
-FROM golang:1.20.2 as build
+FROM golang:1.20.3 as build
 LABEL org.opencontainers.image.authors="Florent Carré"
 LABEL org.opencontainers.image.source=https://github.com/fc92/poker
 LABEL org.opencontainers.image.description="poker image running client and server components"
@@ -22,7 +22,7 @@ RUN CGO_ENABLED=0 go build -o /go/bin/poker cmd/poker.go
 RUN CGO_ENABLED=0 go build -o /go/bin/groom cmd/groom/groom.go
 
 # for tty2web an image with a shell is required
-FROM alpine:3.17.2
+FROM alpine:3.17.3
 RUN addgroup -S myapp && adduser -S myapp -G myapp
 
 # required for client using infocmp

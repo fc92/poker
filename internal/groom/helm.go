@@ -38,9 +38,7 @@ func RoomDeployed() (roomDeployed []interface{}, err error) {
 
 	rooms := make([]interface{}, 0)
 	// get rooms
-	for _, room := range pokerRelease.Config[roomsValueName].([]interface{}) {
-		rooms = append(rooms, room)
-	}
+	rooms = append(rooms, pokerRelease.Config[roomsValueName].([]interface{})...)
 	return rooms, nil
 }
 
@@ -106,10 +104,16 @@ func AddRoom(roomName string) (rooms []string, err error) {
 		return nil, err
 	}
 	if exists {
+		log.Logger.Err(err).Msgf("room %v already exists", roomName)
 		return rooms, errors.New("Room named " + roomName + " already exists. No change applied.")
 	}
 	log.Logger.Info().Msgf("Adding room %v", roomName)
-	return updateRoom(roomName, true)
+	result, err2 := updateRoom(roomName, true)
+	if err2 != nil {
+		log.Logger.Err(err2).Msgf("Error adding room %v", roomName)
+		return nil, err2
+	}
+	return result, nil
 }
 
 // remove room named roomName

@@ -3,6 +3,8 @@
 package groom
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"reflect"
 	"testing"
 
@@ -108,5 +110,43 @@ func Test_getRoomsName(t *testing.T) {
 				t.Errorf("getRoomsName() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestCheckUrl(t *testing.T) {
+	// Create a local HTTP server for testing
+	testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/success" {
+			w.WriteHeader(http.StatusOK)
+		} else if r.URL.Path == "/notfound" {
+			w.WriteHeader(http.StatusNotFound)
+		} else if r.URL.Path == "/unavailable" {
+			w.WriteHeader(http.StatusServiceUnavailable)
+		}
+	}))
+	defer testServer.Close()
+
+	// Test a valid URL
+	validUrl := testServer.URL + "/success"
+	if !checkUrl(validUrl) {
+		t.Errorf("checkUrl(%s) = false, expected true", validUrl)
+	}
+
+	// Test a URL that returns 404
+	notFoundUrl := testServer.URL + "/notfound"
+	if checkUrl(notFoundUrl) {
+		t.Errorf("checkUrl(%s) = true, expected false", notFoundUrl)
+	}
+
+	// Test a URL that returns 503
+	unavailableUrl := testServer.URL + "/unavailable"
+	if checkUrl(unavailableUrl) {
+		t.Errorf("checkUrl(%s) = true, expected false", unavailableUrl)
+	}
+
+	// Test an invalid URL
+	invalidUrl := "http://invalid.url"
+	if checkUrl(invalidUrl) {
+		t.Errorf("checkUrl(%s) = true, expected false", invalidUrl)
 	}
 }

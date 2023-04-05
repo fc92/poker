@@ -15,7 +15,7 @@ metadata:
     nginx.ingress.kubernetes.io/timeout: "60s"
     nginx.ingress.kubernetes.io/configuration-snippet: |
       if ($request_uri = /groom) {
-        return 301 /groom/?arg=https%3A%2F%2Fpoker.local;
+        return 301 /groom/?arg=http%3A%2F%2F{{ .Values.externalDomain }};
       }
   name: room-ingress
   namespace: {{ .Release.Namespace }}

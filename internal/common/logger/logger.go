@@ -22,10 +22,7 @@ func InitLogger() {
 	}
 
 	// Create a new zerolog logger with the lumberjack logger as the output
-	log.Logger = zerolog.New(logFile).With().Timestamp().Logger()
-
-	// Add the file and line number to the log context
-	log.Logger = log.With().Caller().Logger()
+	log.Logger = zerolog.New(logFile).With().Timestamp().Logger().With().Caller().Logger()
 
 	// Set global log level to debug
 	zerolog.SetGlobalLevel(zerolog.DebugLevel)

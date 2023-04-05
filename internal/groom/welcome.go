@@ -4,7 +4,9 @@ package groom
 
 import (
 	"fmt"
+	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 	"unicode"
@@ -20,6 +22,7 @@ const (
 	newRoomLabel  = "New room name (4-10 letters only):"
 	openRoomLabel = "open new room"
 	urlLabel      = "Use this url to join the poker room : "
+	errorLabel    = "Room is not available, please try again later"
 	tipsLabel     = "(pop-up needs to be allowed, multiple click work best)"
 	inputSize     = 20
 )
@@ -50,7 +53,7 @@ func DisplayWelcome(serverUrl string) {
 	githubLink := projectLink(app)
 
 	// Form fields
-	textView := tview.NewTextView().SetTextColor(tview.Styles.PrimaryTextColor).
+	titleView := tview.NewTextView().SetTextColor(tview.Styles.PrimaryTextColor).
 		SetTextAlign(0).
 		SetMaxLines(10).
 		SetText(title).
@@ -77,13 +80,13 @@ func DisplayWelcome(serverUrl string) {
 		SetLabel("Select poker room:")
 
 	// Form
-	form := newForm(nameInput, roomSelection, roomUrl, serverUrl, flex, textView, displayUrl, tipsUrl, githubLink, newRoom, app)
+	form := newForm(nameInput, roomSelection, roomUrl, serverUrl, flex, titleView, displayUrl, tipsUrl, githubLink, newRoom, app)
 
 	// Show/Hide new room name in form
 	setRoomSelectionOptions(roomSelection, form, newRoom, app, openRoomLabel, newRoomLabel, &rooms)
 
 	// Build screen
-	flex.AddItem(textView, 6, 1, false).
+	flex.AddItem(titleView, 6, 1, false).
 		AddItem(form, 9, 1, true).
 		AddItem(githubLink, 1, 1, false)
 
@@ -98,9 +101,11 @@ func refreshRoomList(rooms []interface{}, err error, roomSelection *tview.DropDo
 		log.Debug().Msg("starting room list refresh")
 		time.Sleep(time.Second * 5)
 
-		rooms, err = RoomDeployed()
-		if err != nil {
-			log.Err(err).Msg("unable to get list of rooms deployed...")
+		var err2 error
+		rooms, err2 = RoomDeployed()
+		if err2 != nil {
+			log.Err(err2).Msg("unable to get list of rooms deployed...")
+			return
 		} else {
 			log.Debug().Msgf("Found rooms: %v", rooms)
 		}
@@ -134,6 +139,7 @@ func newForm(nameInput *tview.InputField, roomSelection *tview.DropDown, roomUrl
 					// existing room
 					if roomSelected != openRoomLabel {
 						roomUrl = serverUrl + "/room-" + roomSelected + "/?arg=-name&arg=" + playerName
+						displayUrl.SetText(roomUrl)
 						displayResultUrl(flex, textView, displayUrl, tipsUrl, githubLink)
 					} else {
 						// open new room
@@ -141,11 +147,10 @@ func newForm(nameInput *tview.InputField, roomSelection *tview.DropDown, roomUrl
 						if len(newRoomName) > 3 && len(newRoomName) < 11 {
 							AddRoom(newRoomName)
 							roomUrl = serverUrl + "/room-" + newRoomName + "/?arg=-name&arg=" + playerName
+							displayUrl.SetText(roomUrl)
 							displayResultUrl(flex, textView, displayUrl, tipsUrl, githubLink)
 						}
 					}
-					// display room url
-					displayUrl.SetText(roomUrl)
 				}
 			}
 		}).
@@ -173,12 +178,41 @@ func setRoomSelectionOptions(roomSelection *tview.DropDown, form *tview.Form, ne
 	})
 }
 
-func displayResultUrl(flex *tview.Flex, textView *tview.TextView, displayUrl *tview.TextView, tipsUrl *tview.TextView, githubLink *tview.TextView) {
+func displayResultUrl(flex *tview.Flex, titleView *tview.TextView, displayUrl *tview.TextView, tipsUrl *tview.TextView, githubLink *tview.TextView) {
+	// textView to display waitLabel
+	waitView := tview.NewTextView().SetText("Checking room availability...")
+
+	// display waitView
 	flex.Clear()
-	flex.AddItem(textView, 6, 1, false).
-		AddItem(displayUrl, 10, 1, true).
-		AddItem(tipsUrl, 10, 1, true).
+	flex.AddItem(titleView, 6, 1, false).
+		AddItem(waitView, 10, 1, true).
 		AddItem(githubLink, 1, 1, false)
+
+	// during 60 s check if url is reachable every 2 seconds
+	go func() {
+		for i := 0; i < 30; i++ {
+			if checkUrl(displayUrl.GetText(false)) {
+				flex.Clear()
+				flex.AddItem(titleView, 6, 1, false).
+					AddItem(displayUrl, 10, 1, true).
+					AddItem(tipsUrl, 10, 1, true).
+					AddItem(githubLink, 1, 1, false)
+				break
+			}
+			time.Sleep(time.Second * 2)
+			waitView.SetText("Checking room availability... " + strconv.Itoa((i+1)*2) + " seconds")
+			if i == 29 {
+				// textView to display errorLabel
+				errorView := tview.NewTextView().SetText(errorLabel)
+				// display errorView
+				flex.Clear()
+				flex.AddItem(titleView, 6, 1, false).
+					AddItem(errorView, 10, 1, true).
+					AddItem(githubLink, 1, 1, false)
+			}
+		}
+	}()
+
 }
 
 func getRoomsName(rooms []interface{}) []string {
@@ -191,4 +225,22 @@ func getRoomsName(rooms []interface{}) []string {
 		}
 	}
 	return options
+}
+
+// function to check if url is reachable with http code 200
+func checkUrl(url string) bool {
+	// clean url by removing arguments
+	url = strings.Split(url, "?")[0]
+	response, err := http.Get(url)
+	if err != nil {
+		log.Warn().Msgf("Error while checking url %s: %s", url, err)
+		return false
+	}
+	//if http code is 503 or 404 return false
+	if response.StatusCode == 503 || response.StatusCode == 404 {
+		log.Info().Msgf("Url %s is not reachable", url)
+		return false
+	}
+
+	return true
 }
