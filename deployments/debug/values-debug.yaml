@@ -7,12 +7,12 @@ rooms: # room name one word
     index: 2
 tty2webPort: 8083
 image:
-  repository: harbor.lab.dev/poker/poker # default repo
-  tag: latest # default tag 
+  repository: poker # default repo
+  tag: debug # default tag 
   pullPolicy: IfNotPresent # default PullPolicy
 imagegroom:
-  repository: harbor.lab.dev/poker/poker # default repo
-  tag: latest # default tag 
+  repository: poker # default repo
+  tag: debug # default tag 
   pullPolicy: IfNotPresent # default PullPolicy
 externalDomain: poker.local # UPDATE required for target domain
 debugPoker: false # seems better for room delete
