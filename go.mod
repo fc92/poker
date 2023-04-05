@@ -138,7 +138,6 @@ require (
 
 require (
 	github.com/gdamore/encoding v1.0.0 // indirect
-	github.com/gdamore/tcell v1.4.0
 	github.com/google/uuid v1.3.0
 	github.com/goombaio/namegenerator v0.0.0-20181006234301-989e774b106e
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
