@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"os"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"helm.sh/helm/v3/pkg/action"
@@ -104,6 +105,7 @@ func AddRoom(roomName string) (rooms []string, err error) {
 		return nil, err
 	}
 	if exists {
+		log.Logger.Err(err).Msgf("room %v already exists", roomName)
 		return rooms, errors.New("Room named " + roomName + " already exists. No change applied.")
 	}
 	log.Logger.Info().Msgf("Adding room %v", roomName)
