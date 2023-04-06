@@ -128,25 +128,25 @@ func TestCheckUrl(t *testing.T) {
 
 	// Test a valid URL
 	validUrl := testServer.URL + "/success"
-	if !checkUrl(validUrl) {
+	if !checkURL(validUrl) {
 		t.Errorf("checkUrl(%s) = false, expected true", validUrl)
 	}
 
 	// Test a URL that returns 404
 	notFoundUrl := testServer.URL + "/notfound"
-	if checkUrl(notFoundUrl) {
+	if checkURL(notFoundUrl) {
 		t.Errorf("checkUrl(%s) = true, expected false", notFoundUrl)
 	}
 
 	// Test a URL that returns 503
 	unavailableUrl := testServer.URL + "/unavailable"
-	if checkUrl(unavailableUrl) {
+	if checkURL(unavailableUrl) {
 		t.Errorf("checkUrl(%s) = true, expected false", unavailableUrl)
 	}
 
 	// Test an invalid URL
 	invalidUrl := "http://invalid.url"
-	if checkUrl(invalidUrl) {
+	if checkURL(invalidUrl) {
 		t.Errorf("checkUrl(%s) = true, expected false", invalidUrl)
 	}
 }
