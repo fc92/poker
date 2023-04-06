@@ -3,6 +3,7 @@
 package groom
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net/http"
 	"os"
@@ -33,7 +34,7 @@ func init() {
 
 // Terminal welcome page to choose player name and poker room
 // serverUrl designate the url used by the browser to reach the poker room
-func DisplayWelcome(serverUrl string) {
+func DisplayWelcome(serverURL string) {
 	rooms, err := RoomDeployed()
 	if err != nil {
 		log.Err(err).Msg("unable to get list of rooms deployed...")
@@ -42,7 +43,7 @@ func DisplayWelcome(serverUrl string) {
 	}
 	rooms = append(rooms, map[string]interface{}{"name": openRoomLabel, "index": -1})
 	app := tview.NewApplication()
-	roomUrl := ""
+	roomURL := ""
 	flex := tview.NewFlex().SetDirection(tview.FlexRow)
 
 	// Title
@@ -73,14 +74,14 @@ func DisplayWelcome(serverUrl string) {
 
 		return true
 	})
-	displayUrl := tview.NewTextView().SetLabel(urlLabel)
-	tipsUrl := tview.NewTextView().SetLabel(tipsLabel)
+	displayURL := tview.NewTextView().SetLabel(urlLabel)
+	tipsURL := tview.NewTextView().SetLabel(tipsLabel)
 	roomSelection := tview.NewDropDown().
 		SetFieldWidth(inputSize).
 		SetLabel("Select poker room:")
 
 	// Form
-	form := newForm(nameInput, roomSelection, roomUrl, serverUrl, flex, titleView, displayUrl, tipsUrl, githubLink, newRoom, app)
+	form := newForm(nameInput, roomSelection, roomURL, serverURL, flex, titleView, displayURL, tipsURL, githubLink, newRoom, app)
 
 	// Show/Hide new room name in form
 	setRoomSelectionOptions(roomSelection, form, newRoom, app, openRoomLabel, newRoomLabel, &rooms)
@@ -127,7 +128,7 @@ func projectLink(app *tview.Application) *tview.TextView {
 	return githubLink
 }
 
-func newForm(nameInput *tview.InputField, roomSelection *tview.DropDown, roomUrl string, serverUrl string, flex *tview.Flex, textView *tview.TextView, displayUrl *tview.TextView, tipsUrl *tview.TextView, githubLink *tview.TextView, newRoom *tview.InputField, app *tview.Application) *tview.Form {
+func newForm(nameInput *tview.InputField, roomSelection *tview.DropDown, roomURL string, serverURL string, flex *tview.Flex, textView *tview.TextView, displayURL *tview.TextView, tipsURL *tview.TextView, githubLink *tview.TextView, newRoom *tview.InputField, app *tview.Application) *tview.Form {
 	form := tview.NewForm().
 		AddFormItem(nameInput).
 		AddFormItem(roomSelection).
@@ -138,17 +139,17 @@ func newForm(nameInput *tview.InputField, roomSelection *tview.DropDown, roomUrl
 				if len(roomSelected) > 0 {
 					// existing room
 					if roomSelected != openRoomLabel {
-						roomUrl = serverUrl + "/room-" + roomSelected + "/?arg=-name&arg=" + playerName
-						displayUrl.SetText(roomUrl)
-						displayResultUrl(flex, textView, displayUrl, tipsUrl, githubLink)
+						roomURL = serverURL + "/room-" + roomSelected + "/?arg=-name&arg=" + playerName
+						displayURL.SetText(roomURL)
+						displayResultURL(flex, textView, displayURL, tipsURL, githubLink)
 					} else {
 						// open new room
 						newRoomName := strings.TrimSpace(newRoom.GetText())
 						if len(newRoomName) > 3 && len(newRoomName) < 11 {
 							AddRoom(newRoomName)
-							roomUrl = serverUrl + "/room-" + newRoomName + "/?arg=-name&arg=" + playerName
-							displayUrl.SetText(roomUrl)
-							displayResultUrl(flex, textView, displayUrl, tipsUrl, githubLink)
+							roomURL = serverURL + "/room-" + newRoomName + "/?arg=-name&arg=" + playerName
+							displayURL.SetText(roomURL)
+							displayResultURL(flex, textView, displayURL, tipsURL, githubLink)
 						}
 					}
 				}
@@ -178,7 +179,7 @@ func setRoomSelectionOptions(roomSelection *tview.DropDown, form *tview.Form, ne
 	})
 }
 
-func displayResultUrl(flex *tview.Flex, titleView *tview.TextView, displayUrl *tview.TextView, tipsUrl *tview.TextView, githubLink *tview.TextView) {
+func displayResultURL(flex *tview.Flex, titleView *tview.TextView, displayURL *tview.TextView, tipsURL *tview.TextView, githubLink *tview.TextView) {
 	// textView to display waitLabel
 	waitView := tview.NewTextView().SetText("Checking room availability...")
 
@@ -191,11 +192,11 @@ func displayResultUrl(flex *tview.Flex, titleView *tview.TextView, displayUrl *t
 	// during 60 s check if url is reachable every 2 seconds
 	go func() {
 		for i := 0; i < 30; i++ {
-			if checkUrl(displayUrl.GetText(false)) {
+			if checkURL(displayURL.GetText(false)) {
 				flex.Clear()
 				flex.AddItem(titleView, 6, 1, false).
-					AddItem(displayUrl, 10, 1, true).
-					AddItem(tipsUrl, 10, 1, true).
+					AddItem(displayURL, 10, 1, true).
+					AddItem(tipsURL, 10, 1, true).
 					AddItem(githubLink, 1, 1, false)
 				break
 			}
@@ -228,10 +229,21 @@ func getRoomsName(rooms []interface{}) []string {
 }
 
 // function to check if url is reachable with http code 200
-func checkUrl(url string) bool {
+func checkURL(url string) bool {
 	// clean url by removing arguments
 	url = strings.Split(url, "?")[0]
-	response, err := http.Get(url)
+
+	// Ignorer toutes les erreurs de vérification de certificat
+	tlsConfig := &tls.Config{InsecureSkipVerify: true}
+	// Créer un transport qui utilise la configuration TLS personnalisée
+	transport := &http.Transport{
+		TLSClientConfig: tlsConfig,
+	}
+	// Ajouter le transport au client HTTP
+	client := &http.Client{Transport: transport}
+
+	// HEAD url without checking certificate
+	response, err := client.Head(url)
 	if err != nil {
 		log.Warn().Msgf("Error while checking url %s: %s", url, err)
 		return false
