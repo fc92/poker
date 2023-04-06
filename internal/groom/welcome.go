@@ -3,6 +3,7 @@
 package groom
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net/http"
 	"os"
@@ -231,7 +232,18 @@ func getRoomsName(rooms []interface{}) []string {
 func checkURL(url string) bool {
 	// clean url by removing arguments
 	url = strings.Split(url, "?")[0]
-	response, err := http.Get(url) // do not check certificate
+
+	// Ignorer toutes les erreurs de vérification de certificat
+	tlsConfig := &tls.Config{InsecureSkipVerify: true}
+	// Créer un transport qui utilise la configuration TLS personnalisée
+	transport := &http.Transport{
+		TLSClientConfig: tlsConfig,
+	}
+	// Ajouter le transport au client HTTP
+	client := &http.Client{Transport: transport}
+
+	// HEAD url without checking certificate
+	response, err := client.Head(url)
 	if err != nil {
 		log.Warn().Msgf("Error while checking url %s: %s", url, err)
 		return false
