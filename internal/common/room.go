@@ -10,9 +10,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/kyokomi/emoji/v2"
 	"github.com/rs/zerolog/log"
-	"k8s.io/client-go/rest"
-
-	"github.com/fc92/poker/internal/groom"
 )
 
 type RoomVoteStatus int
@@ -264,11 +261,10 @@ func (room *Room) UpdateFromHub() {
 	numVoters := len(room.Voters)
 
 	// terminate program if all players left
-	if numVoters == 0 && runsInKube() {
+	if numVoters == 0 {
 		hostnameParts := strings.Split(os.Getenv("HOSTNAME"), "-")
 		roomName := hostnameParts[1]
 		log.Info().Msgf("No more players. Closing the poker room named %s.", roomName)
-		closeRoom(roomName)
 	}
 	if numVoters < 2 {
 		room.CloseVote()
@@ -283,27 +279,4 @@ func (room Room) NbVotesReceived() int {
 		}
 	}
 	return nbVotes
-}
-
-// return true if running Kubernetes
-func runsInKube() bool {
-	// Création de la configuration du client Kubernetes
-	_, err := rest.InClusterConfig()
-	return err == nil
-}
-
-func closeRoom(roomFromPod string) {
-	rooms, err := groom.RoomDeployed()
-	if err != nil {
-		log.Err(err).Msg("unable to get list of rooms deployed...")
-	}
-
-	for _, room := range rooms {
-		roomMap := room.(map[string]interface{})
-
-		if strings.EqualFold(roomMap["name"].(string), roomFromPod) {
-			groom.RemoveRoom(roomMap["name"].(string))
-			return
-		}
-	}
 }
