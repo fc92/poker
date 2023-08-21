@@ -4,9 +4,6 @@
 package common
 
 import (
-	"os"
-	"strings"
-
 	"github.com/google/uuid"
 	"github.com/kyokomi/emoji/v2"
 	"github.com/rs/zerolog/log"
@@ -262,9 +259,7 @@ func (room *Room) UpdateFromHub() {
 
 	// terminate program if all players left
 	if numVoters == 0 {
-		hostnameParts := strings.Split(os.Getenv("HOSTNAME"), "-")
-		roomName := hostnameParts[1]
-		log.Info().Msgf("No more players. Closing the poker room named %s.", roomName)
+		log.Info().Msgf("No more players. Closing the poker room.")
 	}
 	if numVoters < 2 {
 		room.CloseVote()
