@@ -35,9 +35,11 @@ jobs:
           go-version: 1.21.0
 
       - name: Build
+        working-directory: backend
         run: go build -v -o poker cmd/poker.go
 
       - name: Run coverage
+        working-directory: backend
         run: go test -race -coverprofile=coverage.out -covermode=atomic ./...
 
       - name: Upload coverage reports to Codecov with GitHub Action
