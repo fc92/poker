@@ -23,12 +23,12 @@ jobs:
             goos: windows
     steps:
       - uses: actions/checkout@v3
-      - uses: wangyoucao577/go-release-action@v1.37
+      - uses: wangyoucao577/go-release-action@v1.39
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
-          goversion: "https://dl.google.com/go/go1.20.3.linux-amd64.tar.gz"
+          goversion: "https://dl.google.com/go/go1.21.0.linux-amd64.tar.gz"
           project_path: "./cmd"
           binary_name: "poker"
           extra_files: LICENSE README.md
