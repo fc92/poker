@@ -1,8 +1,8 @@
 build:
-	docker build -t poker:latest -f build/package/Dockerfile .
+	docker build -t poker:latest -f backend/build/package/Dockerfile .
 
 build-debug:
-	docker build -t poker:debug -f build/package/debug/Dockerfile .
+	docker build -t poker:debug -f backend/build/package/debug/Dockerfile .
 
 all: build build-debug
 

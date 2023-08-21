@@ -3,7 +3,7 @@
 This page provide technical information to facilitate future maintenance of the project.
 
 - [Contributing](#contributing)
-  - [Building from sources](#building-from-sources)
+  - [Building backend from sources](#building-backend-from-sources)
   - [Deployments methods](#deployments-methods)
     - [Use CLI in console mode](#use-cli-in-console-mode)
     - [Deploy the game for Web based access](#deploy-the-game-for-web-based-access)
@@ -14,18 +14,18 @@ This page provide technical information to facilitate future maintenance of the 
     - [Low level design](#low-level-design)
   - [Debug log](#debug-log)
 
-## Building from sources
+## Building backend from sources
 
 Prerequisites:
 
 - internet access
-- recent go version (tested with 1.19.x and 1.20)
+- recent go version (tested with 1.19.x to 1.21)
 
 Get the sources and build the `poker` binary:
 
 ```bash
 git clone https://github.com/fc92/poker
-cd poker
+cd poker/backend
 go build -o poker cmd/poker.go
 ```
 
@@ -44,7 +44,6 @@ The are different ways of deploying this client/server game:
 
 - using CLI in console mode (recommended for development or native client on a wide range of platforms),
 - with Web based access for better user experience (recommended for end users),
-- with Web based access to a Kubernetes cluster (adds support for multiple poker rooms for different teams)
 
 ### Use CLI in console mode
 
