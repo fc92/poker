@@ -14,30 +14,6 @@
                 "poker.local"
             ]
         },
-        // if necessary use kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission -v 6
-        // to solve Error: INSTALLATION FAILED: Internal error occurred: failed calling webhook "validate.nginx.ingress.kubernetes.io": failed to call webhook
-        {
-            "name": "Kubernetes: run", // do not use Debug or make sure dlv entrypoint is injected
-            "type": "cloudcode.kubernetes",
-            "request": "launch", // launch the deployment, use attach for debug
-            "skaffoldConfig": "${workspaceFolder}/skaffold.yaml",
-            "watch": true,
-            "cleanUp": true,
-            "portForward": true,
-            "autoStop": false,
-            // "profile": "dev",
-            // NOT working so far (initContainer not injected)
-            // "debug": [
-            //     {
-            //         "program": "cmd/groom/groom.go",
-            //         "image": "groomImage",
-            //         "containerName": "groom",
-            //         "sourceFileMap": {
-            //             "${workspaceFolder}": "/go/src"
-            //         }
-            //     }
-            // ]
-        },
         {
             "name": "Launch server",
             "type": "go",
@@ -58,30 +34,6 @@
             "args": [
                 "client",
             ],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "Launch groom",
-            "type": "go",
-            "request": "launch",
-            "mode": "debug",
-            "program": "${workspaceFolder}/cmd/groom",
-            "args": [
-                "http://localhost:8080"
-            ],
-            "console": "integratedTerminal"
-        },
-        // use minikube mount .:/go/src to debug in local cluster
-        {
-            "name": "Remote debug in Kubernetes",
-            "type": "go",
-            "request": "attach",
-            "mode": "remote",
-            "remotePath": "/go/src",
-            "cwd": "${workspaceFolder}",
-            "port": 9229,
-            "host": "127.0.0.1",
-            "showLog": true,
             "console": "integratedTerminal"
         },
     ]

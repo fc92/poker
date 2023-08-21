@@ -1,4 +1,4 @@
-// logger shared between files of the package groom
+// logger shared
 package logger
 
 import (

@@ -7,14 +7,12 @@ This page provide technical information to facilitate future maintenance of the 
   - [Deployments methods](#deployments-methods)
     - [Use CLI in console mode](#use-cli-in-console-mode)
     - [Deploy the game for Web based access](#deploy-the-game-for-web-based-access)
-    - [Helm chart deployment for Kubernetes](#helm-chart-deployment-for-kubernetes)
   - [Information for developers](#information-for-developers)
     - [Client console](#client-console)
     - [Server](#server)
     - [High level design](#high-level-design)
     - [Low level design](#low-level-design)
   - [Debug log](#debug-log)
-  - [Ideas for the future](#ideas-for-the-future)
 
 ## Building from sources
 
@@ -128,17 +126,6 @@ There are multiple benefits with this tty2web deployment method:
 - users can play on platforms that are not natively supported like iOS or Android,
 - the server and each player process run inside a restricted container for security.
 
-### Helm chart deployment for Kubernetes
-
-When the Helm chart is installed, it will deployed a list of rooms defined in the values.yaml file. Each room is composed of:
-
-- a pod hosting a server instance accessible locally and welcome web players through the tty2web mechanism. Each player connection instantiates a dedicated shell with the poker client inside this pod. It has local access to the server.
-- a service to expose the pod.
-- a dedicated ingress rule to route the HTTP or HTTPS traffic to the room based on a prefix.
-
-When a player asks for a new room, the groom program will modify the values of the Helm chart to deploy the stack for the new room (pod + service + ingress rule).
-
-It is recommended to use ResourceQuota to limit the number of rooms.
 
 ## Information for developers
 
@@ -203,16 +190,3 @@ It should be possible to write other client implementations using other language
 ## Debug log
 
 Server debug logs can be activated using the `-debug` flag
-
-## Ideas for the future
-
-- [ ] replace the need for tty2web with a WebAssembly client running in the browser using xterm.js
-- [ ] [WebAssembly.sh](https://webassembly.sh) support: tinygo WASI support is not yes sufficient
-
-```bash
-tinygo build -wasm-abi=generic -target=wasi -o poker.wasm cmd/poker.go 
-# golang.org/x/sys/unix
-../.go/pkg/mod/golang.org/x/sys@v0.0.0-20220722155257-8c9f86f7a55f/unix/syscall_unix.go:526:17: Exec not declared by package syscall
-```
-
-- [ ] server part on ESP32: [tinygo support for ESP32](https://tinygo.org/docs/reference/microcontrollers/esp32-coreboard-v2) is not sufficient
