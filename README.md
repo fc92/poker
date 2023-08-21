@@ -13,7 +13,6 @@
   - [Install](#install)
     - [Standard deployment](#standard-deployment)
     - [Custom HTTP port deployment](#custom-http-port-deployment)
-    - [Multi room in a Kubernetes namespace (Advanced)](#multi-room-in-a-kubernetes-namespace-advanced)
 
 ## Game description
 
@@ -56,16 +55,3 @@ docker run -p 8083:8083 -td ghcr.io/fc92/poker:main ./clients.sh 8083 TeamOne
 
 - Browser URL to connect as player *Mary*:
 `http://server_ip:8083/?arg=-name&arg=Mary`
-
-### Multi room in a Kubernetes namespace (Advanced)
-
-This deployment method adds the possibility for different team to use a dedicated poker room.
-
-Each player connects to a groom program to:
-
-- choose an existing poker room already deployed,
-- or add a new room.
-
-A Helm chart is provided in the deployments/poker directory.
-
-Prerequisite: namespace accessible with ingress to allow incoming HTTP/HTTPS traffic.

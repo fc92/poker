@@ -1,4 +1,4 @@
-FROM golang:1.20.3 as build
+FROM golang:1.21.0 as build
 LABEL org.opencontainers.image.authors="Florent Carré"
 LABEL org.opencontainers.image.source=https://github.com/fc92/poker
 LABEL org.opencontainers.image.description="poker image running client and server components"
@@ -19,28 +19,23 @@ RUN go test -v ./...
 
 WORKDIR /go/src/app
 RUN CGO_ENABLED=0 go build -o /go/bin/poker cmd/poker.go
-RUN CGO_ENABLED=0 go build -o /go/bin/groom cmd/groom/groom.go
 
 # for tty2web an image with a shell is required
-FROM alpine:3.17.3
+FROM alpine:3.18.3
 RUN addgroup -S myapp && adduser -S myapp -G myapp
 
 # required for client using infocmp
 COPY --from=build /go/bin /
 
 # download tty2web binary
-ADD https://github.com/kost/tty2web/releases/download/v2.7.1/tty2web_linux_amd64 /tty2web
+ADD https://github.com/kost/tty2web/releases/download/v3.0.0/tty2web_linux_amd64 /tty2web
 
 COPY build/package/poker.sh /
 COPY build/package/clients.sh /
-COPY build/package/groom.sh /
-COPY build/package/groom-clients.sh /
 # prepare a script /clients.sh to launch the server as well as tty2web to welcome incoming clients
 # make the script and binary executable
 RUN chmod +x /tty2web \
     && chmod +x /clients.sh \
-    && chmod +x /groom.sh \
-    && chmod +x /groom-clients.sh \
     && chmod +x /poker.sh
 
 # avoid running as ROOT
