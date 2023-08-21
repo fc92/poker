@@ -189,3 +189,6 @@ It should be possible to write other client implementations using other language
 ## Debug log
 
 Server debug logs can be activated using the `-debug` flag
+
+### Code coverage
+![Codecov graph](https://codecov.io/github/fc92/poker/graphs/sunburst.svg?token=R4OZKBC13P "Codecov graph")
