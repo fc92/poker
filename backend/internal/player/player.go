@@ -84,7 +84,7 @@ func Play(name string, serverAddress string) {
 		case command := <-controlFromUI:
 			switch command {
 			case co.CommandQuit:
-				fmt.Print("Exiting poker room. You can close this web page.")
+				fmt.Print("Exiting poker room. If you use a browser you can close this webpage.")
 				cleanExit(c)
 				return
 			case co.CommandStartVote:
