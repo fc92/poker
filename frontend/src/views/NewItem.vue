@@ -1,11 +1,18 @@
 <template>
-    <swiper-container :slides-per-view="3" :space-between="spaceBetween" :centered-slides="true"
-        :pagination="{ hideOnClick: true }" :breakpoints="{ 768: { slidesPerView: 3 } }" @progress="onProgress"
-        @slidechange="onSlideChange">
-        <swiper-slide v-for="value in fibonacciValues" :key="value.num" :style="{ backgroundColor: value.color }">
-            {{ value.num }}
-        </swiper-slide>
-    </swiper-container>
+    <ion-page>
+        <ion-header :translucent="true">
+        </ion-header>
+
+        <ion-content :fullscreen="true">
+            <swiper-container :slides-per-view="3" :space-between="spaceBetween" :centered-slides="true"
+                :pagination="{ hideOnClick: true }" :breakpoints="{ 768: { slidesPerView: 3 } }" @progress="onProgress"
+                @slidechange="onSlideChange">
+                <swiper-slide v-for="value in fibonacciValues" :key="value.num" :style="{ backgroundColor: value.color }">
+                    {{ value.num }}
+                </swiper-slide>
+            </swiper-container>
+        </ion-content>
+    </ion-page>
 </template>
 
 
@@ -14,7 +21,6 @@ import { defineComponent, ref } from 'vue';
 import { register } from 'swiper/element/bundle';
 const fibonacciValues: { num: number, color: string }[] = [
     { num: 1, color: '#f4f4f4' },
-    { num: 1, color: '#262626' },
     { num: 2, color: '#0f62fe' },
     { num: 3, color: '#198038' },
     { num: 5, color: '#007d79' },
