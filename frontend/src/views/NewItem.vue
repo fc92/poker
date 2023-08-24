@@ -4,10 +4,11 @@
         </ion-header>
 
         <ion-content :fullscreen="true">
-            <swiper-container :slides-per-view="3" :space-between="spaceBetween" :centered-slides="true"
+            <swiper-container class="slider" :slides-per-view="3" :space-between="spaceBetween" :centered-slides="true"
                 :pagination="{ hideOnClick: true }" :breakpoints="{ 768: { slidesPerView: 3 } }" @progress="onProgress"
                 @slidechange="onSlideChange">
-                <swiper-slide v-for="value in fibonacciValues" :key="value.num" :style="{ backgroundColor: value.color }">
+                <swiper-slide class="rounded-slide" v-for="value in fibonacciValues" :key="value.num"
+                    :style="{ backgroundColor: value.color }">
                     {{ value.num }}
                 </swiper-slide>
             </swiper-container>
@@ -54,3 +55,24 @@ export default defineComponent({
 
 });
 </script>
+
+<style scoped>
+.slider {
+    height: 20vh;
+    /* 20% de la hauteur de l'écran */
+}
+
+.rounded-slide {
+    border-radius: 10px;
+    /* Angles arrondis */
+    /* Ajoutons un padding pour éloigner le contenu du bord */
+    padding: 5px;
+    /* Centrons le texte à l'intérieur */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Mettons une taille minimale pour garantir une bonne lisibilité, peut-être ajustée si nécessaire */
+    min-width: 80px;
+    text-align: center;
+}
+</style>
