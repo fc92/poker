@@ -66,10 +66,7 @@ const handlePlayerUpdate = (player: Player) => {
   }
 };
 const handleExitClick = () => {
-  if (store.state.websocket) {
-    store.state.websocket.close();
-  }
-  store.state.serverSelected = '';
+  store.dispatch('handleExitClick');
 };
 
 onBeforeUnmount(() => {

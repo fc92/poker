@@ -2,7 +2,7 @@ import { createStore } from 'vuex';
 
 export default createStore({
     state: {
-        websocket: null,
+        websocket: null as WebSocket | null,
         serverSelected: '',
     },
     mutations: {
@@ -11,6 +11,12 @@ export default createStore({
         },
         setServerSelected(state, serverSelected) {
             state.serverSelected = serverSelected;
+        },
+        clearWebSocket(state) {
+            if (state.websocket) {
+                state.websocket.close();
+            }
+            state.websocket = null;
         },
     },
     actions: {
@@ -38,6 +44,9 @@ export default createStore({
             dispatch('connectToWebSocket', newServerValue);
             commit('setServerSelected', newServerValue);
         },
-        // ... (Ajoutez d'autres actions comme handlePlayerUpdate et handleExitClick ici)
+        handleExitClick({ state, commit }) {
+            commit('clearWebSocket');
+            commit('setServerSelected', '');
+        },
     },
 });
