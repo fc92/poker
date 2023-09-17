@@ -38,7 +38,7 @@ import { ref, onBeforeUnmount } from 'vue';
 import { IonContent, IonFooter, IonHeader, IonPage, IonButton, IonIcon } from '@ionic/vue';
 import ServerSelector from '@/components/ServerSelector.vue';
 import NameSelector from '@/components/NameSelector.vue';
-import { Player } from '@/player'
+import { Participant } from '@/participant'
 import { exit } from 'ionicons/icons';
 import { useStore } from 'vuex';
 
@@ -49,13 +49,13 @@ const store = useStore();
 const handleServerValueUpdate = (newServerValue: string) => {
   store.dispatch('handleServerValueUpdate', newServerValue);
 };
-const handlePlayerUpdate = (player: Player) => {
-  console.log('Valeur du player id mise à jour:', player.id);
-  console.log('Valeur du player name mise à jour:', player.name);
+const handlePlayerUpdate = (participant: Participant) => {
+  console.log('Valeur du participant id mise à jour:', participant.id);
+  console.log('Valeur du participant name mise à jour:', participant.name);
   if (store.state.websocket) {
     const message = JSON.stringify({
-      id: player.id,
-      name: player.name,
+      id: participant.id,
+      name: participant.name,
       vote: "",
       available_commands: {},
       last_command: ""
