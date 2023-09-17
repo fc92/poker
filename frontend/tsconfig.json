@@ -19,7 +19,9 @@
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    "sourceMap": true,
+    "inlineSourceMap": false,
   },
   "include": [
     "src/**/*.ts",
