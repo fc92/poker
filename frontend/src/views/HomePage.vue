@@ -23,36 +23,37 @@
 
     </ion-content>
     <IonFooter>
-      <div v-if="store.state.serverSelected !== ''">
-        <ion-button @click="handleExitClick">
-          <ion-icon :icon="exit"></ion-icon>
-        </ion-button>
-      </div>
-
+      <ExitButton></ExitButton>
     </IonFooter>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeUnmount } from 'vue';
-import { IonContent, IonFooter, IonHeader, IonPage, IonButton, IonIcon } from '@ionic/vue';
+import { onBeforeUnmount, computed } from 'vue';
+import { IonContent, IonFooter, IonHeader, IonPage } from '@ionic/vue';
 import ServerSelector from '@/components/ServerSelector.vue';
 import NameSelector from '@/components/NameSelector.vue';
-import { Participant } from '@/participant'
-import { exit } from 'ionicons/icons';
+import ExitButton from '@/components/ExitButton.vue';
+import { Participant } from '@/participant';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
-const websocket = ref<WebSocket | null>(null);
-
+const router = useRouter();
 
 const store = useStore();
+
+const serverSelected = computed(() => store.state.serverSelected);
+const websocket = computed(() => store.state.websocket);
+const localParticipantId = computed(() => store.state.localParticipantId);
+
 const handleServerValueUpdate = (newServerValue: string) => {
   store.dispatch('handleServerValueUpdate', newServerValue);
 };
+
 const handlePlayerUpdate = (participant: Participant) => {
   console.log('Valeur du participant id mise à jour:', participant.id);
   console.log('Valeur du participant name mise à jour:', participant.name);
-  if (store.state.websocket) {
+  if (websocket.value) {
     const message = JSON.stringify({
       id: participant.id,
       name: participant.name,
@@ -60,18 +61,17 @@ const handlePlayerUpdate = (participant: Participant) => {
       available_commands: {},
       last_command: ""
     });
-    store.state.websocket.send(message);
+    websocket.value.send(message);
+    store.commit('setLocalParticipantId', participant.id);
+    router.push('/pokertable');
   } else {
     console.error('WebSocket is not connected');
   }
 };
-const handleExitClick = () => {
-  store.dispatch('handleExitClick');
-};
 
 onBeforeUnmount(() => {
-  if (store.state.websocket) {
-    store.state.websocket.close();
+  if (websocket.value) {
+    websocket.value.close();
   }
 });
 </script>
