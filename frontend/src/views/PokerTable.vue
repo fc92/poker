@@ -52,7 +52,7 @@ const room = computed(() => store.state.room);
 const participants = computed(() => store.state.room.voters);
 const localParticipantId = computed(() => store.state.localParticipantId);
 
-const localParticipant = computed(() => participants.value.find((p: Participant) => p.id === localParticipantId.value));
+var localParticipant = computed(() => participants.value.find((p: Participant) => p.id === localParticipantId.value));
 
 const localVote = computed({
   get: () => localParticipant.value?.vote || '',
@@ -63,7 +63,7 @@ const localVote = computed({
 
 const startGame = () => {
   // Ajoutez la logique pour démarrer le jeu
-  store.dispatch('startGame');
+  store.dispatch('startGame', localParticipant.value);
 };
 
 const onVoteChange = () => {
