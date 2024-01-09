@@ -9,7 +9,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { IonContent, IonItem, IonInput, IonButton } from "@ionic/vue";
-import { defineProps, defineEmits } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import { Participant } from "@/participant";
 

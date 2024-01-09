@@ -17,7 +17,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { IonList, IonListHeader, IonItem, IonRadioGroup, IonRadio, IonButton } from '@ionic/vue';
-import { defineProps, defineEmits } from 'vue';
 
 const emit = defineEmits();
 
