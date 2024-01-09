@@ -11,7 +11,7 @@
 <script lang="ts">
 import { IonIcon } from '@ionic/vue';
 import { addIcons } from 'ionicons';
-import { personCircle, heart, person, ellipsisHorizontal, checkmarkCircleOutline, closeCircle } from 'ionicons/icons'
+import { personCircle, person, ellipsisHorizontal, checkmarkCircleOutline, closeCircle } from 'ionicons/icons'
 import { defineComponent, PropType } from 'vue';
 
 interface Participant {
@@ -28,7 +28,7 @@ export default defineComponent({
     },
     setup() {
         addIcons(
-            { personCircle, heart, person, ellipsisHorizontal, checkmarkCircleOutline, closeCircle });
+            { personCircle, person, ellipsisHorizontal, checkmarkCircleOutline, closeCircle });
     },
     props: {
         player: {
