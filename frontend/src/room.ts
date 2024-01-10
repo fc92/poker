@@ -11,11 +11,3 @@ export interface Room {
     turnStartedCommands: Record<string, string>;
     voteCommands: Record<string, string>;
 }
-
-
-// Vote status
-export enum VoteStatus {
-    Received = "r",
-    NotReceived = "",
-    Hidden = "-",
-}

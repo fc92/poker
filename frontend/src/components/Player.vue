@@ -2,9 +2,9 @@
     <div class="player-item">
         <ion-icon :name="isCurrentUser ? 'person-circle' : 'person'" :class="{ 'bold-text': isCurrentUser }"></ion-icon>
         <span :class="{ 'bold-text': isCurrentUser }">{{ player.name }}</span>
-        <!-- <ion-icon v-if="player.last_command === VoteStatus.NotReceived" name="ellipsis-horizontal"></ion-icon>
-        <ion-icon v-if="player.available_commands['voted']" name="checkmark-circle-outline"></ion-icon>
-        <ion-icon v-if="player.available_commands['notVoting']" name="close-circle"></ion-icon> -->
+        <ion-icon v-if="player.last_command === ''" name="ellipsis-horizontal"></ion-icon>
+        <ion-icon v-if="player.last_command === 'r'" name="checkmark-circle-outline"></ion-icon>
+        <ion-icon v-if="player.last_command === 'n'" name="close-circle"></ion-icon>
     </div>
 </template>
 
