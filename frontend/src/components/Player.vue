@@ -2,25 +2,21 @@
     <div class="player-item">
         <ion-icon :name="isCurrentUser ? 'person-circle' : 'person'" :class="{ 'bold-text': isCurrentUser }"></ion-icon>
         <span :class="{ 'bold-text': isCurrentUser }">{{ player.name }}</span>
-        <ion-icon v-if="player.available_commands['thinking']" name="ellipsis-horizontal"></ion-icon>
+        <!-- <ion-icon v-if="player.last_command === VoteStatus.NotReceived" name="ellipsis-horizontal"></ion-icon>
         <ion-icon v-if="player.available_commands['voted']" name="checkmark-circle-outline"></ion-icon>
-        <ion-icon v-if="player.available_commands['notVoting']" name="close-circle"></ion-icon>
+        <ion-icon v-if="player.available_commands['notVoting']" name="close-circle"></ion-icon> -->
     </div>
 </template>
 
 <script lang="ts">
+import { Participant } from '@/participant';
+import { VoteStatus } from '@/room';
 import { IonIcon } from '@ionic/vue';
 import { addIcons } from 'ionicons';
 import { personCircle, person, ellipsisHorizontal, checkmarkCircleOutline, closeCircle } from 'ionicons/icons'
 import { defineComponent, PropType } from 'vue';
 
-interface Participant {
-    id: string;
-    name: string;
-    vote: string;
-    available_commands: Record<string, string>;
-    last_command: string;
-}
+
 
 export default defineComponent({
     components: {

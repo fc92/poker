@@ -19,10 +19,10 @@
             <player v-for="participant in participants" :key="participant.id" :player="participant"
               :isCurrentUser="participant.id === localParticipantId" />
             <ion-item v-if="localParticipant">
-              <ion-label>Vote</ion-label>
-              <ion-select v-model="localVote" @ionChange="onVoteChange">
-                <ion-select-option v-for="option in voteOptions" :key="option.value" :value="option.value">
-                  {{ option.label }}
+              <ion-select v-model="localVote" @ionChange="onVoteChange" label="Vote">
+                <ion-select-option v-for="[command, label] in Object.entries(room.voteCommands)" :key="command"
+                  :value="label">
+                  {{ label }}
                 </ion-select-option>
               </ion-select>
             </ion-item>
@@ -44,16 +44,15 @@ import { playOutline } from 'ionicons/icons';
 import Player from '@/components/Player.vue';
 import ExitButton from '@/components/ExitButton.vue';
 import { Participant } from '@/participant';
-import { RoomVoteStatus, voteOptions } from '@/room';
+import { Room, RoomVoteStatus } from '@/room';
 
 const store = useStore();
 
-const room = computed(() => store.state.room);
+const room: Room = computed(() => store.state.room).value;
 const participants = computed(() => store.state.room.voters);
 const localParticipantId = computed(() => store.state.localParticipantId);
 
 var localParticipant = computed(() => participants.value.find((p: Participant) => p.id === localParticipantId.value));
-
 const localVote = computed({
   get: () => localParticipant.value?.vote || '',
   set: (value) => {
@@ -67,6 +66,6 @@ const startGame = () => {
 };
 
 const onVoteChange = () => {
-  store.dispatch('updateVote', { id: localParticipantId.value, vote: localVote.value });
+  store.dispatch('updateVote', { localParticipant: localParticipant.value });
 };
 </script>

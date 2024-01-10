@@ -36,6 +36,7 @@ export default createStore({
         },
         setParticipants(state, voters: Participant[]) {
             state.room.voters = voters;
+            state.room.voteCommands = voters[0].available_commands;
             const roomLog = JSON.stringify(state.room);
             console.info(`room  ${roomLog}`);
         },
@@ -97,7 +98,7 @@ export default createStore({
             commit('setServerSelected', '');
             console.info('Exited');
         },
-        startGame({ state, commit }, localParticipant: Participant) {
+        startGame({ state }, localParticipant: Participant) {
             if (state.websocket) {
                 localParticipant.last_command = 's';
                 const message = JSON.stringify(localParticipant);
@@ -107,9 +108,15 @@ export default createStore({
                 console.error('WebSocket is not connected');
             }
         },
-        updateVote({ state, commit }, payload) {
-            // Votre logique pour mettre à jour le vote ici, par exemple envoyer le vote via WebSocket
-            // ...
+        updateVote({ state }, payload) {
+            if (state.websocket) {
+                payload.localParticipant.last_command = 'r';
+                const message = JSON.stringify(payload.localParticipant);
+                state.websocket.send(message);
+                console.log('participant update sent to server: ' + message)
+            } else {
+                console.error('WebSocket is not connected');
+            }
         },
 
     },
