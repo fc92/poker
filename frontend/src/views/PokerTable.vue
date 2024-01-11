@@ -10,6 +10,7 @@
           <div v-if="room.roomStatus === RoomVoteStatus.VoteClosed">
             <player v-for="participant in participants" :key="participant.id" :player="participant"
               :isCurrentUser="participant.id === localParticipantId" />
+            <BarChart :player-votes="voteResults" />
             <ion-button @click="startGame">
               <ion-icon :icon="playOutline"></ion-icon> Start Game
             </ion-button>
@@ -42,6 +43,7 @@ import { useStore } from 'vuex';
 import { IonPage, IonContent, IonHeader, IonButton, IonIcon, IonFooter, IonLabel, IonItem, IonSelect, IonSelectOption } from '@ionic/vue';
 import { playOutline } from 'ionicons/icons';
 import Player from '@/components/Player.vue';
+import BarChart from '@/components/BarChart.vue'
 import ExitButton from '@/components/ExitButton.vue';
 import { Participant } from '@/participant';
 import { Room, RoomVoteStatus } from '@/room';
@@ -49,6 +51,7 @@ import { Room, RoomVoteStatus } from '@/room';
 const store = useStore();
 
 const room: Room = computed(() => store.state.room).value;
+var voteResults = computed(() => store.state.voteResults);
 const participants = computed(() => store.state.room.voters);
 const localParticipantId = computed(() => store.state.localParticipantId);
 

@@ -14,7 +14,8 @@ export default createStore({
             turnStartedCommands: {} as Record<string, string>,
             voteCommands: {} as Record<string, string>,
         } as Room,
-        localParticipantId: ''
+        localParticipantId: '',
+        voteResults: [0, 0, 0, 0, 0, 0, 0, 0] as number[]
     },
     mutations: {
         setWebSocket(state, websocket: WebSocket) {
@@ -37,6 +38,37 @@ export default createStore({
         setParticipants(state, voters: Participant[]) {
             state.room.voters = voters;
             state.room.voteCommands = voters[0].available_commands;
+            if (state.room.roomStatus == RoomVoteStatus.VoteClosed) {
+                voters.forEach((voter) => {
+                    switch (voter.vote) {
+                        case "vote 1":
+                            state.voteResults[0] += 1;
+                            break;
+                        case "vote 2":
+                            state.voteResults[1] += 1;
+                            break;
+                        case "vote 3":
+                            state.voteResults[2] += 1;
+                            break;
+                        case "vote 5":
+                            state.voteResults[3] += 1;
+                            break;
+                        case "vote 8":
+                            state.voteResults[4] += 1;
+                            break;
+                        case "vote 13":
+                            state.voteResults[5] += 1;
+                            break;
+                        case "vote 21":
+                            state.voteResults[6] += 1;
+                            break;
+                        case "not voting":
+                            state.voteResults[7] += 1;
+                            break;
+                    }
+
+                });
+            }
             const roomLog = JSON.stringify(state.room);
             console.info(`room  ${roomLog}`);
         },
@@ -99,6 +131,7 @@ export default createStore({
             console.info('Exited');
         },
         startGame({ state }, localParticipant: Participant) {
+            state.voteResults = [0, 0, 0, 0, 0, 0, 0, 0]; // display fresh vote
             if (state.websocket) {
                 localParticipant.last_command = 's';
                 const message = JSON.stringify(localParticipant);
