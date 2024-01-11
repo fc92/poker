@@ -10,7 +10,6 @@
 
 <script lang="ts">
 import { Participant } from '@/participant';
-import { VoteStatus } from '@/room';
 import { IonIcon } from '@ionic/vue';
 import { addIcons } from 'ionicons';
 import { personCircle, person, ellipsisHorizontal, checkmarkCircleOutline, closeCircle } from 'ionicons/icons'
