@@ -8,14 +8,14 @@
       <div>
         <div>
           <div v-if="room.roomStatus === RoomVoteStatus.VoteClosed">
-            <player v-for="participant in participants" :key="participant.id" :player="participant" :displayVote=true
-              :isCurrentUser="participant.id === localParticipantId" />
-            <BarChart :player-votes="voteResults" :barColors="barColors" />
+            <player v-for="participant in participants" :key="participant.id" :player="participant"
+              :displayVoteResults="displayVoteResults" :isCurrentUser="participant.id === localParticipantId" />
+            <BarChart v-if="displayVoteResults" :player-votes="voteResults" :barColors="barColors" />
           </div>
 
           <div v-else-if="room.roomStatus === RoomVoteStatus.VoteOpen">
-            <player v-for="participant in participants" :key="participant.id" :player="participant" :displayVote=false
-              :isCurrentUser="participant.id === localParticipantId" />
+            <player v-for="participant in participants" :key="participant.id" :player="participant"
+              :displayVoteResults=false :isCurrentUser="participant.id === localParticipantId" />
             <ion-item v-if="localParticipant">
               <ion-radio-group v-model="localVote" @ionChange="onVoteChange">
                 <ion-item v-for="[command, label] in Object.entries(room.voteCommands)" :key="command">
@@ -29,7 +29,7 @@
     </ion-content>
     <IonFooter>
       <div v-if="room.roomStatus === RoomVoteStatus.VoteClosed">
-        <ion-button @click="startGame">
+        <ion-button v-if="room.voters.length > 1" @click="startGame">
           <ion-icon :icon="playOutline"></ion-icon> Start new vote
         </ion-button>
       </div>
@@ -71,6 +71,7 @@ const room: Room = computed(() => store.state.room).value;
 var voteResults = computed(() => store.state.voteResults);
 const participants = computed(() => store.state.room.voters);
 const localParticipantId = computed(() => store.state.localParticipantId);
+var displayVoteResults = computed(() => store.state.voteResults.some((num: number) => num !== 0));
 
 var localParticipant = computed(() => participants.value.find((p: Participant) => p.id === localParticipantId.value));
 const localVote = computed({
