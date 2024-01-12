@@ -11,9 +11,6 @@
             <player v-for="participant in participants" :key="participant.id" :player="participant"
               :isCurrentUser="participant.id === localParticipantId" />
             <BarChart :player-votes="voteResults" />
-            <ion-button @click="startGame">
-              <ion-icon :icon="playOutline"></ion-icon> Start Game
-            </ion-button>
           </div>
 
           <div v-else-if="room.roomStatus === RoomVoteStatus.VoteOpen">
@@ -32,6 +29,16 @@
       </div>
     </ion-content>
     <IonFooter>
+      <div v-if="room.roomStatus === RoomVoteStatus.VoteClosed">
+        <ion-button @click="startGame">
+          <ion-icon :icon="playOutline"></ion-icon> Start new vote
+        </ion-button>
+      </div>
+      <div v-if="room.roomStatus === RoomVoteStatus.VoteOpen">
+        <ion-button @click="closeVote">
+          <ion-icon :icon="playOutline"></ion-icon> Close vote
+        </ion-button>
+      </div>
       <ExitButton></ExitButton>
     </IonFooter>
   </ion-page>
@@ -64,8 +71,11 @@ const localVote = computed({
 });
 
 const startGame = () => {
-  // Ajoutez la logique pour démarrer le jeu
   store.dispatch('startGame', localParticipant.value);
+};
+
+const closeVote = () => {
+  store.dispatch('closeVote', localParticipant.value);
 };
 
 const onVoteChange = () => {

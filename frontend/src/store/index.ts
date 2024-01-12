@@ -141,6 +141,16 @@ export default createStore({
                 console.error('WebSocket is not connected');
             }
         },
+        closeVote({ state }, localParticipant: Participant) {
+            if (state.websocket) {
+                localParticipant.last_command = 'v';
+                const message = JSON.stringify(localParticipant);
+                state.websocket.send(message);
+                console.log('participant update sent to server: ' + message)
+            } else {
+                console.error('WebSocket is not connected');
+            }
+        },
         updateVote({ state }, payload) {
             if (state.websocket) {
                 payload.localParticipant.last_command = 'r';
