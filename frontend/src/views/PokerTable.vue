@@ -10,7 +10,7 @@
           <div v-if="room.roomStatus === RoomVoteStatus.VoteClosed">
             <player v-for="participant in participants" :key="participant.id" :player="participant"
               :isCurrentUser="participant.id === localParticipantId" />
-            <BarChart :player-votes="voteResults" />
+            <BarChart :player-votes="voteResults" :barColors="barColors" />
           </div>
 
           <div v-else-if="room.roomStatus === RoomVoteStatus.VoteOpen">
@@ -56,6 +56,16 @@ import { Participant } from '@/participant';
 import { Room, RoomVoteStatus } from '@/room';
 
 const store = useStore();
+const barColors: string[] = [
+  'white',
+  'saddlebrown',
+  'dodgerblue',
+  'limegreen',
+  'darkturquoise',
+  'gold',
+  'fuchsia',
+  'deepskyblue'
+];
 
 const room: Room = computed(() => store.state.room).value;
 var voteResults = computed(() => store.state.voteResults);
