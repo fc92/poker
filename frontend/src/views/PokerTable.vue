@@ -8,13 +8,13 @@
       <div>
         <div>
           <div v-if="room.roomStatus === RoomVoteStatus.VoteClosed">
-            <player v-for="participant in participants" :key="participant.id" :player="participant"
+            <player v-for="participant in participants" :key="participant.id" :player="participant" :displayVote=true
               :isCurrentUser="participant.id === localParticipantId" />
             <BarChart :player-votes="voteResults" :barColors="barColors" />
           </div>
 
           <div v-else-if="room.roomStatus === RoomVoteStatus.VoteOpen">
-            <player v-for="participant in participants" :key="participant.id" :player="participant"
+            <player v-for="participant in participants" :key="participant.id" :player="participant" :displayVote=false
               :isCurrentUser="participant.id === localParticipantId" />
             <ion-item v-if="localParticipant">
               <ion-radio-group v-model="localVote" @ionChange="onVoteChange">
