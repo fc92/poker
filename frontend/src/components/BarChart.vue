@@ -36,6 +36,17 @@ export default defineComponent({
             chartOptions: {
                 responsive: true,
                 plugins: {
+                    title: {
+                        display: true,
+                        text: 'Vote results',
+                        padding: {
+                            top: 10,
+                            bottom: 30
+                        },
+                        font: {
+                            size: 20
+                        }
+                    },
                     legend: {
                         display: false,
                     },
@@ -45,6 +56,11 @@ export default defineComponent({
                         grid: {
                             color: 'rgba(255, 255, 255, 0.1)', // Optional: Add grid lines for better visibility
                         },
+                        ticks: {
+                            font: {
+                                size: 20
+                            }
+                        },
                     },
                     y: {
                         beginAtZero: true, // Ensure the scale starts at zero
@@ -53,6 +69,9 @@ export default defineComponent({
                         },
                         ticks: {
                             stepSize: 1, // Display only integer values
+                            font: {
+                                size: 20
+                            }
                         },
                     },
                 },
