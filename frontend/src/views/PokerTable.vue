@@ -17,12 +17,11 @@
             <player v-for="participant in participants" :key="participant.id" :player="participant"
               :isCurrentUser="participant.id === localParticipantId" />
             <ion-item v-if="localParticipant">
-              <ion-select v-model="localVote" @ionChange="onVoteChange" label="Vote">
-                <ion-select-option v-for="[command, label] in Object.entries(room.voteCommands)" :key="command"
-                  :value="label">
-                  {{ label }}
-                </ion-select-option>
-              </ion-select>
+              <ion-radio-group v-model="localVote" @ionChange="onVoteChange">
+                <ion-item v-for="[command, label] in Object.entries(room.voteCommands)" :key="command">
+                  <ion-radio v-if="label !== 'Close vote'" :value="label">{{ label }}</ion-radio>
+                </ion-item>
+              </ion-radio-group>
             </ion-item>
           </div>
         </div>
@@ -49,6 +48,7 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { IonPage, IonContent, IonHeader, IonButton, IonIcon, IonFooter, IonLabel, IonItem, IonSelect, IonSelectOption } from '@ionic/vue';
 import { playOutline } from 'ionicons/icons';
+import { IonRadio, IonRadioGroup } from '@ionic/vue';
 import Player from '@/components/Player.vue';
 import BarChart from '@/components/BarChart.vue'
 import ExitButton from '@/components/ExitButton.vue';
