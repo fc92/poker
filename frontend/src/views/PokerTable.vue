@@ -14,6 +14,7 @@
           </div>
 
           <div v-else-if="room.roomStatus === RoomVoteStatus.VoteOpen">
+            <ion-label>Your vote:</ion-label>
             <player v-for="participant in participants" :key="participant.id" :player="participant"
               :displayVoteResults=false :isCurrentUser="participant.id === localParticipantId" />
             <ion-item v-if="localParticipant">
@@ -23,6 +24,7 @@
                 </ion-item>
               </ion-radio-group>
             </ion-item>
+            <ProgressBar :progress="voteProgress"></ProgressBar>
           </div>
         </div>
       </div>
@@ -51,6 +53,7 @@ import { playOutline } from 'ionicons/icons';
 import { IonRadio, IonRadioGroup } from '@ionic/vue';
 import Player from '@/components/Player.vue';
 import BarChart from '@/components/BarChart.vue'
+import ProgressBar from '@/components/ProgressBar.vue';
 import ExitButton from '@/components/ExitButton.vue';
 import { Participant } from '@/participant';
 import { Room, RoomVoteStatus } from '@/room';
@@ -72,6 +75,17 @@ var voteResults = computed(() => store.state.voteResults);
 const participants = computed(() => store.state.room.voters);
 const localParticipantId = computed(() => store.state.localParticipantId);
 var displayVoteResults = computed(() => store.state.voteResults.some((num: number) => num !== 0));
+var voteProgress = computed(() => {
+  let nbVotes = 0;
+
+  for (const voter of store.state.room.voters) {
+    if (voter.last_command !== "") {
+      nbVotes++;
+    }
+  }
+
+  return [nbVotes, store.state.room.voters.length - nbVotes];
+});
 
 var localParticipant = computed(() => participants.value.find((p: Participant) => p.id === localParticipantId.value));
 const localVote = computed({
