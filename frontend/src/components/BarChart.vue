@@ -38,7 +38,7 @@ export default defineComponent({
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Vote results',
+                        text: 'Distribution of votes',
                         padding: {
                             top: 10,
                             bottom: 30
