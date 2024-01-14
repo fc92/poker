@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import { IonPage, IonContent, IonHeader, IonButton, IonIcon, IonFooter, IonLabel, IonItem, IonSelect, IonSelectOption } from '@ionic/vue';
+import { IonPage, IonContent, IonHeader, IonButton, IonIcon, IonFooter, IonLabel, IonItem } from '@ionic/vue';
 import { playOutline } from 'ionicons/icons';
 import { IonRadio, IonRadioGroup } from '@ionic/vue';
 import Player from '@/components/Player.vue';
