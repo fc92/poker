@@ -31,6 +31,10 @@ export default createStore({
             state.websocket = null;
         },
         setRoomStatus(state, roomStatus: RoomVoteStatus) {
+            if (state.room.roomStatus === RoomVoteStatus.VoteClosed
+                && roomStatus === RoomVoteStatus.VoteOpen) {
+                resetVotes(state);
+            }
             state.room.roomStatus = roomStatus;
             const roomLog = JSON.stringify(state.room);
             console.info(`room  ${roomLog}`);
@@ -131,7 +135,7 @@ export default createStore({
             console.info('Exited');
         },
         startGame({ state }, localParticipant: Participant) {
-            state.voteResults = [0, 0, 0, 0, 0, 0, 0, 0]; // display fresh vote
+            resetVotes(state); // display fresh vote
             if (state.websocket) {
                 localParticipant.last_command = 's';
                 const message = JSON.stringify(localParticipant);
@@ -164,3 +168,7 @@ export default createStore({
 
     },
 });
+function resetVotes(state: { websocket: WebSocket | null; serverSelected: string; room: Room; localParticipantId: string; voteResults: number[]; }) {
+    state.voteResults = [0, 0, 0, 0, 0, 0, 0, 0];
+}
+
