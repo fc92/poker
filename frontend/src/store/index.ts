@@ -69,6 +69,9 @@ export default createStore({
                         case "not voting":
                             state.voteResults[7] += 1;
                             break;
+                        case "":
+                            voter.vote = 'did not vote...'
+                            break;
                     }
 
                 });
