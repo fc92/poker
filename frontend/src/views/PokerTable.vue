@@ -5,42 +5,56 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <div>
-        <div>
-          <div v-if="room.roomStatus === RoomVoteStatus.VoteClosed">
+      <ion-grid>
+        <ion-row>
+          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteClosed" size="12">
+            <ion-label v-if="displayVoteResults">Team votes</ion-label>
+            <ion-label v-else>Team</ion-label>
             <player v-for="participant in participants" :key="participant.id" :player="participant"
-              :displayVoteResults="displayVoteResults" :isCurrentUser="participant.id === localParticipantId" />
+              :displayVote="displayVoteResults" :isCurrentUser="participant.id === localParticipantId" />
             <BarChart v-if="displayVoteResults" :player-votes="voteResults" :barColors="barColors" />
-          </div>
+          </ion-col>
 
-          <div v-else-if="room.roomStatus === RoomVoteStatus.VoteOpen">
-            <ion-label>Your vote:</ion-label>
-            <player v-for="participant in participants" :key="participant.id" :player="participant"
-              :displayVoteResults=false :isCurrentUser="participant.id === localParticipantId" />
-            <ion-item v-if="localParticipant">
-              <ion-radio-group v-model="localVote" @ionChange="onVoteChange">
-                <ion-item v-for="[command, label] in Object.entries(room.voteCommands)" :key="command">
-                  <ion-radio v-if="label !== 'Close vote'" :value="label">{{ label }}</ion-radio>
-                </ion-item>
-              </ion-radio-group>
-            </ion-item>
-            <ProgressBar :progress="voteProgress"></ProgressBar>
+          <div v-else>
+            <ion-col size=2><ion-label>Team votes</ion-label>
+              <player v-for="participant in participants" :key="participant.id" :player="participant" :displayVote=false
+                :isCurrentUser="participant.id === localParticipantId" />
+            </ion-col>
+            <ion-col size=4>
+              <ion-item v-if="localParticipant">
+                <ion-col size=6><ion-row>Your vote:</ion-row>
+                  <ion-row><ion-radio-group v-model="localVote" @ionChange="onVoteChange">
+                      <ion-item v-for="[command, label] in Object.entries(room.voteCommands)" :key="command">
+                        <ion-radio v-if="label !== 'Close vote'" :value="label">{{ label }}</ion-radio>
+                      </ion-item>
+                    </ion-radio-group></ion-row>
+                </ion-col>
+              </ion-item></ion-col>
+            <ion-col size=2>
+              <ProgressBar :progress="voteProgress"></ProgressBar>
+            </ion-col>
           </div>
-        </div>
-      </div>
+        </ion-row>
+      </ion-grid>
     </ion-content>
     <IonFooter>
-      <div v-if="room.roomStatus === RoomVoteStatus.VoteClosed">
-        <ion-button v-if="room.voters.length > 1" @click="startGame">
-          <ion-icon :icon="playOutline"></ion-icon> Start new vote
-        </ion-button>
-      </div>
-      <div v-if="room.roomStatus === RoomVoteStatus.VoteOpen">
-        <ion-button @click="closeVote">
-          <ion-icon :icon="playOutline"></ion-icon> Close vote
-        </ion-button>
-      </div>
-      <ExitButton></ExitButton>
+      <ion-grid>
+        <ion-row>
+          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteClosed" size=8>
+            <ion-button v-if="room.voters.length > 1" @click="startGame">
+              <ion-icon :icon="playOutline"></ion-icon> Start new vote
+            </ion-button>
+          </ion-col>
+          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteOpen" size=8>
+            <ion-button @click="closeVote">
+              <ion-icon :icon="playOutline"></ion-icon> Close vote
+            </ion-button>
+          </ion-col>
+          <ion-col size=2>
+            <ExitButton></ExitButton>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </IonFooter>
   </ion-page>
 </template>
@@ -48,7 +62,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import { IonPage, IonContent, IonHeader, IonButton, IonIcon, IonFooter, IonLabel, IonItem } from '@ionic/vue';
+import { IonPage, IonContent, IonHeader, IonButton, IonIcon, IonFooter, IonLabel, IonItem, IonGrid, IonCol, IonRow } from '@ionic/vue';
 import { playOutline } from 'ionicons/icons';
 import { IonRadio, IonRadioGroup } from '@ionic/vue';
 import Player from '@/components/Player.vue';
