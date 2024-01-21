@@ -15,13 +15,9 @@
             <BarChart v-if="displayVoteResults" :player-votes="voteResults" :barColors="barColors" />
           </ion-col>
 
-          <div v-else>
-            <ion-col size=2><ion-label>Team votes</ion-label>
-              <player v-for="participant in participants" :key="participant.id" :player="participant" :displayVote=false
-                :isCurrentUser="participant.id === localParticipantId" />
-            </ion-col>
-            <ion-col size=4>
-              <ion-item v-if="localParticipant">
+          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteOpen" size=4>
+            <ion-item v-if="localParticipant">
+              <ion-grid>
                 <ion-col size=6><ion-row>Your vote:</ion-row>
                   <ion-row><ion-radio-group v-model="localVote" @ionChange="onVoteChange">
                       <ion-item v-for="[command, label] in Object.entries(room.voteCommands)" :key="command">
@@ -29,11 +25,16 @@
                       </ion-item>
                     </ion-radio-group></ion-row>
                 </ion-col>
-              </ion-item></ion-col>
-            <ion-col size=2>
-              <ProgressBar :progress="voteProgress"></ProgressBar>
-            </ion-col>
-          </div>
+              </ion-grid>
+            </ion-item>
+          </ion-col>
+          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteOpen" size=2><ion-label>Team votes</ion-label>
+            <player v-for="participant in participants" :key="participant.id" :player="participant" :displayVote=false
+              :isCurrentUser="participant.id === localParticipantId" />
+          </ion-col>
+          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteOpen" size=2>
+            <ProgressBar :progress="voteProgress"></ProgressBar>
+          </ion-col>
         </ion-row>
       </ion-grid>
     </ion-content>
