@@ -49,7 +49,7 @@ export default defineComponent({
 .player-item {
     display: flex;
     align-items: center;
-    padding: 8px;
+    padding: 4px;
 }
 
 .bold-text {

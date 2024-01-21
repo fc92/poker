@@ -35,6 +35,7 @@ export default defineComponent({
             },
             chartOptions: {
                 responsive: true,
+                maintainAspectRatio: true,
                 plugins: {
                     title: {
                         display: true,
