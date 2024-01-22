@@ -35,7 +35,7 @@ export default defineComponent({
     computed: {
         chartData(): ChartData {
             return {
-                labels: ['Votes Received', 'Remaining'],
+                labels: ['Received', 'Expected'],
                 datasets: [
                     {
                         data: this.progress,
@@ -59,9 +59,20 @@ export default defineComponent({
                             bottom: 10
                         },
                         font: {
-                            size: 20
+                            family: 'Arial',
+                            size: 16,
+
                         }
                     },
+                    legend: {
+                        labels: {
+                            font: {
+                                family: 'Arial',
+                                size: 16,
+
+                            }
+                        }
+                    }
                 },
             },
         };

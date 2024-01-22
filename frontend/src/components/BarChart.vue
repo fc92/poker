@@ -45,11 +45,16 @@ export default defineComponent({
                             bottom: 30
                         },
                         font: {
-                            size: 20
+                            size: 25,
+                            family: 'Arial'
                         }
                     },
                     legend: {
                         display: false,
+                        font: {
+                            size: 12,
+                            family: 'Arial'
+                        }
                     },
                 },
                 scales: {

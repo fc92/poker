@@ -9,32 +9,49 @@
     <ion-content :fullscreen="true">
       <ion-grid>
         <ion-row>
-          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteClosed" size="12">
-            <ion-label v-if="displayVoteResults">Team votes</ion-label>
-            <ion-label v-else>Team</ion-label>
-            <player v-for="participant in participants" :key="participant.id" :player="participant"
-              :displayVote="displayVoteResults" :isCurrentUser="participant.id === localParticipantId" />
-            <BarChart v-if="displayVoteResults" :player-votes="voteResults" :barColors="barColors" />
+          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteClosed">
+            <ion-grid>
+              <ion-row>
+                <ion-col>
+                  <ion-label v-if="displayVoteResults">Team votes</ion-label>
+                  <ion-label v-else>Team</ion-label>
+                  <player v-for="participant in participants" :key="participant.id" :player="participant"
+                    :displayVote="displayVoteResults" :isCurrentUser="participant.id === localParticipantId" />
+                </ion-col>
+                <ion-col v-if="displayVoteResults">
+                  <BarChart v-if="displayVoteResults" :player-votes="voteResults" :barColors="barColors" />
+                </ion-col>
+                <ion-col v-if="!displayVoteResults" class="ion-margin-center">
+                  No vote to display
+                </ion-col>
+              </ion-row>
+            </ion-grid>
           </ion-col>
 
-          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteOpen" size=4>
+          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteOpen">
             <ion-item v-if="localParticipant">
               <ion-grid>
-                <ion-col size=6><ion-row>Your vote:</ion-row>
-                  <ion-row><ion-radio-group v-model="localVote" @ionChange="onVoteChange">
-                      <ion-item v-for="[command, label] in Object.entries(room.voteCommands)" :key="command">
-                        <ion-radio v-if="label !== 'Close vote'" :value="label">{{ label }}</ion-radio>
-                      </ion-item>
-                    </ion-radio-group></ion-row>
-                </ion-col>
+                <ion-row>Your vote:</ion-row>
+                <ion-row><ion-radio-group v-model="localVote" @ionChange="onVoteChange">
+                    <ion-item v-for="[command, label] in Object.entries(room.voteCommands)" :key="command">
+                      <ion-radio v-if="label !== 'Close vote'" :value="label">{{ label }}</ion-radio>
+                    </ion-item>
+                  </ion-radio-group></ion-row>
               </ion-grid>
             </ion-item>
           </ion-col>
-          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteOpen" size=2><ion-label>Team votes</ion-label>
-            <player v-for="participant in participants" :key="participant.id" :player="participant" :displayVote=false
-              :isCurrentUser="participant.id === localParticipantId" />
+          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteOpen">
+            <ion-grid>
+              <ion-row>Team votes</ion-row>
+              <ion-row>
+                <ion-col>
+                  <player v-for="participant in participants" :key="participant.id" :player="participant"
+                    :displayVote=false :isCurrentUser="participant.id === localParticipantId" />
+                </ion-col>
+              </ion-row>
+            </ion-grid>
           </ion-col>
-          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteOpen" size=2>
+          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteOpen">
             <ProgressBar :progress="voteProgress"></ProgressBar>
           </ion-col>
         </ion-row>
@@ -43,17 +60,17 @@
     <IonFooter>
       <ion-grid>
         <ion-row>
-          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteClosed" size=8>
+          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteClosed">
             <ion-button v-if="room.voters.length > 1" @click="startGame">
               <ion-icon :icon="playOutline"></ion-icon> Start new vote
             </ion-button>
           </ion-col>
-          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteOpen" size=8>
+          <ion-col v-if="room.roomStatus === RoomVoteStatus.VoteOpen">
             <ion-button @click="closeVote">
               <ion-icon :icon="playOutline"></ion-icon> Close vote
             </ion-button>
           </ion-col>
-          <ion-col size=2>
+          <ion-col>
             <ExitButton></ExitButton>
           </ion-col>
         </ion-row>
