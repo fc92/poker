@@ -2,6 +2,7 @@
   <ion-page>
     <ion-header :translucent="true">
       <h1>Unbiased poker</h1>
+      <h1>You are: <ion-label v-text="localParticipant.name"></ion-label></h1>
     </ion-header>
 
     <ion-content :fullscreen="true">
