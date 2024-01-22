@@ -1,8 +1,9 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
-      <h1>Unbiased poker</h1>
-      <h1>You are: <ion-label v-if="localParticipant" v-text="localParticipant.name"></ion-label></h1>
+    <ion-header :translucent="true" class="ion-margin-top">
+      <h1 class="ion-text-center">Team poker
+        <br>You are: <ion-label v-if="localParticipant" v-text="localParticipant.name"></ion-label>
+      </h1>
     </ion-header>
 
     <ion-content :fullscreen="true">
