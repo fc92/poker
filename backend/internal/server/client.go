@@ -50,7 +50,8 @@ type Client struct {
 	send chan []byte
 
 	// Room voter id used to cleanly remove client connexions
-	voterId uuid.UUID
+	voterId  uuid.UUID
+	roomName string
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -84,6 +85,7 @@ func (c *Client) readPump() {
 			return
 		}
 		c.voterId = voterReceived.Id
+		c.roomName = voterReceived.RoomName
 
 		// send message to hub for synced updates of the room
 		c.hub.participantReceived <- voterReceived
@@ -143,4 +145,23 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	// new goroutines.
 	go client.writePump()
 	go client.readPump()
+}
+
+// retrieve rooms
+func serveRoomList(hub *Hub, w http.ResponseWriter, r *http.Request) {
+	var roomList []string
+	for roomName := range hub.rooms {
+		roomList = append(roomList, roomName)
+	}
+	// convert room list to json
+	response, err := json.Marshal(roomList)
+	if err != nil {
+		http.Error(w, "Erreur lors de la sérialisation JSON", http.StatusInternalServerError)
+		return
+	}
+
+	// json type in HTTP response header
+	w.Header().Set("Content-Type", "application/json")
+
+	w.Write(response)
 }

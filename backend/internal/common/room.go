@@ -44,6 +44,7 @@ type Room struct {
 	turnFinishedCommands map[string]string
 	turnStartedCommands  map[string]string
 	voteCommands         map[string]string
+	Name                 string
 }
 
 func NewRoom() *Room {

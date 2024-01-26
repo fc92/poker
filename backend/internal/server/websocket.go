@@ -41,6 +41,9 @@ func StartServer(ws string) error {
 	hub := newHub()
 	go hub.run()
 	http.HandleFunc("/", serveHome)
+	http.HandleFunc("/rooms", func(w http.ResponseWriter, r *http.Request) {
+		serveRoomList(hub, w, r)
+	})
 	http.Handle("/metrics", promhttp.Handler())
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
