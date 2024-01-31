@@ -12,12 +12,13 @@
             <server-selector @update:serverValue="handleServerValueUpdate"></server-selector>
           </div>
           <div v-if="store.state.serverSelected !== ''">
-            <h2>Now in poker room: {{ store.state.serverSelected }}</h2>
+            <div class="local-player">
+              <room-selector @update:room="handleRoomUpdate"></room-selector>
+              <br>
+              <name-selector v-if="store.state.roomSelected" @update:player="handlePlayerUpdate"></name-selector>
+            </div>
           </div>
-        </div>
-        <br>
-        <div class="local-player" v-if="store.state.serverSelected">
-          <name-selector @update:player="handlePlayerUpdate"></name-selector>
+          <br>
         </div>
       </div>
 
@@ -32,6 +33,7 @@
 import { onBeforeUnmount, computed } from 'vue';
 import { IonContent, IonFooter, IonHeader, IonPage } from '@ionic/vue';
 import ServerSelector from '@/components/ServerSelector.vue';
+import RoomSelector from '@/components/RoomSelector.vue';
 import NameSelector from '@/components/NameSelector.vue';
 import ExitButton from '@/components/ExitButton.vue';
 import { Participant } from '@/participant';
@@ -42,12 +44,15 @@ const router = useRouter();
 
 const store = useStore();
 
-const serverSelected = computed(() => store.state.serverSelected);
 const websocket = computed(() => store.state.websocket);
-const localParticipantId = computed(() => store.state.localParticipantId);
 
 const handleServerValueUpdate = (newServerValue: string) => {
   store.dispatch('handleServerValueUpdate', newServerValue);
+};
+
+const handleRoomUpdate = (newRoomName: string) => {
+  store.state.roomSelected = newRoomName;
+  store.commit('setRoom', newRoomName);
 };
 
 const handlePlayerUpdate = (participant: Participant) => {
@@ -59,7 +64,8 @@ const handlePlayerUpdate = (participant: Participant) => {
       name: participant.name,
       vote: "",
       available_commands: {},
-      last_command: ""
+      last_command: "",
+      room: store.state.roomSelected
     });
     websocket.value.send(message);
     store.commit('setLocalParticipantId', participant.id);

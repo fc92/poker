@@ -38,6 +38,10 @@ const (
 	VoteHidden      = "-"
 )
 
+const (
+	ActionGetRoomList = iota
+)
+
 type Room struct {
 	RoomStatus           RoomVoteStatus `json:"roomStatus"`
 	Voters               []*Participant `json:"voters"`
@@ -45,6 +49,11 @@ type Room struct {
 	turnStartedCommands  map[string]string
 	voteCommands         map[string]string
 	Name                 string
+}
+
+type RoomRequest struct {
+	Action   int
+	RoomList []string
 }
 
 func NewRoom() *Room {
@@ -258,9 +267,8 @@ func (room *Room) updateFromVotes() {
 func (room *Room) UpdateFromHub() {
 	numVoters := len(room.Voters)
 
-	// terminate program if all players left
 	if numVoters == 0 {
-		log.Info().Msgf("No more players. Closing the poker room.")
+		log.Info().Msgf("No more player in the poker room.")
 	}
 	if numVoters < 2 {
 		room.CloseVote()

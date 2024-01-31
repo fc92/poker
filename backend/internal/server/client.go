@@ -9,7 +9,9 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -79,16 +81,23 @@ func (c *Client) readPump() {
 			return
 		}
 		log.Debug().Msgf("receive message %s", string(message))
-		voterReceived := common.Participant{}
-		if err := json.Unmarshal(message, &voterReceived); err != nil {
-			log.Err(err).Err(err).Msg("unknown message, not a participant")
-			return
-		}
-		c.voterId = voterReceived.Id
-		c.roomName = voterReceived.RoomName
+		// room request
+		roomReq := common.RoomRequest{}
+		if err := json.Unmarshal(message, &roomReq); err == nil {
+			handleRoomRequest(roomReq, c)
+		} else {
+			// vote request
+			voterReceived := common.Participant{}
+			if err := json.Unmarshal(message, &voterReceived); err != nil {
+				log.Err(err).Err(err).Msg("unknown message, not a participant")
+				return
+			}
+			c.voterId = voterReceived.Id
+			c.roomName = voterReceived.RoomName
 
-		// send message to hub for synced updates of the room
-		c.hub.participantReceived <- voterReceived
+			// send message to hub for synced updates of the room
+			c.hub.participantReceived <- voterReceived
+		}
 	}
 }
 
@@ -105,22 +114,25 @@ func (c *Client) writePump() {
 	}()
 	for {
 		select {
-		case jsonRoom, ok := <-c.send:
+		case responseBytes, ok := <-c.send:
 
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				// The hub closed the channel.
+				log.Error().Msg("channel closed from hub")
 				return
 			}
 			w, err := c.conn.NextWriter(websocket.TextMessage)
 			if err != nil {
+				log.Error().Err(err).Msg("error sending response")
 				return
 			}
-			w.Write(jsonRoom)
+			w.Write(responseBytes)
 			if err := w.Close(); err != nil {
+				log.Error().Err(err).Msg("error sending response")
 				return
 			}
-			log.Debug().Msgf("sent message %s", string(jsonRoom))
+			log.Debug().Msgf("sent message %s", string(responseBytes))
 
 		case <-ticker.C:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
@@ -148,20 +160,27 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 }
 
 // retrieve rooms
-func serveRoomList(hub *Hub, w http.ResponseWriter, r *http.Request) {
-	var roomList []string
-	for roomName := range hub.rooms {
-		roomList = append(roomList, roomName)
-	}
-	// convert room list to json
-	response, err := json.Marshal(roomList)
-	if err != nil {
-		http.Error(w, "Erreur lors de la sérialisation JSON", http.StatusInternalServerError)
+func handleRoomRequest(roomReq common.RoomRequest, c *Client) {
+	switch a := roomReq.Action; a {
+
+	case common.ActionGetRoomList:
+		var roomList []string
+		for roomName := range c.hub.rooms {
+			roomList = append(roomList, roomName)
+		}
+		roomReq.RoomList = roomList
+		sort.Strings(roomReq.RoomList)
+		// convert room list to json
+		response, err := json.Marshal(roomReq)
+		if err != nil {
+			log.Err(err).Msg("could not convert room list to json")
+			return
+		}
+		c.send <- response
+
+	default:
+		err := errors.New("RoomRequest error")
+		log.Error().Err(err).Msgf("Action unknown: %d", a)
 		return
 	}
-
-	// json type in HTTP response header
-	w.Header().Set("Content-Type", "application/json")
-
-	w.Write(response)
 }

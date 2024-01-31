@@ -1,12 +1,12 @@
 import { createStore } from 'vuex';
-import { Room, RoomVoteStatus } from '@/room';
+import { Room, RoomRequest, RoomRequestAction, RoomVoteStatus } from '@/room';
 import { Participant } from '@/participant';
-
 
 export default createStore({
     state: {
         websocket: null as WebSocket | null,
         serverSelected: '',
+        roomSelected: '',
         room: {
             roomStatus: RoomVoteStatus.VoteClosed,
             voters: [] as Participant[],
@@ -15,7 +15,8 @@ export default createStore({
             voteCommands: {} as Record<string, string>,
         } as Room,
         localParticipantId: '',
-        voteResults: [0, 0, 0, 0, 0, 0, 0, 0] as number[]
+        voteResults: [0, 0, 0, 0, 0, 0, 0, 0] as number[],
+        roomList: [] as string[]
     },
     mutations: {
         setWebSocket(state, websocket: WebSocket) {
@@ -29,6 +30,12 @@ export default createStore({
                 state.websocket.close();
             }
             state.websocket = null;
+        },
+        setRoomList(state, roomList: string[]) {
+            state.roomList = roomList;
+        },
+        setRoom(state, newRoomName: string) {
+            state.roomSelected = newRoomName;
         },
         setRoomStatus(state, roomStatus: RoomVoteStatus) {
             if (state.room.roomStatus === RoomVoteStatus.VoteClosed
@@ -92,7 +99,7 @@ export default createStore({
         }
     },
     actions: {
-        connectToWebSocket({ commit }, serverAddress: string) {
+        connectToWebSocket({ state, commit, dispatch }, serverAddress: string) {
             try {
                 const websocket = new WebSocket(`ws://${serverAddress}/ws`);
                 websocket.addEventListener('open', () => {
@@ -103,8 +110,16 @@ export default createStore({
                     console.log('Message from server: ', event.data);
                     try {
                         const data = JSON.parse(event.data);
-                        commit('setRoomStatus', data.roomStatus);
-                        commit('setParticipants', data.voters);
+                        if (data.voters) {
+                            commit('setRoomStatus', <RoomVoteStatus>data.roomStatus);
+                            commit('setParticipants', <Participant[]>data.voters);
+                        }
+                        else if (data.Action == RoomRequestAction.ActionGetRoomList) {
+                            commit('setRoomList', <string[]>data.RoomList)
+                        }
+                        else {
+                            console.error('Server response unknown');
+                        }
                     } catch (error) {
                         console.error('Error parsing message data:', error);
                     }
@@ -168,10 +183,47 @@ export default createStore({
                 console.error('WebSocket is not connected');
             }
         },
-
+        getRoomList({ state }) {
+            if (state.websocket) {
+                const roomReq: RoomRequest = {
+                    action: RoomRequestAction.ActionGetRoomList,
+                    roomList: []
+                }
+                const message = JSON.stringify(roomReq);
+                sendMessage(state.websocket, message);
+            } else {
+                console.error('WebSocket is not connected');
+            }
+        },
     },
+
 });
 function resetVotes(state: { websocket: WebSocket | null; serverSelected: string; room: Room; localParticipantId: string; voteResults: number[]; }) {
     state.voteResults = [0, 0, 0, 0, 0, 0, 0, 0];
 }
 
+function sendMessage(ws: WebSocket, message: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        if (ws.readyState === WebSocket.OPEN) {
+            try {
+                ws.send(message);
+                console.log('room request sent to server: ' + message)
+                resolve();
+            } catch (error) {
+                console.error('websocket send error')
+            }
+        } else if (ws.readyState === WebSocket.CONNECTING) {
+            ws.addEventListener('open', () => {
+                try {
+                    ws.send(message);
+                    console.log('room request sent to server: ' + message)
+                    resolve();
+                } catch (error) {
+                    console.error('websocket send error')
+                }
+            });
+        } else {
+            reject(new Error('WebSocket connection not open.'));
+        }
+    });
+}

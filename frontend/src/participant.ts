@@ -4,4 +4,5 @@ export interface Participant {
     vote: string;
     available_commands: Record<string, string>;
     last_command: string;
+    room: string;
 }

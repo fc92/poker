@@ -8,9 +8,10 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { IonContent, IonItem, IonInput, IonButton } from "@ionic/vue";
+import { IonItem, IonInput, IonButton } from "@ionic/vue";
 import { v4 as uuidv4 } from "uuid";
 import { Participant } from "@/participant";
+import store from "@/store";
 
 const emit = defineEmits();
 
@@ -23,15 +24,9 @@ const enterName = () => {
     available_commands: {},
     last_command: "",
     vote: "",
+    room: store.state.room.name == null ? "" : store.state.room.name
   };
   emit("update:player", player);
 };
 
-const props = defineProps({
-  player: {
-    type: Object as () => Participant,
-    required: false,
-    default: () => ({ id: "", name: "" } as Participant),
-  },
-});
 </script>

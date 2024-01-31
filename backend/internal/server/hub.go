@@ -7,6 +7,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rs/zerolog/log"
@@ -48,11 +49,18 @@ func init() {
 }
 
 func newHub() *Hub {
+	initRooms := make(map[string]*common.Room)
+	for i := 0; i < 10; i++ {
+		newRoom := common.NewRoom()
+		newRoom.Name = "team " + fmt.Sprint(i)
+		initRooms[newRoom.Name] = newRoom
+	}
+
 	return &Hub{
 		register:            make(chan *Client),
 		unregister:          make(chan *Client),
 		clients:             make(map[*Client]bool),
-		rooms:               make(map[string]*common.Room),
+		rooms:               initRooms,
 		participantReceived: make(chan common.Participant),
 	}
 }
@@ -92,32 +100,24 @@ func (h *Hub) run() {
 				h.broadcastRoom()
 			}
 		case participantReceived := <-h.participantReceived:
-			// use existing room
-			if h.rooms[participantReceived.RoomName] != nil {
-				h.rooms[participantReceived.RoomName].UpdateFromParticipant(participantReceived)
-			} else {
-				// create new room
-				newRoom := common.NewRoom()
-				newRoom.Name = participantReceived.RoomName
-				newRoom.Voters = append(newRoom.Voters, &participantReceived)
-			}
+			h.rooms[participantReceived.RoomName].UpdateFromParticipant(participantReceived)
 			h.broadcastRoom()
 		}
 	}
 }
 
 func (h *Hub) removeVoter(client *Client) {
-	for i, voter := range h.rooms[client.roomName].Voters {
-		if voter.Id == client.voterId {
-			h.rooms[client.roomName].Voters[i] = h.rooms[client.roomName].Voters[len(h.rooms[client.roomName].Voters)-1] // Copy last element to index i.
-			h.rooms[client.roomName].Voters[len(h.rooms[client.roomName].Voters)-1] = nil                                // Erase last element (write zero value).
-			h.rooms[client.roomName].Voters = h.rooms[client.roomName].Voters[:len(h.rooms[client.roomName].Voters)-1]   // Truncate slice.
-			break
+	rooms, ok := h.rooms[client.roomName]
+	if ok {
+		for i, voter := range rooms.Voters {
+			if voter.Id == client.voterId {
+				h.rooms[client.roomName].Voters[i] = h.rooms[client.roomName].Voters[len(h.rooms[client.roomName].Voters)-1] // Copy last element to index i.
+				h.rooms[client.roomName].Voters[len(h.rooms[client.roomName].Voters)-1] = nil                                // Erase last element (write zero value).
+				h.rooms[client.roomName].Voters = h.rooms[client.roomName].Voters[:len(h.rooms[client.roomName].Voters)-1]   // Truncate slice.
+				break
+			}
 		}
-	}
-	// remove empty room
-	h.rooms[client.roomName].UpdateFromHub()
-	if len(h.rooms) == 0 {
-		delete(h.rooms, client.roomName)
+		// remove empty room
+		h.rooms[client.roomName].UpdateFromHub()
 	}
 }
