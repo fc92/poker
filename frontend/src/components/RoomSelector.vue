@@ -30,7 +30,6 @@ onBeforeMount(async () => {
         await waitForRoomList();
         roomList.value = store.state.roomList;
         selectedRoom.value = roomList.value[0];
-        console.log('room list:', roomList.value);
     } catch (error) {
         console.error('Failed to load room list:', error);
     }
@@ -40,15 +39,15 @@ onBeforeMount(async () => {
         let attempts = 0;
 
         while (store.state.roomList.length === 0 && attempts < maxAttempts) {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Pause d'une seconde entre les tentatives
+            await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second pause before each retry
             attempts++;
         }
 
         if (store.state.roomList.length === 0) {
-            console.error('La liste des salles n\'a pas été chargée après plusieurs tentatives.');
+            console.error('List of rooms could not be loaded after many attempts');
         } else {
             roomList.value = store.state.roomList;
-            console.log('La liste des salles a été chargée:', roomList.value);
+            console.log('Room list was successfully loaded:', roomList.value);
         }
     }
 });
