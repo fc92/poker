@@ -20,8 +20,9 @@ import { useStore } from 'vuex';
 import { IonList, IonListHeader, IonItem, IonRadioGroup, IonRadio, IonButton } from '@ionic/vue';
 
 const emit = defineEmits();
-var roomList = ref<string[]>([]);
-var selectedRoom = ref<string>('');
+const roomList = ref<string[]>([]);
+const selectedRoom = ref<string>('');
+const selectedColor = ref<string>('rgba(173, 216, 230, 0.5)'); // Initial color as light blue
 
 onBeforeMount(async () => {
     const store = useStore();
@@ -57,6 +58,5 @@ onBeforeMount(async () => {
 const selectRoom = () => {
     emit('update:room', selectedRoom.value);
 };
-
 
 </script>

@@ -1,9 +1,11 @@
 <template>
-  Enter your name:
-  <ion-item>
-    <ion-input v-model="playerName" placeholder="player name"></ion-input>
-  </ion-item>
-  <ion-button @click="enterName">Join game</ion-button>
+  <div>
+    <p>Enter your name:</p>
+    <ion-item>
+      <ion-input v-model="playerName" placeholder="Player name"></ion-input>
+    </ion-item>
+    <ion-button @click="enterName">Join game</ion-button>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -14,7 +14,6 @@
           <div v-if="store.state.serverSelected !== ''">
             <div class="local-player">
               <room-selector @update:room="handleRoomUpdate"></room-selector>
-              <br>
               <name-selector v-if="store.state.roomSelected" @update:player="handlePlayerUpdate"></name-selector>
             </div>
           </div>
@@ -81,3 +80,21 @@ onBeforeUnmount(() => {
   }
 });
 </script>
+
+<style scoped>
+.body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.room {
+  text-align: center;
+}
+
+.selector-container {
+  margin-top: 20px;
+  /* Adjust as needed for spacing between selectors */
+}
+</style>
