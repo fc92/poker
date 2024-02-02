@@ -4,10 +4,6 @@ export enum RoomVoteStatus {
     VoteClosed,
 }
 
-export enum RoomRequestAction {
-    ActionGetRoomList,
-}
-
 export interface Room {
     roomStatus: RoomVoteStatus;
     voters: Participant[];
@@ -17,7 +13,10 @@ export interface Room {
     name: string;
 }
 
+export interface RoomOverview {
+    name: string;
+    nbVoters: number;
+}
 export interface RoomRequest {
-    action: RoomRequestAction,
-    roomList: string[]
+    roomList: RoomOverview[]
 }

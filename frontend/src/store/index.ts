@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { Room, RoomRequest, RoomRequestAction, RoomVoteStatus } from '@/room';
+import { Room, RoomOverview, RoomRequest, RoomVoteStatus } from '@/room';
 import { Participant } from '@/participant';
 
 export default createStore({
@@ -16,7 +16,7 @@ export default createStore({
         } as Room,
         localParticipantId: '',
         voteResults: [0, 0, 0, 0, 0, 0, 0, 0] as number[],
-        roomList: [] as string[]
+        roomList: [] as RoomOverview[]
     },
     mutations: {
         setWebSocket(state, websocket: WebSocket) {
@@ -31,7 +31,7 @@ export default createStore({
             }
             state.websocket = null;
         },
-        setRoomList(state, roomList: string[]) {
+        setRoomList(state, roomList: RoomOverview[]) {
             state.roomList = roomList;
         },
         setRoom(state, newRoomName: string) {
@@ -114,8 +114,8 @@ export default createStore({
                             commit('setRoomStatus', <RoomVoteStatus>data.roomStatus);
                             commit('setParticipants', <Participant[]>data.voters);
                         }
-                        else if (data.Action == RoomRequestAction.ActionGetRoomList) {
-                            commit('setRoomList', <string[]>data.RoomList)
+                        else if (data.voters == null) {
+                            commit('setRoomList', <RoomOverview[]>data.RoomList)
                         }
                         else {
                             console.error('Server response unknown');
@@ -186,7 +186,6 @@ export default createStore({
         getRoomList({ state }) {
             if (state.websocket) {
                 const roomReq: RoomRequest = {
-                    action: RoomRequestAction.ActionGetRoomList,
                     roomList: []
                 }
                 const message = JSON.stringify(roomReq);

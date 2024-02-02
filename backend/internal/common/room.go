@@ -38,10 +38,6 @@ const (
 	VoteHidden      = "-"
 )
 
-const (
-	ActionGetRoomList = iota
-)
-
 type Room struct {
 	RoomStatus           RoomVoteStatus `json:"roomStatus"`
 	Voters               []*Participant `json:"voters"`
@@ -51,9 +47,12 @@ type Room struct {
 	Name                 string
 }
 
+type RoomOverview struct {
+	Name     string `json:"name"`
+	NbVoters int    `json:"nbVoters"`
+}
 type RoomRequest struct {
-	Action   int
-	RoomList []string
+	RoomList []RoomOverview
 }
 
 func NewRoom() *Room {

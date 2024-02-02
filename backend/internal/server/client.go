@@ -9,7 +9,6 @@ package server
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"sort"
 	"time"
@@ -161,26 +160,25 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 
 // retrieve rooms
 func handleRoomRequest(roomReq common.RoomRequest, c *Client) {
-	switch a := roomReq.Action; a {
 
-	case common.ActionGetRoomList:
-		var roomList []string
-		for roomName := range c.hub.rooms {
-			roomList = append(roomList, roomName)
+	var roomList []common.RoomOverview
+	for roomName := range c.hub.rooms {
+		roomOverview := common.RoomOverview{
+			Name:     roomName,
+			NbVoters: len(c.hub.rooms[roomName].Voters),
 		}
-		roomReq.RoomList = roomList
-		sort.Strings(roomReq.RoomList)
-		// convert room list to json
-		response, err := json.Marshal(roomReq)
-		if err != nil {
-			log.Err(err).Msg("could not convert room list to json")
-			return
-		}
-		c.send <- response
-
-	default:
-		err := errors.New("RoomRequest error")
-		log.Error().Err(err).Msgf("Action unknown: %d", a)
+		roomList = append(roomList, roomOverview)
+	}
+	roomReq.RoomList = roomList
+	sort.Slice(roomReq.RoomList, func(i, j int) bool {
+		return roomReq.RoomList[i].Name < roomReq.RoomList[j].Name
+	})
+	// convert room list to json
+	response, err := json.Marshal(roomReq)
+	if err != nil {
+		log.Err(err).Msg("could not convert room list to json")
 		return
 	}
+	c.send <- response
+
 }
