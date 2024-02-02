@@ -81,23 +81,23 @@ func (c *Client) readPump() {
 			return
 		}
 		log.Debug().Msgf("receive message %s", string(message))
-		// room request
-		roomReq := common.RoomRequest{}
-		if err := json.Unmarshal(message, &roomReq); err == nil {
-			handleRoomRequest(roomReq, c)
-		} else {
-			// vote request
-			voterReceived := common.Participant{}
-			if err := json.Unmarshal(message, &voterReceived); err != nil {
-				log.Err(err).Err(err).Msg("unknown message, not a participant")
-				return
-			}
+		// try unmarshalling as Participant
+		var voterReceived common.Participant
+		if err := json.Unmarshal(message, &voterReceived); err == nil && voterReceived.RoomName != "" {
 			c.voterId = voterReceived.Id
 			c.roomName = voterReceived.RoomName
 
 			// send message to hub for synced updates of the room
 			c.hub.participantReceived <- voterReceived
+			continue
 		}
+		// try unmarshalling as RoomRequest
+		var roomReq common.RoomRequest
+		if err := json.Unmarshal(message, &roomReq); err == nil {
+			handleRoomRequest(roomReq, c)
+			continue
+		}
+		log.Err(err).Err(err).Msg("unknown message, not a Participant or a RoomRequest")
 	}
 }
 
