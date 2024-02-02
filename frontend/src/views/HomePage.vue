@@ -13,7 +13,8 @@
           </div>
           <div v-if="store.state.serverSelected !== ''">
             <div class="local-player">
-              <room-selector @update:room="handleRoomUpdate"></room-selector>
+              <room-selector v-if="!store.state.roomSelected" @update:room="handleRoomUpdate"></room-selector>
+              <ion-label v-else>Poker room selected: {{ store.state.roomSelected }}</ion-label>
               <name-selector v-if="store.state.roomSelected" @update:player="handlePlayerUpdate"></name-selector>
             </div>
           </div>
@@ -30,7 +31,7 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, computed } from 'vue';
-import { IonContent, IonFooter, IonHeader, IonPage } from '@ionic/vue';
+import { IonContent, IonFooter, IonHeader, IonPage, IonLabel } from '@ionic/vue';
 import ServerSelector from '@/components/ServerSelector.vue';
 import RoomSelector from '@/components/RoomSelector.vue';
 import NameSelector from '@/components/NameSelector.vue';
