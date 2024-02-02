@@ -1,8 +1,8 @@
 <template>
   <ion-page>
     <ion-header :translucent="true" class="ion-margin-top">
-      <h1 class="ion-text-center">Team poker
-        <br>You are: <ion-label v-if="localParticipant" v-text="localParticipant.name"></ion-label>
+      <h1 class="ion-text-center">Team poker room: {{ store.state.roomSelected }}
+        <p v-if="localParticipant">You are: {{ localParticipant.name }}</p>
       </h1>
     </ion-header>
 
@@ -80,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import { IonPage, IonContent, IonHeader, IonButton, IonIcon, IonFooter, IonLabel, IonItem, IonGrid, IonCol, IonRow } from '@ionic/vue';
 import { playOutline } from 'ionicons/icons';
@@ -121,7 +121,11 @@ var voteProgress = computed(() => {
   return [nbVotes, store.state.room.voters.length - nbVotes];
 });
 
-var localParticipant = computed(() => participants.value.find((p: Participant) => p.id === localParticipantId.value));
+const localParticipant = ref<Participant | null>(null);
+watchEffect(() => {
+  localParticipant.value = store.state.room.voters.find((p: Participant) => p.id === localParticipantId.value) || null;
+});
+
 const localVote = computed({
   get: () => localParticipant.value?.vote || '',
   set: (value) => {
@@ -130,14 +134,14 @@ const localVote = computed({
 });
 
 const startGame = () => {
-  store.dispatch('startGame', localParticipant.value);
+  store.dispatch('startGame', localParticipant);
 };
 
 const closeVote = () => {
-  store.dispatch('closeVote', localParticipant.value);
+  store.dispatch('closeVote', localParticipant);
 };
 
 const onVoteChange = () => {
-  store.dispatch('updateVote', { localParticipant: localParticipant.value });
+  store.dispatch('updateVote', { localParticipant: localParticipant });
 };
 </script>
