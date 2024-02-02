@@ -6,7 +6,10 @@
         <ion-radio-group v-model="selectedRoom">
             <ion-list>
                 <ion-item v-for="(room, index) in roomList" :key="index">
-                    <ion-radio :value="room">{{ room }}</ion-radio><br>
+                    <ion-radio :value="room.name">
+                        <span class="roomDetails">{{ room.name }}
+                            <ion-icon :icon="people" class="nbPlayer"></ion-icon>{{ room.nbVoters }}</span>
+                    </ion-radio>
                 </ion-item>
             </ion-list>
         </ion-radio-group>
@@ -17,12 +20,13 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
 import { useStore } from 'vuex';
-import { IonList, IonListHeader, IonItem, IonRadioGroup, IonRadio, IonButton } from '@ionic/vue';
+import { IonList, IonListHeader, IonItem, IonRadioGroup, IonRadio, IonButton, IonIcon } from '@ionic/vue';
+import { people } from 'ionicons/icons';
+import { RoomOverview } from '@/room';
 
 const emit = defineEmits();
-const roomList = ref<string[]>([]);
+const roomList = ref<RoomOverview[]>([]);
 const selectedRoom = ref<string>('');
-const selectedColor = ref<string>('rgba(173, 216, 230, 0.5)'); // Initial color as light blue
 
 onBeforeMount(async () => {
     const store = useStore();
@@ -30,7 +34,7 @@ onBeforeMount(async () => {
         store.dispatch('getRoomList');
         await waitForRoomList();
         roomList.value = store.state.roomList;
-        selectedRoom.value = roomList.value[0];
+        selectedRoom.value = roomList.value[0].name;
     } catch (error) {
         console.error('Failed to load room list:', error);
     }
@@ -60,3 +64,22 @@ const selectRoom = () => {
 };
 
 </script>
+
+<style scoped>
+.roomDetails {
+    display: block;
+    text-align: right;
+    width: 100%;
+    /* Additional styling if needed */
+    padding: 10px;
+    /* Add padding for better visual appearance */
+    background-color: lightgray;
+    /* Add a background color for better visibility */
+}
+
+.nbPlayer {
+    margin-left: 50px;
+    color: darkblue;
+    /* Adjust the value as needed */
+}
+</style>
