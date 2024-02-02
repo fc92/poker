@@ -67,20 +67,23 @@ func newHub() *Hub {
 
 func (h *Hub) broadcastRoom() {
 	for client := range h.clients {
-		// remove vote if it is not closed
-		filteredRoom := h.rooms[client.roomName].FilterVoteData(client.voterId)
-		jsonRoom, err := json.Marshal(filteredRoom)
-		if err != nil {
-			log.Err(err).Msg("")
-			return
-		}
+		room, ok := h.rooms[client.roomName]
+		if ok {
+			// remove vote if it is not closed
+			filteredRoom := room.FilterVoteData(client.voterId)
+			jsonRoom, err := json.Marshal(filteredRoom)
+			if err != nil {
+				log.Err(err).Msg("")
+				return
+			}
 
-		select {
-		case client.send <- jsonRoom:
-		default:
-			delete(h.clients, client)
-			h.removeVoter(client)
-			h.broadcastRoom()
+			select {
+			case client.send <- jsonRoom:
+			default:
+				delete(h.clients, client)
+				h.removeVoter(client)
+				h.broadcastRoom()
+			}
 		}
 	}
 }

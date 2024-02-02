@@ -179,6 +179,7 @@ func (room Room) FilterVoteData(voterId uuid.UUID) *Room {
 				Vote:              vote,
 				AvailableCommands: voter.AvailableCommands,
 				LastCommand:       voter.LastCommand,
+				RoomName:          voter.RoomName,
 			}
 			filteredRoom.Voters = append(filteredRoom.Voters, &voterForClient)
 		}

@@ -93,6 +93,7 @@ export default createStore({
             const participant = state.room.voters.find(p => p.id === payload.id);
             if (participant) {
                 participant.vote = payload.vote;
+                // participant.room = state.room.name;
             } else {
                 console.error(`No participant found with ID ${payload.id}`);
             }
@@ -173,10 +174,10 @@ export default createStore({
                 console.error('WebSocket is not connected');
             }
         },
-        updateVote({ state }, payload) {
+        updateVote({ state }, localParticipant: Participant) {
             if (state.websocket) {
-                payload.localParticipant.last_command = 'r';
-                const message = JSON.stringify(payload.localParticipant);
+                localParticipant.last_command = 'r';
+                const message = JSON.stringify(localParticipant);
                 state.websocket.send(message);
                 console.log('participant update sent to server: ' + message)
             } else {

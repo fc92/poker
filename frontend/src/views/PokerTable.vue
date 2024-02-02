@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-header :translucent="true" class="ion-margin-top">
-      <h1 class="ion-text-center">Team poker room: {{ store.state.roomSelected }}
+      <h1 class="ion-text-center">Poker room: {{ store.state.roomSelected }}
         <p v-if="localParticipant">You are: {{ localParticipant.name }}</p>
       </h1>
     </ion-header>
@@ -134,14 +134,14 @@ const localVote = computed({
 });
 
 const startGame = () => {
-  store.dispatch('startGame', localParticipant);
+  store.dispatch('startGame', localParticipant.value);
 };
 
 const closeVote = () => {
-  store.dispatch('closeVote', localParticipant);
+  store.dispatch('closeVote', localParticipant.value);
 };
 
 const onVoteChange = () => {
-  store.dispatch('updateVote', { localParticipant: localParticipant });
+  store.dispatch('updateVote', localParticipant.value);
 };
 </script>

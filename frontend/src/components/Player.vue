@@ -16,7 +16,7 @@
  
 <script lang="ts">
 import { Participant } from '@/participant';
-import { IonIcon } from '@ionic/vue';
+import { IonIcon, IonLabel } from '@ionic/vue';
 import { addIcons } from 'ionicons';
 import { personCircle, person, ellipsisHorizontal, checkmarkCircleOutline, closeCircle } from 'ionicons/icons'
 import { defineComponent, PropType } from 'vue';
@@ -25,7 +25,7 @@ import { defineComponent, PropType } from 'vue';
 
 export default defineComponent({
     components: {
-        IonIcon,
+        IonIcon, IonLabel
     },
     setup() {
         addIcons(
