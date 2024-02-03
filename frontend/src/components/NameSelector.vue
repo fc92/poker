@@ -2,7 +2,8 @@
   <div>
     <p>Enter your name:</p>
     <ion-item>
-      <ion-input v-model="playerName" @ion-input="onInputchange" placeholder="Player name" autofocus></ion-input>
+      <ion-input v-model="playerName" @ion-input="onInputchange" placeholder="Player name" autofocus
+        @keyup.enter="enterName"></ion-input>
     </ion-item>
     <ion-button v-show="isButtonVisible" @click="enterName">Join game</ion-button>
   </div>
@@ -32,15 +33,17 @@ const onInputchange = () => {
 
 
 const enterName = () => {
-  const player: Participant = {
-    id: uuidv4(),
-    name: playerName.value.trim(),
-    available_commands: {},
-    last_command: "",
-    vote: "",
-    room: store.state.room.name == null ? "" : store.state.room.name
-  };
-  emit("update:player", player);
+  if (store.state.roomSelected != "") {
+    const player: Participant = {
+      id: uuidv4(),
+      name: playerName.value.trim(),
+      available_commands: {},
+      last_command: "",
+      vote: "",
+      room: store.state.room.name == null ? "" : store.state.room.name
+    };
+    emit("update:player", player);
+  }
 };
 
 </script>
