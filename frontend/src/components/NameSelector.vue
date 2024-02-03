@@ -2,7 +2,7 @@
   <div>
     <p>Enter your name:</p>
     <ion-item>
-      <ion-input v-model="playerName" @ion-input="onInputchange" placeholder="Player name"></ion-input>
+      <ion-input v-model="playerName" @ion-input="onInputchange" placeholder="Player name" autofocus></ion-input>
     </ion-item>
     <ion-button v-show="isButtonVisible" @click="enterName">Join game</ion-button>
   </div>
