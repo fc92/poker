@@ -2,7 +2,6 @@
   <ion-page>
     <ion-header :translucent="true" class="ion-margin-top">
       <h1 class="ion-text-center">Poker room: {{ store.state.roomSelected }}
-        <p v-if="localParticipant">You are: {{ localParticipant.name }}</p>
       </h1>
     </ion-header>
 
