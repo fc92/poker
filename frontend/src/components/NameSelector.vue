@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { IonItem, IonInput, IonButton } from "@ionic/vue";
 import { v4 as uuidv4 } from "uuid";
 import { Participant } from "@/participant";
@@ -31,6 +31,14 @@ const onInputchange = () => {
   }
 }
 
+// Watch for changes in store.state.roomSelected
+watch(() => store.state.roomSelected, (newValue) => {
+  if (playerName.value.trim() != "" && newValue !== "") {
+    isButtonVisible.value = true;
+  } else {
+    isButtonVisible.value = false;
+  }
+});
 
 const enterName = () => {
   if (store.state.roomSelected != "") {
