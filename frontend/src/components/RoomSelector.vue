@@ -1,9 +1,9 @@
 <template>
-    <ion-list>
+    <ion-list v-if="selectedRoom == ''">
         <ion-list-header>
             <h2 v-if="roomList.length > 0">Poker rooms available</h2>
         </ion-list-header>
-        <ion-radio-group v-model="selectedRoom">
+        <ion-radio-group v-model="selectedRoom" @ionChange="selectRoom">
             <ion-list>
                 <ion-item v-for="(room, index) in roomList" :key="index">
                     <ion-radio :value="room.name">
@@ -14,27 +14,32 @@
             </ion-list>
         </ion-radio-group>
     </ion-list>
-    <ion-button v-show="roomList.length > 0" @click="selectRoom">Select room</ion-button>
+    <IonLabel v-if="selectedRoom != ''">Room selected:
+        <span class="roomDetails">{{ selectedRoom }}
+            <ion-icon :icon="people" class="nbPlayer"></ion-icon>{{ selectedRoomNbPlayer }}
+        </span>
+    </IonLabel>
 </template>
 
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
 import { useStore } from 'vuex';
-import { IonList, IonListHeader, IonItem, IonRadioGroup, IonRadio, IonButton, IonIcon } from '@ionic/vue';
+import { IonList, IonListHeader, IonItem, IonRadioGroup, IonRadio, IonButton, IonIcon, IonLabel } from '@ionic/vue';
 import { people } from 'ionicons/icons';
 import { RoomOverview } from '@/room';
+import { Participant } from '@/participant';
 
 const emit = defineEmits();
+const store = useStore();
 const roomList = ref<RoomOverview[]>([]);
 const selectedRoom = ref<string>('');
+const selectedRoomNbPlayer = ref<number>(0);
 
 onBeforeMount(async () => {
-    const store = useStore();
     try {
         store.dispatch('getRoomList');
         await waitForRoomList();
         roomList.value = store.state.roomList;
-        selectedRoom.value = roomList.value[0].name;
     } catch (error) {
         console.error('Failed to load room list:', error);
     }
@@ -57,9 +62,9 @@ onBeforeMount(async () => {
     }
 });
 
-
-
 const selectRoom = () => {
+    if (store.state.room.voters.length > 0)
+        selectedRoomNbPlayer.value = store.state.room.voters.find((p: Participant) => p.name === selectedRoom.value).nbPlayer || null;
     emit('update:room', selectedRoom.value);
 };
 

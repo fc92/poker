@@ -2,9 +2,9 @@
   <div>
     <p>Enter your name:</p>
     <ion-item>
-      <ion-input v-model="playerName" placeholder="Player name"></ion-input>
+      <ion-input v-model="playerName" @ion-input="onInputchange" placeholder="Player name"></ion-input>
     </ion-item>
-    <ion-button @click="enterName">Join game</ion-button>
+    <ion-button v-show="isButtonVisible" @click="enterName">Join game</ion-button>
   </div>
 </template>
 
@@ -13,16 +13,28 @@ import { ref } from "vue";
 import { IonItem, IonInput, IonButton } from "@ionic/vue";
 import { v4 as uuidv4 } from "uuid";
 import { Participant } from "@/participant";
-import store from "@/store";
+import { useStore } from 'vuex';
 
+const store = useStore();
 const emit = defineEmits();
 
-const playerName = ref("");
+const playerName = ref<string>('');
+const isButtonVisible = ref(false);
+
+const onInputchange = () => {
+  if (playerName.value.trim() != "" && store.state.roomSelected != "") {
+    isButtonVisible.value = true;
+  }
+  else {
+    isButtonVisible.value = false;
+  }
+}
+
 
 const enterName = () => {
   const player: Participant = {
     id: uuidv4(),
-    name: playerName.value,
+    name: playerName.value.trim(),
     available_commands: {},
     last_command: "",
     vote: "",
