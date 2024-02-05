@@ -22,12 +22,11 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import { IonList, IonListHeader, IonItem, IonRadioGroup, IonRadio, IonButton, IonIcon, IonLabel } from '@ionic/vue';
 import { people } from 'ionicons/icons';
 import { RoomOverview } from '@/room';
-import { Participant } from '@/participant';
 
 const emit = defineEmits();
 const store = useStore();
@@ -63,10 +62,14 @@ onBeforeMount(async () => {
 });
 
 const selectRoom = () => {
-    if (store.state.room.voters.length > 0)
-        selectedRoomNbPlayer.value = store.state.room.voters.find((p: Participant) => p.name === selectedRoom.value).nbPlayer || null;
+    if (store.state.roomList.length > 0)
+        selectedRoomNbPlayer.value = store.state.roomList.find((r: RoomOverview) => r.name === selectedRoom.value).nbVoters || null;
     emit('update:room', selectedRoom.value);
 };
+
+watch(() => store.state.roomList, (newRoomList) => {
+    selectedRoomNbPlayer.value = newRoomList.find((r: RoomOverview) => r.name === selectedRoom.value).nbVoters || null;
+});
 
 </script>
 
