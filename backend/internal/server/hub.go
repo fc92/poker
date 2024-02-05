@@ -101,9 +101,20 @@ func (h *Hub) run() {
 				close(client.send)
 				connectedClients.Dec()
 				h.broadcastRoom()
+				// broadcast roomList change
+				roomReq := common.RoomRequest{}
+				for c := range h.clients {
+					handleRoomRequest(roomReq, c)
+				}
 			}
 		case participantReceived := <-h.participantReceived:
-			h.rooms[participantReceived.RoomName].UpdateFromParticipant(participantReceived)
+			isNewPlayer := h.rooms[participantReceived.RoomName].UpdateFromParticipant(participantReceived)
+			if isNewPlayer { // broadcast roomList change
+				roomReq := common.RoomRequest{}
+				for c := range h.clients {
+					handleRoomRequest(roomReq, c)
+				}
+			}
 			h.broadcastRoom()
 		}
 	}

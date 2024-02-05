@@ -188,7 +188,8 @@ func (room Room) FilterVoteData(voterId uuid.UUID) *Room {
 	return &room
 }
 
-func (room *Room) UpdateFromParticipant(voterReceived Participant) {
+func (room *Room) UpdateFromParticipant(voterReceived Participant) (isNewPlayer bool) {
+	isNewPlayer = false
 	// add first player
 	if len(room.Voters) == 0 {
 		room.Voters = append(room.Voters, &voterReceived)
@@ -206,11 +207,13 @@ func (room *Room) UpdateFromParticipant(voterReceived Participant) {
 			if i == len(room.Voters)-1 {
 				// update command menu
 				room.addPlayer(voterReceived)
+				isNewPlayer = true
 			}
 		}
 
 	}
 	room.updateFromVotes()
+	return
 }
 
 func updateRoomFromReceivedPlayer(room *Room, voterPosition int, voterReceived Participant) {
