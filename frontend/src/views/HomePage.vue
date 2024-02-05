@@ -81,6 +81,10 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+h1 {
+  text-align: center;
+}
+
 .body {
   display: flex;
   justify-content: center;
@@ -94,6 +98,5 @@ onBeforeUnmount(() => {
 
 .selector-container {
   margin-top: 20px;
-  /* Adjust as needed for spacing between selectors */
 }
 </style>
