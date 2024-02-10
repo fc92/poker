@@ -131,7 +131,7 @@ func (h *Hub) removeVoter(client *Client) {
 				break
 			}
 		}
-		// remove empty room
+		// close vote if needed
 		h.rooms[client.roomName].UpdateFromHub()
 	}
 }
