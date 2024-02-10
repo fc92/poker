@@ -1,14 +1,17 @@
 <template>
     <div class="player-item">
         <ion-icon :name="isCurrentUser ? 'person-circle' : 'person'" :class="{ 'bold-text': isCurrentUser }"></ion-icon>
-        <span :class="{ 'bold-text': isCurrentUser }">{{ player.name }}:</span>
-        <ion-label v-if="!displayVote && player.last_command === ''" color="warning"> waiting for vote</ion-label>
+        <span :class="{ 'bold-text': isCurrentUser }">{{ player.name }}</span>
+        <ion-label v-if="!displayVote && player.last_command === ''" color="warning"><span class="vote-status">: waiting for
+                vote</span></ion-label>
         <ion-icon v-if="!displayVote && player.last_command === ''" name="ellipsis-horizontal"
             class="player-item"></ion-icon>
-        <ion-label v-if="!displayVote && player.last_command === 'r'" color="success"> vote received</ion-label>
+        <ion-label v-if="!displayVote && player.last_command === 'r'" color="success"><span class="vote-status">: vote
+                received</span></ion-label>
         <ion-icon v-if="!displayVote && player.last_command === 'r'" name="checkmark-circle-outline"
             class="player-item"></ion-icon>
-        <ion-label v-if="!displayVote && player.last_command === 'n'" color="success"> vote received</ion-label>
+        <ion-label v-if="!displayVote && player.last_command === 'n'" color="success"><span class="vote-status">: vote
+                received</span></ion-label>
         <ion-icon v-if="!displayVote && player.last_command === 'n'" name="close-circle" class="player-item"></ion-icon>
         <div v-if="displayVote && player.vote" class="player-item">{{ player.vote }}</div>
     </div>
@@ -57,5 +60,9 @@ export default defineComponent({
 
 .bold-text {
     font-weight: bold;
+}
+
+.vote-status {
+    margin: 4px;
 }
 </style>
