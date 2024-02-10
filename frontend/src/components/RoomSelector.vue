@@ -68,7 +68,9 @@ const selectRoom = () => {
 };
 
 watch(() => store.state.roomList, (newRoomList) => {
-    selectedRoomNbPlayer.value = newRoomList.find((r: RoomOverview) => r.name === selectedRoom.value).nbVoters || null;
+    roomList.value = newRoomList;
+    if (selectedRoom.value != '')
+        selectedRoomNbPlayer.value = newRoomList.find((r: RoomOverview) => r.name === selectedRoom.value).nbVoters || null;
 });
 
 </script>
