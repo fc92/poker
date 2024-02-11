@@ -16,7 +16,8 @@
     </ion-list>
     <IonLabel v-if="selectedRoom != ''">Room selected:
         <span class="roomDetails">{{ selectedRoom }}
-            <ion-icon :icon="people" class="nbPlayer"></ion-icon>{{ selectedRoomNbPlayer }}
+            <ion-icon :icon="people" class="nbPlayer"></ion-icon>{{ selectedRoomNbPlayer == undefined ? 0 :
+                selectedRoomNbPlayer }}
         </span>
     </IonLabel>
 </template>
