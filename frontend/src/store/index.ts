@@ -5,7 +5,6 @@ import { Participant } from '@/participant';
 export default createStore({
     state: {
         websocket: null as WebSocket | null,
-        serverSelected: '',
         roomSelected: '',
         room: {
             roomStatus: RoomVoteStatus.VoteClosed,
@@ -21,9 +20,6 @@ export default createStore({
     mutations: {
         setWebSocket(state, websocket: WebSocket) {
             state.websocket = websocket;
-        },
-        setServerSelected(state, serverSelected: string) {
-            state.serverSelected = serverSelected;
         },
         clearWebSocket(state) {
             if (state.websocket) {
@@ -100,7 +96,7 @@ export default createStore({
         }
     },
     actions: {
-        connectToWebSocket({ state, commit, dispatch }, serverAddress: string) {
+        connectToWebSocket({ commit }, serverAddress: string) {
             try {
                 const websocket = new WebSocket(`ws://${serverAddress}/ws`);
                 websocket.addEventListener('open', () => {
@@ -138,19 +134,15 @@ export default createStore({
                 console.error('Failed to connect to WebSocket:', error);
             }
         },
-        handleServerValueUpdate({ dispatch, commit }, newServerValue: string) {
-            console.log('Valeur du serveur mise à jour:', newServerValue);
-            dispatch('connectToWebSocket', newServerValue)
-                .then(() => {
-                    commit('setServerSelected', newServerValue);
-                })
-                .catch(error => {
-                    console.error('Failed to update server value:', error);
-                });
+        initializeWebSocketConnection({ dispatch }) {
+            const serverAddress = window.location.host;
+            if (serverAddress == 'localhost:8100')
+                dispatch('connectToWebSocket', 'localhost:8080');
+            else
+                dispatch('connectToWebSocket', serverAddress);
         },
         handleExitClick({ state, commit }) {
             commit('clearWebSocket');
-            commit('setServerSelected', '');
             console.info('Exited');
         },
         startGame({ state }, localParticipant: Participant) {
@@ -198,7 +190,7 @@ export default createStore({
     },
 
 });
-function resetVotes(state: { websocket: WebSocket | null; serverSelected: string; room: Room; localParticipantId: string; voteResults: number[]; }) {
+function resetVotes(state: { websocket: WebSocket | null; room: Room; localParticipantId: string; voteResults: number[]; }) {
     state.voteResults = [0, 0, 0, 0, 0, 0, 0, 0];
 }
 

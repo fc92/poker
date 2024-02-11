@@ -1,5 +1,5 @@
 <template>
-    <div v-if="store.state.serverSelected !== ''">
+    <div>
         <ion-button @click="handleExitClick">
             <ion-icon :icon="exit"></ion-icon>
         </ion-button>

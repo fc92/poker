@@ -8,10 +8,7 @@
 
       <div class="body">
         <div class="room">
-          <div v-if="store.state.serverSelected == ''">
-            <server-selector @update:serverValue="handleServerValueUpdate"></server-selector>
-          </div>
-          <div v-if="store.state.serverSelected !== ''">
+          <div>
             <div class="local-player">
               <room-selector @update:room="handleRoomUpdate"></room-selector>
               <name-selector @update:player="handlePlayerUpdate"></name-selector>
@@ -31,7 +28,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, computed } from 'vue';
 import { IonContent, IonFooter, IonHeader, IonPage } from '@ionic/vue';
-import ServerSelector from '@/components/ServerSelector.vue';
 import RoomSelector from '@/components/RoomSelector.vue';
 import NameSelector from '@/components/NameSelector.vue';
 import ExitButton from '@/components/ExitButton.vue';
@@ -42,12 +38,9 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const store = useStore();
+store.dispatch('initializeWebSocketConnection');
 
 const websocket = computed(() => store.state.websocket);
-
-const handleServerValueUpdate = (newServerValue: string) => {
-  store.dispatch('handleServerValueUpdate', newServerValue);
-};
 
 const handleRoomUpdate = (newRoomName: string) => {
   store.commit('setRoom', newRoomName);

@@ -11,13 +11,13 @@
           <ion-col>
             <ion-grid>
               <ion-row>
-                <ion-col :size="4">
+                <ion-col class="ion-col-4">
                   <ion-label v-if="displayVoteResults">Team votes</ion-label>
                   <ion-label v-else>Team</ion-label>
                   <player v-for="participant in participants" :key="participant.id" :player="participant"
                     :displayVote="displayVoteResults" :isCurrentUser="participant.id === localParticipantId" />
                 </ion-col>
-                <ion-col v-if="displayVoteResults" :size="6">
+                <ion-col v-if="displayVoteResults" class="ion-col-6">
                   <BarChart v-if="displayVoteResults" :player-votes="voteResults" :barColors="barColors" />
                 </ion-col>
                 <ion-col v-if="!displayVoteResults" class="ion-margin-center">
@@ -28,7 +28,7 @@
           </ion-col>
         </ion-row>
         <ion-row v-if="room.roomStatus === RoomVoteStatus.VoteOpen">
-          <ion-col :size="2">
+          <ion-col class="ion-col-2">
             <ion-item v-if="localParticipant">
               <ion-grid>
                 <ion-row>Your vote:</ion-row>
@@ -40,7 +40,7 @@
               </ion-grid>
             </ion-item>
           </ion-col>
-          <ion-col :size="4">
+          <ion-col class="ion-col-4">
             <ion-grid>
               <ion-row>Team votes</ion-row>
               <ion-row>
@@ -51,7 +51,7 @@
               </ion-row>
             </ion-grid>
           </ion-col>
-          <ion-col :size="3">
+          <ion-col class="ion-colon-3">
             <ProgressBar :progress="voteProgress"></ProgressBar>
           </ion-col>
         </ion-row>
