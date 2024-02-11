@@ -19,6 +19,9 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
+            "env": {
+                "ROOM_LIST": "Fire,Water,Air,Earth"
+            },
             "program": "${workspaceFolder}/cmd",
             "args": [
                 "server",

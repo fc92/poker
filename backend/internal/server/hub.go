@@ -8,6 +8,8 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rs/zerolog/log"
@@ -49,11 +51,16 @@ func init() {
 }
 
 func newHub() *Hub {
-	initRooms := make(map[string]*common.Room)
-	for i := 0; i < 10; i++ {
-		newRoom := common.NewRoom()
-		newRoom.Name = "team " + fmt.Sprint(i)
-		initRooms[newRoom.Name] = newRoom
+	var initRooms map[string]*common.Room
+	// Check if the environment variable ROOM_LIST is set
+	roomListEnv := os.Getenv("ROOM_LIST")
+
+	if roomListEnv != "" {
+		// Load room list from environment variable
+		initRooms = loadRoomsFromEnv(roomListEnv)
+	} else {
+		// Initialize default rooms
+		initRooms = makeDefaultRooms()
 	}
 
 	return &Hub{
@@ -63,6 +70,32 @@ func newHub() *Hub {
 		rooms:               initRooms,
 		participantReceived: make(chan common.Participant),
 	}
+}
+
+func makeDefaultRooms() map[string]*common.Room {
+	initRooms := make(map[string]*common.Room)
+	for i := 0; i < 10; i++ {
+		newRoom := common.NewRoom()
+		newRoom.Name = "team " + fmt.Sprint(i)
+		initRooms[newRoom.Name] = newRoom
+	}
+	return initRooms
+}
+
+func loadRoomsFromEnv(roomListEnv string) map[string]*common.Room {
+	initRooms := make(map[string]*common.Room)
+	// Assuming ROOM_LIST is a comma-separated list of room names
+	roomNames := strings.Split(roomListEnv, ",")
+
+	for _, roomName := range roomNames {
+		// You may need to add additional checks or validation here
+		// based on the structure of your environment variable data
+		newRoom := common.NewRoom()
+		newRoom.Name = strings.TrimSpace(roomName)
+		initRooms[newRoom.Name] = newRoom
+	}
+
+	return initRooms
 }
 
 func (h *Hub) broadcastRoom() {
