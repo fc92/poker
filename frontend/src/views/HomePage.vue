@@ -60,7 +60,13 @@ const handlePlayerUpdate = (participant: Participant) => {
     });
     websocket.value.send(message);
     store.commit('setLocalParticipantId', participant.id);
-    router.push('/pokertable');
+    router.push({
+      name: 'PokerTable',
+      params: {
+        username: participant.name,
+        room: store.state.roomSelected
+      }
+    });
   } else {
     console.error('WebSocket is not connected');
   }

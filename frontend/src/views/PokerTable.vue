@@ -80,7 +80,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue';
+import { computed, ref, watchEffect, onBeforeMount } from 'vue';
+import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import { IonPage, IonContent, IonHeader, IonButton, IonIcon, IonFooter, IonLabel, IonItem, IonGrid, IonCol, IonRow } from '@ionic/vue';
 import { playOutline } from 'ionicons/icons';
@@ -91,7 +92,11 @@ import ProgressBar from '@/components/ProgressBar.vue';
 import ExitButton from '@/components/ExitButton.vue';
 import { Participant } from '@/participant';
 import { Room, RoomVoteStatus } from '@/room';
+import { v4 as uuidv4 } from "uuid";
 
+const route = useRoute();
+const urlParamUsername = ref(route.params.username);
+const urlParamRoom = ref(route.params.room);
 const store = useStore();
 const barColors: string[] = [
   'white',
@@ -103,6 +108,42 @@ const barColors: string[] = [
   'fuchsia',
   'deepskyblue'
 ];
+
+// bookmark is used to connect without coming from HomePage
+onBeforeMount(async () => {
+  if (!store.state.websocket) {
+    try {
+      store.dispatch('initializeWebSocketConnection');
+      await waitForWebsocket();
+    } catch (error) {
+      console.error('Failed to connect to websocket : ', error);
+    }
+
+    async function waitForWebsocket() {
+      const maxAttempts = 10;
+      let attempts = 0;
+
+      while (store.state.websocket.readyState === WebSocket.CONNECTING && attempts < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second pause before each retry
+        attempts++;
+      }
+    }
+
+    store.commit('setRoom', urlParamRoom);
+
+    const newId = uuidv4()
+    const message = JSON.stringify({
+      id: newId,
+      name: urlParamUsername.value,
+      vote: "",
+      available_commands: {},
+      last_command: "",
+      room: store.state.roomSelected
+    });
+    store.state.websocket.send(message);
+    store.commit('setLocalParticipantId', newId);
+  }
+});
 
 const room: Room = computed(() => store.state.room).value;
 var voteResults = computed(() => store.state.voteResults);

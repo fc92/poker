@@ -15,7 +15,7 @@ const routes: Array<RouteRecordRaw> = [
     component: HomePage
   },
   {
-    path: '/pokertable',
+    path: '/pokertable/:username/:room',
     name: 'PokerTable',
     component: PokerTable,
   },
