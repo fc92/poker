@@ -80,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect, onBeforeMount } from 'vue';
+import { computed, ref, watchEffect, onBeforeMount, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import { IonPage, IonContent, IonHeader, IonButton, IonIcon, IonFooter, IonLabel, IonItem, IonGrid, IonCol, IonRow } from '@ionic/vue';
@@ -97,6 +97,8 @@ import { v4 as uuidv4 } from "uuid";
 const route = useRoute();
 const urlParamUsername = ref(route.params.username);
 const urlParamRoom = ref(route.params.room);
+const pageTitle = ref(`Poker room ${urlParamRoom.value}`);
+
 const store = useStore();
 const barColors: string[] = [
   'white',
@@ -143,6 +145,10 @@ onBeforeMount(async () => {
     store.state.websocket.send(message);
     store.commit('setLocalParticipantId', newId);
   }
+});
+
+onMounted(() => {
+  document.title = pageTitle.value;
 });
 
 const room: Room = computed(() => store.state.room).value;
