@@ -1,1 +1,5 @@
-cmd/__debug_bin
+cmd/__debug_bin*
+backend/cmd/__debug_bin*
+backend/cmd/console/__debug_bin*
+.gitignore
+frontend/package-lock.json

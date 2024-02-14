@@ -44,6 +44,15 @@ type Room struct {
 	turnFinishedCommands map[string]string
 	turnStartedCommands  map[string]string
 	voteCommands         map[string]string
+	Name                 string
+}
+
+type RoomOverview struct {
+	Name     string `json:"name"`
+	NbVoters int    `json:"nbVoters"`
+}
+type RoomRequest struct {
+	RoomList []RoomOverview
 }
 
 func NewRoom() *Room {
@@ -170,6 +179,7 @@ func (room Room) FilterVoteData(voterId uuid.UUID) *Room {
 				Vote:              vote,
 				AvailableCommands: voter.AvailableCommands,
 				LastCommand:       voter.LastCommand,
+				RoomName:          voter.RoomName,
 			}
 			filteredRoom.Voters = append(filteredRoom.Voters, &voterForClient)
 		}
@@ -178,7 +188,8 @@ func (room Room) FilterVoteData(voterId uuid.UUID) *Room {
 	return &room
 }
 
-func (room *Room) UpdateFromParticipant(voterReceived Participant) {
+func (room *Room) UpdateFromParticipant(voterReceived Participant) (isNewPlayer bool) {
+	isNewPlayer = false
 	// add first player
 	if len(room.Voters) == 0 {
 		room.Voters = append(room.Voters, &voterReceived)
@@ -196,11 +207,13 @@ func (room *Room) UpdateFromParticipant(voterReceived Participant) {
 			if i == len(room.Voters)-1 {
 				// update command menu
 				room.addPlayer(voterReceived)
+				isNewPlayer = true
 			}
 		}
 
 	}
 	room.updateFromVotes()
+	return
 }
 
 func updateRoomFromReceivedPlayer(room *Room, voterPosition int, voterReceived Participant) {
@@ -257,9 +270,8 @@ func (room *Room) updateFromVotes() {
 func (room *Room) UpdateFromHub() {
 	numVoters := len(room.Voters)
 
-	// terminate program if all players left
 	if numVoters == 0 {
-		log.Info().Msgf("No more players. Closing the poker room.")
+		log.Info().Msgf("No more player in the poker room.")
 	}
 	if numVoters < 2 {
 		room.CloseVote()

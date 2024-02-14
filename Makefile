@@ -1,10 +1,10 @@
-build:
+docker-build:
 	docker build -t poker:latest -f backend/build/package/Dockerfile .
 
-build-debug:
-	docker build -t poker:debug -f backend/build/package/debug/Dockerfile .
+ionic-build:
+	cd frontend && ionic build
 
-all: build build-debug
+all: ionic-build docker-build
 
 clean:
 	docker image rm poker:latest poker:debug 2> /dev/null || true

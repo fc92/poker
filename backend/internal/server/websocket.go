@@ -8,6 +8,7 @@ package server
 import (
 	"flag"
 	"net/http"
+	"os"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog/log"
@@ -21,30 +22,43 @@ func init() {
 
 var httpListenAndServe = http.ListenAndServe
 
-func serveHome(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		log.Error().Msgf("URL not supported: %s", r.URL)
-		http.Error(w, "Not found", http.StatusNotFound)
-		return
-	}
-	if r.Method != http.MethodGet {
-		log.Error().Msgf("URL %s, method not supported: %s", r.URL, r.Method)
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	http.ServeFile(w, r, "home.html")
-}
-
 func StartServer(ws string) error {
 	var addr = flag.String("addr", ws, "http service address")
 	flag.Parse()
 	hub := newHub()
 	go hub.run()
-	http.HandleFunc("/", serveHome)
-	http.Handle("/metrics", promhttp.Handler())
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(hub, w, r)
+	// Define the directory to serve static files from
+	var staticDir string
+	// Check if the environment variable ROOM_LIST is set
+	staticDir = os.Getenv("FRONTEND_DIR")
+
+	if staticDir == "" {
+		staticDir = "../../frontend/dist"
+	}
+	log.Info().Msgf("static contend: %s, http service %s", staticDir, *addr)
+
+	// Custom handler to manage routing
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		// Exclude paths "/metrics" and "/ws" from serving static files
+		if r.URL.Path != "/metrics" && r.URL.Path != "/ws" {
+			// For any route (except /ws and /metrics), serve the index.html file
+			http.ServeFile(w, r, staticDir+"/index.html")
+			return
+		}
+
+		// Handle other paths ("/metrics", "/ws") as needed
+		switch r.URL.Path {
+		case "/metrics":
+			promhttp.Handler().ServeHTTP(w, r)
+		case "/ws":
+			serveWs(hub, w, r)
+		}
 	})
+	http.HandleFunc("/assets/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, staticDir+r.URL.Path)
+		w.Header().Set("Content-Type", "application/javascript")
+	})
+
 	err := httpListenAndServe(*addr, nil)
 	if err != nil {
 		return err

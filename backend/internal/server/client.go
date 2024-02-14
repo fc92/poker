@@ -10,6 +10,7 @@ package server
 import (
 	"encoding/json"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -36,6 +37,7 @@ const (
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
 // Client is a middleman between the websocket connection and the hub.
@@ -49,7 +51,8 @@ type Client struct {
 	send chan []byte
 
 	// Room voter id used to cleanly remove client connexions
-	voterId uuid.UUID
+	voterId  uuid.UUID
+	roomName string
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -77,15 +80,23 @@ func (c *Client) readPump() {
 			return
 		}
 		log.Debug().Msgf("receive message %s", string(message))
-		voterReceived := common.Participant{}
-		if err := json.Unmarshal(message, &voterReceived); err != nil {
-			log.Err(err).Err(err).Msg("unknown message, not a participant")
-			return
-		}
-		c.voterId = voterReceived.Id
+		// try unmarshalling as Participant
+		var voterReceived common.Participant
+		if err := json.Unmarshal(message, &voterReceived); err == nil && voterReceived.RoomName != "" {
+			c.voterId = voterReceived.Id
+			c.roomName = voterReceived.RoomName
 
-		// send message to hub for synced updates of the room
-		c.hub.participantReceived <- voterReceived
+			// send message to hub for synced updates of the room
+			c.hub.participantReceived <- voterReceived
+			continue
+		}
+		// try unmarshalling as RoomRequest
+		var roomReq common.RoomRequest
+		if err := json.Unmarshal(message, &roomReq); err == nil {
+			handleRoomRequest(roomReq, c)
+			continue
+		}
+		log.Err(err).Err(err).Msg("unknown message, not a Participant or a RoomRequest")
 	}
 }
 
@@ -102,22 +113,25 @@ func (c *Client) writePump() {
 	}()
 	for {
 		select {
-		case jsonRoom, ok := <-c.send:
+		case responseBytes, ok := <-c.send:
 
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				// The hub closed the channel.
+				log.Error().Msg("channel closed from hub")
 				return
 			}
 			w, err := c.conn.NextWriter(websocket.TextMessage)
 			if err != nil {
+				log.Error().Err(err).Msg("error sending response")
 				return
 			}
-			w.Write(jsonRoom)
+			w.Write(responseBytes)
 			if err := w.Close(); err != nil {
+				log.Error().Err(err).Msg("error sending response")
 				return
 			}
-			log.Debug().Msgf("sent message %s", string(jsonRoom))
+			log.Debug().Msgf("sent message %s", string(responseBytes))
 
 		case <-ticker.C:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
@@ -142,4 +156,29 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	// new goroutines.
 	go client.writePump()
 	go client.readPump()
+}
+
+// retrieve rooms
+func handleRoomRequest(roomReq common.RoomRequest, c *Client) {
+
+	var roomList []common.RoomOverview
+	for roomName := range c.hub.rooms {
+		roomOverview := common.RoomOverview{
+			Name:     roomName,
+			NbVoters: len(c.hub.rooms[roomName].Voters),
+		}
+		roomList = append(roomList, roomOverview)
+	}
+	roomReq.RoomList = roomList
+	sort.Slice(roomReq.RoomList, func(i, j int) bool {
+		return roomReq.RoomList[i].Name < roomReq.RoomList[j].Name
+	})
+	// convert room list to json
+	response, err := json.Marshal(roomReq)
+	if err != nil {
+		log.Err(err).Msg("could not convert room list to json")
+		return
+	}
+	c.send <- response
+
 }

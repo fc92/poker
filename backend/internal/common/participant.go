@@ -10,6 +10,7 @@ type Participant struct {
 	Vote              string            `json:"vote"`
 	AvailableCommands map[string]string `json:"available_commands"`
 	LastCommand       string            `json:"last_command"`
+	RoomName          string            `json:"room"`
 }
 
 func CreateVoter(voterName string) *Participant {
@@ -19,6 +20,7 @@ func CreateVoter(voterName string) *Participant {
 		AvailableCommands: map[string]string{},
 		LastCommand:       VoteNotReceived,
 		Vote:              VoteNotReceived,
+		RoomName:          "",
 	}
 }
 
