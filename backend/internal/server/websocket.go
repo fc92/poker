@@ -8,8 +8,10 @@ package server
 import (
 	"flag"
 	"net/http"
+	"os"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/rs/zerolog/log"
 
 	"github.com/fc92/poker/internal/common/logger"
 )
@@ -26,7 +28,15 @@ func StartServer(ws string) error {
 	hub := newHub()
 	go hub.run()
 	// Define the directory to serve static files from
-	staticDir := "../../frontend/dist"
+	var staticDir string
+	// Check if the environment variable ROOM_LIST is set
+	staticDir = os.Getenv("FRONTEND_DIR")
+
+	if staticDir == "" {
+		staticDir = "../../frontend/dist"
+	}
+	log.Info().Msgf("static contend: %s", staticDir)
+
 	// Custom handler to manage routing
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// Exclude paths "/metrics" and "/ws" from serving static files
