@@ -28,16 +28,5 @@
                 "-debug"
             ]
         },
-        {
-            "name": "Launch client",
-            "type": "go",
-            "request": "launch",
-            "mode": "debug",
-            "program": "${workspaceFolder}/cmd/console",
-            "args": [
-                "client",
-            ],
-            "console": "integratedTerminal"
-        },
     ]
 }

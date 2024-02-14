@@ -35,7 +35,7 @@ func StartServer(ws string) error {
 	if staticDir == "" {
 		staticDir = "../../frontend/dist"
 	}
-	log.Info().Msgf("static contend: %s", staticDir)
+	log.Info().Msgf("static contend: %s, http service %s", staticDir, *addr)
 
 	// Custom handler to manage routing
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

@@ -20,7 +20,7 @@ func main() {
 }
 
 func run(args []string) {
-	websocketHostPortPtr := flag.String("websocket", "localhost:8080", "hostname and port of the websocket to open")
+	websocketHostPortPtr := flag.String("websocket", "0.0.0.0:8080", "hostname and port of the websocket to open")
 	debug := flag.Bool("debug", false, "sets log level to debug")
 
 	if *debug {
