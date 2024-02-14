@@ -23,11 +23,14 @@ RUN CGO_ENABLED=0 go build -o /go/bin/poker cmd/poker.go
 
 FROM alpine:latest
 WORKDIR /
+# Create a non-root user and group
+RUN addgroup -g 1001 appgroup && adduser -D -u 1001 -G appgroup appuser
 ENV FRONTEND_DIR="/static"
 RUN mkdir -p ${FRONTEND_DIR}
 COPY --from=build /go/bin /
 COPY "frontend/dist" $FRONTEND_DIR
 
+USER appuser
 # Set environment variables
 ENV ROOM_LIST="Fire,Water,Air,Earth"
 EXPOSE 8080
