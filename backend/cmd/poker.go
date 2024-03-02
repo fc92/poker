@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"os"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -16,10 +15,10 @@ func init() {
 }
 
 func main() {
-	run(os.Args[1:])
+	run()
 }
 
-func run(args []string) {
+func run() {
 	websocketHostPortPtr := flag.String("websocket", "0.0.0.0:8080", "hostname and port of the websocket to open")
 	debug := flag.Bool("debug", false, "sets log level to debug")
 

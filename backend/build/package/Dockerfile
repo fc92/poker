@@ -1,7 +1,7 @@
 FROM golang:1.21.7 as build
 LABEL org.opencontainers.image.authors="fc92"
 LABEL org.opencontainers.image.source=https://github.com/fc92/poker
-LABEL org.opencontainers.image.description="poker image running client and server components"
+LABEL org.opencontainers.image.description="poker image running web frontend and server components"
 LABEL org.opencontainers.image.licenses=MIT
 
 # build poker binary using multi stage build for go
@@ -13,15 +13,13 @@ RUN go mod download
 COPY backend/cmd/ cmd/
 COPY backend/internal/ internal/
 RUN pwd
-RUN ls cmd
-RUN go vet -v ./...
-RUN go test -v ./...
+RUN ls cmd && go vet -v ./... && go test -v ./...
 
 WORKDIR /go/src/app
 RUN CGO_ENABLED=0 go build -o /go/bin/poker cmd/poker.go
 
 
-FROM alpine:latest
+FROM alpine:3.19.1
 WORKDIR /
 # Create a non-root user and group
 RUN addgroup -g 1001 appgroup && adduser -D -u 1001 -G appgroup appuser
