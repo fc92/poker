@@ -89,7 +89,6 @@ export default createStore({
             const participant = state.room.voters.find(p => p.id === payload.id);
             if (participant) {
                 participant.vote = payload.vote;
-                // participant.room = state.room.name;
             } else {
                 console.error(`No participant found with ID ${payload.id}`);
             }
@@ -98,7 +97,8 @@ export default createStore({
     actions: {
         connectToWebSocket({ commit }, serverAddress: string) {
             try {
-                const websocket = new WebSocket(`ws://${serverAddress}/ws`);
+                const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const websocket = new WebSocket(`${wsProtocol}//${serverAddress}/ws`);
                 websocket.addEventListener('open', () => {
                     console.log('WebSocket is connected');
                 });
