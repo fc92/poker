@@ -11,8 +11,6 @@
 - [poker](#poker)
   - [Game description](#game-description)
   - [Install](#install)
-    - [Standard deployment](#standard-deployment)
-    - [Custom HTTP port deployment](#custom-http-port-deployment)
 
 ## Game description
 
@@ -22,36 +20,11 @@
 - Vote values are revealed only when the vote session is closed, and the vote distribution is displayed.
 - Players can join or leave at any time.
 
-Early version in console:
-![short demo](4players.gif)
-
 ## Install
 
 The most common usage is to deploy:
 
-- deploy a container for one poker room on server side,
+- the helm chart and a tls secret `poker-tls` in a Kubernetes namespace,
 - use a modern browser on client side to join the room for the game.
 
-### Standard deployment
-
-- Server using default HTTP port 8081:
-
-```bash
-docker run -p 8081:8081 -td ghcr.io/fc92/poker:main
-```
-
-- Browser URL to connect as player *Mary*:
-`http://server_ip:8081/?arg=-name&arg=Mary`
-
-### Custom HTTP port deployment
-
-The port can be modified, to add a second poker room for example:
-
-- Server using non default HTTP port 8083 and room name "TeamOne":
-
-```bash
-docker run -p 8083:8083 -td ghcr.io/fc92/poker:main ./clients.sh 8083 TeamOne
-```
-
-- Browser URL to connect as player *Mary*:
-`http://server_ip:8083/?arg=-name&arg=Mary`
+The list of rooms can be customized using the ROOM_LIST environment variable of the container.
